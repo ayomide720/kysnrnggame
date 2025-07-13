@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Spin Game</title>
+  <style>
+    body {
+      background: white;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 30px;
+      font-size: 18px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 30px;
+      font-size: 20px;
+      padding: 15px 25px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      min-height: 60px;
+      text-align: center;
+      width: 80%;
+      max-width: 400px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎰 Spin the Wheel</h1>
+  <button onclick="spin()">Spin</button>
+  <div id="result">Your result will appear here.</div>
+
+  <script>
+    const rarities = {
+      "Common": 10000,
+      "Uncommon": 5000,
+      "Rare": 2000,
+      "Epic": 1000,
+      "Legendary": 500,
+      "Mythic": 200,
+      "Ancient": 100,
+      "Celestial": 50,
+      "Transcendent": 10,
+      "Omniversal": 1
+    };
+
+    const variants = {
+      "Common": ["Rusty", "Dusty", "Basic"],
+      "Uncommon": ["Polished", "Light-Tinted"],
+      "Rare": ["Shiny", "Steel-Plated"],
+      "Epic": ["Crimson", "Shadow-Forged", "Holy"],
+      "Legendary": ["Dragoncore", "Arcane-Blade"],
+      "Mythic": ["Ethereal", "Twilightborn"],
+      "Ancient": ["Relic-Bound", "Time-Worn"],
+      "Celestial": ["Starforged", "Void-Dancer"],
+      "Transcendent": ["God-Touched", "Echoed Soul"],
+      "Omniversal": ["Origin", "True Form", "Undefined"]
+    };
+
+    function spin() {
+      const rarity = weightedRandom(rarities);
+      const variant = variants[rarity][Math.floor(Math.random() * variants[rarity].length)];
+      const weight = rarities[rarity];
+
+      const resultBox = document.getElementById("result");
+      resultBox.innerHTML = `
+        <strong>You got:</strong> <br><br>
+        <span style="font-size: 24px;">${rarity} ${variant}</span><br><br>
+        <span style="font-size: 14px;">(1 in ${10000 / weight} base odds)</span>
+      `;
+    }
+
+    function weightedRandom(weightMap) {
+      const entries = Object.entries(weightMap);
+      const total = entries.reduce((sum, [, weight]) => sum + weight, 0);
+      let rand = Math.random() * total;
+
+      for (const [key, weight] of entries) {
+        if (rand < weight) return key;
+        rand -= weight;
+      }
+
+      return "Common"; // fallback
+    }
+  </script>
+
+</body>
+</html>
