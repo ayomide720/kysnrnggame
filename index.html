@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Supa Spin Simulator</title>
+<style>  
+  body {  
+    background: #f0f2f5;  
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  
+    display: flex;  
+    flex-direction: row;  
+    align-items: flex-start;  
+    padding: 30px;  
+    min-height: 100vh;  
+    margin: 0;  
+    gap: 30px;  
+  }  
+  main {  
+    flex: 1;  
+    max-width: 600px;
+  }  
+  h1 {  
+    margin-bottom: 10px;  
+  }  
+  button {  
+    padding: 12px 30px;  
+    font-size: 18px;  
+    border: none;  
+    border-radius: 8px;  
+    background-color: #111;  
+    color: white;  
+    cursor: pointer;  
+    margin: 10px 10px 10px 0;  
+  }  
+  #result, #stats, #money, #gears, #luck {  
+    margin-top: 20px;  
+    width: 100%;  
+    padding: 15px 20px;  
+    border-radius: 12px;  
+    background: white;  
+    box-shadow: 0 0 10px rgb(0 0 0 / 0.1);  
+    font-size: 16px;  
+    text-align: center;  
+  }  
+
+  /* Rarity Colors */  
+  .rarity-Common        { color: #666; }  
+  .rarity-Uncommon      { color: #2ecc71; }  
+  .rarity-Rare          { color: #3498db; }  
+  .rarity-Epic          { color: #9b59b6; }  
+  .rarity-Legendary     { color: #f1c40f; }  
+  .rarity-Mythic        { color: #e67e22; }  
+  .rarity-Ancient       { color: #d35400; }  
+  .rarity-Celestial     { color: #1abc9c; }  
+  .rarity-Transcendent  { color: #e91e63; }  
+  .rarity-Omniversal    { color: #ff0000; font-weight: bold; }  
+  .rarity-Divine        { color: gold; }  
+  .rarity-Phantom       { color: slateblue; }  
+  .rarity-Quantum       { color: darkcyan; }  
+  .rarity-Astral        { color: mediumorchid; }  
+  .rarity-Glitched      { color: darkred; }  
+  .rarity-Primordial    { color: teal; font-weight: bold; }  
+  .rarity-Ethereal      { color: #a29bfe; font-style: italic; }  
+  .rarity-Reality-Bound { color: #8e44ad; font-weight: bold; }  
+  .rarity-Genesis       { color: #000; background: #fff; padding: 2px 6px; border-radius: 6px; }  
+
+  .variant {  
+    font-style: italic;  
+    margin-left: 5px;  
+    padding: 2px 6px;  
+    border-radius: 5px;  
+    background: #eee;  
+    font-weight: 600;  
+    user-select: none;  
+  }
+  /* Variant colors by rarity */
+.variant-common {
+  color: #7f8c8d; /* greyish */
+  font-weight: 600;
+  user-select: none;
+}
+
+.variant-uncommon {
+  color: #27ae60; /* green */
+  font-weight: 600;
+  user-select: none;
+}
+  /* Sidebar dropdown styling */
+  #sidebar {
+    width: 250px;
+    background: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
+  }
+  
+  #auto-spin-rate {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+  label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+  }
+  #upgrades-panel {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.upgrade-box {
+  margin-bottom: 15px;
+  font-size: 15px;
+}
+#buy-luck-upgrade {
+  margin-top: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+  select {
+    width: 100%;
+    font-size: 16px;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+    cursor: pointer;
+  }
+    #gear-panel {
+  width: 300px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
+}
+#inventory-display {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
+}
+#rarity-counts {
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.gear-box {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.gear-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.gear-progress {
+  height: 18px;
+  background: #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 6px 0;
+}
+
+.gear-progress-bar {
+  height: 100%;
+  background: linear-gradient(to right, #4caf50, #2ecc71);
+  width: 0%;
+  transition: width 0.3s ease;
+  color: white;
+  font-size: 12px;
+  text-align: center;
+  line-height: 18px;
+}
+
+.gear-status {
+  font-size: 14px;
+  margin-top: 5px;
+}
+</style>
+</head>
+<body>
+<audio id="bgm-audio" src="ScreenRecording_07-13-2025_16-13-26_1 (1).mp3" loop></audio>
+<main>
+  <h1>♤ Supa Spin Game ♤</h1>
+  <button id="spin-btn">Spin</button>
+  <button id="auto-spin-btn" disabled>Auto Spin: OFF</button>
+
+  <div id="result">Your result will appear here.</div>
+  <div id="money">Money: 0</div>
+  <div id="stats">Total Spins: 0<br>Rarest Pull: N/A</div>
+  <div id="luck">Luck Bonus from Gears: 0%</div>
+  <div id="auto-spin-rate">Auto Spin Rate: OFF</div>
+  <div id="gears">
+    <h3>Gear Status</h3>
+    <div id="gear-list">No gears collected yet.</div>
+    <div id="inventory-display">
+      <h3>Your Rarity Inventory</h3>
+      <div id="rarity-counts">Nothing pulled yet.</div>
+    </div>
+  </div>
+</main>
+
+<div id="sidebar">
+  <div id="upgrades-panel">
+  <h3>Upgrades</h3>
+  <div class="upgrade-box">
+    <strong>Luck Upgrade</strong> (Level <span id="luck-upgrade-level">0</span>)<br>
+    Increases base luck by 10% per level.<br>
+    <button id="buy-luck-upgrade">Buy (Cost: <span id="luck-upgrade-cost">10,000</span>)</button>
+  </div>
+</div>
+  <label for="rarity-list">All Rarities</label>
+  <select id="rarity-list" size="16" readonly>
+    <!-- Options populated by JS -->
+  </select>
+</div>
+<script>
+let bgmStarted = false;
+function startBGM() {
+  if (!bgmStarted) {
+    const audio = document.getElementById("bgm-audio");
+    audio.volume = 0.3;
+    audio.play().catch(err => {
+      console.log("Autoplay blocked:", err);
+    });
+    bgmStarted = true;
+  }
+}
+document.addEventListener("click", startBGM, { once: true });
+
+  const baseRarities = {
+    "Common": 10000,
+    "Uncommon": 5000,
+    "Rare": 2000,
+    "Epic": 1000,
+    "Legendary": 500,
+    "Mythic": 200,
+    "Ancient": 100,
+    "Celestial": 70,
+    "Transcendent": 10 / 95,
+    "Omniversal": 5 / 500,
+    "Divine": 7 / 50,
+    "Phantom": 12 / 25,
+    "Quantum": 15 / 200,
+    "Astral": 20 / 250,
+    "Glitched": 25 / 50000
+  };
+
+  const variants = {
+    "Common": [
+      {name:"Rusty", weight: 40},
+      {name:"Dusty", weight: 30},
+      {name:"Basic", weight: 50},
+      {name:"Worn", weight: 20},
+      {name:"Scratched", weight: 10},
+      {name:"Faded", weight: 35},
+      {name:"Plain", weight: 45}
+    ],
+    "Uncommon": [
+      {name:"Polished", weight: 50},
+      {name:"Light-Tinted", weight: 25},
+      {name:"Improved", weight: 20},
+      {name:"Fine", weight: 15},
+      {name:"Refined", weight: 10}
+    ],
+    "Rare": [
+      {name:"Shiny", weight: 35},
+      {name:"Steel-Plated", weight: 25},
+      {name:"Neat", weight: 20},
+      {name:"Glow-Edge", weight: 15},
+      {name:"Sharp", weight: 10}
+    ],
+    "Epic": [
+      {name:"Crimson", weight: 30},
+      {name:"Shadow-Forged", weight: 20},
+      {name:"Holy", weight: 15},
+      {name:"Void-Touched", weight: 10},
+      {name:"Spiked", weight: 5}
+    ],
+    "Legendary": [
+      {name:"Dragoncore", weight: 25},
+      {name:"Arcane-Blade", weight: 20},
+      {name:"Royal", weight: 15},
+      {name:"Phoenix", weight: 10},
+      {name:"Duskborne", weight: 5}
+    ],
+    "Mythic": [
+      {name:"Ethereal", weight: 20},
+      {name:"Twilightborn", weight: 15},
+      {name:"Spiritforged", weight: 10},
+      {name:"Hellfire", weight: 7},
+      {name:"Radiant", weight: 3}
+    ],
+    "Ancient": [
+      {name:"Relic-Bound", weight: 20},
+      {name:"Time-Worn", weight: 15},
+      {name:"Forgotten", weight: 10},
+      {name:"Runic", weight: 8},
+      {name:"Ruined", weight: 5}
+    ],
+    "Celestial": [
+      {name:"Starforged", weight: 15},
+      {name:"Void-Dancer", weight: 10},
+      {name:"Cometfall", weight: 8},
+      {name:"Skylit", weight: 5},
+      {name:"Galaxian", weight: 3}
+    ],
+    "Transcendent": [
+      {name:"God-Touched", weight: 12},
+      {name:"Echoed Soul", weight: 8},
+      {name:"Lightbane", weight: 6},
+      {name:"Fate-Warped", weight: 4},
+      {name:"Dimensional", weight: 2}
+    ],
+    "Omniversal": [
+      {name:"Origin", weight: 8},
+      {name:"True Form", weight: 5},
+      {name:"Undefined", weight: 4},
+      {name:"Nullborn", weight: 2},
+      {name:"Singularity", weight: 1}
+    ],
+    "Divine": [
+      {name:"Purelight", weight: 10},
+      {name:"Heaven's Kiss", weight: 7},
+      {name:"Blessed", weight: 5},
+      {name:"Immortal", weight: 3},
+      {name:"Sacred", weight: 1}
+    ],
+    "Phantom": [
+      {name:"Ghostblade", weight: 10},
+      {name:"Wraith-Edge", weight: 7},
+      {name:"Spectral", weight: 5},
+      {name:"Eclipsed", weight: 3},
+      {name:"Soulshadow", weight: 1}
+    ],
+    "Quantum": [
+      {name:"Entangled", weight: 10},
+      {name:"Superposed", weight: 7},
+      {name:"Uncertain", weight: 5},
+      {name:"Collapsed", weight: 3},
+      {name:"Photon", weight: 1}
+    ],
+    "Astral": [
+      {name:"Starborn", weight: 10},
+      {name:"Celestine", weight: 7},
+      {name:"Nebula", weight: 5},
+      {name:"Lunar", weight: 3},
+      {name:"Solar", weight: 1}
+    ],
+    "Glitched": [
+      {name:"Corrupted", weight: 10},
+      {name:"Broken", weight: 7},
+      {name:"Fragmented", weight: 5},
+      {name:"Glitched-Out", weight: 3},
+      {name:"Bugged", weight: 1}
+    ]
+  };
+
+  // Gear recipes: each gear requires certain counts of rarities to unlock
+  // === Gear Unlock with Money Cost ===
+// Modify gearRecipes to include a cost property
+const gearRecipes = {
+  "Gear 1: Luck Amulet": {
+    requirements: { "Legendary": 25, "Epic": 30, "Celestial": 1 },
+    cost: 25000,
+    luckBonus: 0.50, // 50%
+    spinRateBoost: 0.15
+  },
+  "Gear 2: Fortune Ring": {
+    requirements: { "Mythic": 15, "Ancient": 20, "Celestial": 2 },
+    cost: 50000,
+    luckBonus: 0.75,
+    moneyMultiplier: 0.25 // +25% money per spin
+  },
+  "Gear 3: Eccentric Engine": {
+    requirements: { "Epic": 45, "Legendary": 40, "Mythic": 10 },
+    cost: 100000,
+    luckBonus: 1.00,
+    rarityUpgradeChance: 0.25,
+    spinRateBoost: 0.15
+  },
+  "Gear 4: Seraphim Booster": {
+    requirements: { "Celestial": 4, "Transcendent": 2, "Mythic": 20 },
+    cost: 250000,
+    luckBonus: 1.50,
+    tenthSpinMoneyMultiplier: 40,
+    variantRarityMultiplier: 0.25 // 4x rarer variants (reduce chance by 75%)
+  },
+  "Gear 5: Lightspeed Obliterator": {
+    requirements: { "Transcendent": 5, "Omniversal": 3, "Divine": 1 },
+    cost: 500000,
+    luckBonus: 3.00,
+    thirdSpinLuckBoost: 25,
+    spinRateBoost: 0.95
+  },
+  "Gear 6: 404 Glitcher": {
+    requirements: { "Glitched": 7, "Primordial": 2, "Ethereal": 4 },
+    cost: 1000000,
+    luckBonus: 5.00,
+    addsGlitchedVariant: true,
+    glitchMoneyBoostChance: 0.5,
+    glitchMoneyMultiplierPositive: 5,
+    glitchMoneyMultiplierNegative: 0.5
+  }
+};
+
+
+  
+  // Secret Tap-Based Developer Command for Money (Mobile Friendly)
+// Secret Mobile Hold-to-Give-Money Command
+let holdStart = 0;
+
+document.body.addEventListener("touchstart", () => {
+  holdStart = Date.now();
+});
+
+document.body.addEventListener("touchend", () => {
+  const holdTime = Date.now() - holdStart;
+  if (holdTime >= 3000) { // held for 3 seconds
+    const giveAmount = prompt("Dev mode: Enter money to add:");
+    const amount = parseInt(giveAmount);
+    if (!isNaN(amount) && amount > 0) {
+      money += amount;
+      moneyDiv.textContent = `Money: ${money}`;
+      alert(`Added $${amount.toLocaleString()} 🤑`);
+      saveGame();
+    } else {
+      alert("Invalid amount.");
+    }
+  }
+});
+
+  // Keep inventory count of rarities and variants
+  let inventory = {};
+  // Keep track of unlocked gears
+  let unlockedGears = {};
+  // Total spins
+  let totalSpins = 0;
+  // Money
+  let money = 0;
+  // Luck from gears, starts at 0
+  let currentLuck = 0;
+  // Highest rarity pulled (for stats)
+  let rarityOrder = Object.keys(baseRarities);
+  let rarityRank = {};
+  rarityOrder.forEach((r, i) => rarityRank[r] = i);
+  let highestRarityPulled = null;
+
+  // Auto-spin variables
+  let autoSpinEnabled = false;
+  let autoSpinInterval = null;
+
+  const spinBtn = document.getElementById("spin-btn");
+  const autoSpinBtn = document.getElementById("auto-spin-btn");
+  const resultDiv = document.getElementById("result");
+  const moneyDiv = document.getElementById("money");
+  const statsDiv = document.getElementById("stats");
+  const luckDiv = document.getElementById("luck");
+  const gearListDiv = document.getElementById("gear-list");
+  const autoSpinRateDiv = document.getElementById("auto-spin-rate");
+  const rarityCountsDiv = document.getElementById("rarity-counts");
+  const rarityListSelect = document.getElementById("rarity-list");
+  const autoSpinRareThreshold = rarityRank["Transcendent"]; // Ancient and above
+  
+  // === Luck Upgrade System ===
+let luckUpgradeLevel = 0;
+let luckUpgradeBaseCost = 200;
+
+function getLuckUpgradeCost() {
+  return Math.floor(luckUpgradeBaseCost * Math.pow(1.75, luckUpgradeLevel));
+}
+
+function getLuckBonusFromUpgrade() {
+  return luckUpgradeLevel * 0.1; // Each level = +10% luck
+}
+
+function updateLuckUpgradeUI() {
+  document.getElementById("luck-upgrade-level").textContent = luckUpgradeLevel;
+  document.getElementById("luck-upgrade-cost").textContent = getLuckUpgradeCost().toLocaleString();
+}
+
+// Buy Luck Upgrade logic
+document.getElementById("buy-luck-upgrade").addEventListener("click", () => {
+  const cost = getLuckUpgradeCost();
+  if (money >= cost) {
+    money -= cost;
+    luckUpgradeLevel++;
+    updateLuckUpgradeUI();
+    moneyDiv.textContent = `Money: ${money}`;
+    saveGame();
+    checkGearsUnlock();
+    luckDiv.textContent = `Luck Bonus from Gears: ${(currentLuck * 100 + getLuckBonusFromUpgrade() * 100).toFixed(2)}%`;
+  }
+});
+
+  // Initialize rarity list in sidebar
+// Helper: Format chance from weight
+function formatChance(weight) {
+  const totalWeight = Object.values(baseRarities).reduce((a,b) => a + b, 0);
+  if (weight === 0) return "N/A";
+  const chance = weight / totalWeight;
+  const inv = Math.round(1 / chance);
+  return `1/${inv.toLocaleString()}`;
+}
+
+// Initialize rarity list in sidebar with ??? for not pulled rarities
+function initRarityList() {
+  rarityListSelect.innerHTML = "";
+  for (const rarity of rarityOrder) {
+    const option = document.createElement("option");
+    const pulledCount = getRarityCount(rarity);
+    if (pulledCount === 0) {
+      // Not pulled yet — show ??? and chance
+      option.textContent = `??? - ${formatChance(baseRarities[rarity])}`;
+      option.className = "rarity-" + rarity.replace(/ /g,"-");
+      option.style.fontStyle = "italic";
+      option.style.color = "#999";
+    } else {
+      // Pulled — show rarity name normally
+      option.textContent = rarity;
+      option.className = "rarity-" + rarity.replace(/ /g,"-");
+      option.style.fontStyle = "";
+      option.style.color = "";
+    }
+    rarityListSelect.appendChild(option);
+  }
+}
+
+// Then, inside your spin() function, add this line near the end to refresh sidebar after each spin:
+initRarityList();
+function loadGame() {
+  const saved = localStorage.getItem("supaSpinSave");
+  if (saved) {
+    const data = JSON.parse(saved);
+    luckUpgradeLevel = data.luckUpgradeLevel || 0;
+    inventory = data.inventory || {};
+    unlockedGears = data.unlockedGears || {};
+    totalSpins = data.totalSpins || 0;
+    money = data.money || 0;
+    highestRarityPulled = data.highestRarityPulled || null;
+  }
+}
+
+// Load first
+loadGame();
+
+  // Weighted random helper for selecting rarity based on base weights + luck
+  function weightedRandomRarity() {
+    // Sum weights with luck applied only if at least one gear unlocked
+    const luckMultiplier = 1 + currentLuck + getLuckBonusFromUpgrade();
+    let weightedEntries = [];
+    let totalWeight = 0;
+    for (const [rarity, baseWeight] of Object.entries(baseRarities)) {
+      // Apply luck multiplier to rarities above Legendary only (to make them easier)
+      let weight = baseWeight;
+      if (rarityRank[rarity] >= rarityRank["Legendary"]) {
+        weight = baseWeight * luckMultiplier;
+      }
+      weightedEntries.push({rarity, weight});
+      totalWeight += weight;
+    }
+    let randomWeight = Math.random() * totalWeight;
+    for (const entry of weightedEntries) {
+      if (randomWeight < entry.weight) return entry.rarity;
+      randomWeight -= entry.weight;
+    }
+    // fallback
+    return "Common";
+  }
+
+  // Weighted random helper for variants within rarity
+  function weightedRandomVariant(rarity) {
+    const variantList = variants[rarity];
+    if (!variantList) return null;
+    let totalWeight = variantList.reduce((acc,v) => acc + v.weight, 0);
+    let rnd = Math.random() * totalWeight;
+    for (const variant of variantList) {
+      if (rnd < variant.weight) return variant.name;
+      rnd -= variant.weight;
+    }
+    return variantList[0].name;
+  }
+
+  // Update inventory counts
+  function addToInventory(rarity, variant) {
+    if (!inventory[rarity]) inventory[rarity] = {};
+    if (!inventory[rarity][variant]) inventory[rarity][variant] = 0;
+    inventory[rarity][variant]++;
+  }
+
+  // Calculate total count of a rarity (all variants)
+  function getRarityCount(rarity) {
+    if (!inventory[rarity]) return 0;
+    return Object.values(inventory[rarity]).reduce((a,b) => a+b, 0);
+  }
+
+  // Update the rarity counts display
+// Precompute total weight of base rarities
+const totalBaseWeight = Object.values(baseRarities).reduce((a,b) => a + b, 0);
+
+// Helper to get chance denominator string "1/XYZ"
+function getChanceDenominator(rarity) {
+  const weight = baseRarities[rarity];
+  if (!weight) return "?";
+  const chance = weight / totalBaseWeight;
+  return "1/" + Math.round(1 / chance);
+}
+
+function updateInventoryDisplay() {
+  let html = "";
+  for (const rarity of rarityOrder) {
+    const count = getRarityCount(rarity);
+    const rarityId = `rarity-${rarity.replace(/ /g, "-")}`;
+
+    if (count > 0) {
+      // Player has this rarity — show name and count as usual
+      html += `
+        <div class="${rarityId}" style="cursor:pointer; font-weight:bold;" onclick="toggleVariants('${rarityId}')">
+          ▶ <strong>${rarity}</strong>: ${count}
+        </div>
+        <div id="${rarityId}-variants" style="display:none; padding-left: 15px; font-size: 14px;">
+          ${getVariantBreakdown(rarity)}
+        </div>
+      `;
+    } else {
+      // Player does NOT have this rarity — show ??? and chance denominator
+      const denom = getChanceDenominator(rarity);
+      html += `
+        <div class="rarity-unknown" style="font-style: italic; color: #999;">
+          ??? - ${denom}
+        </div>
+      `;
+    }
+  }
+  rarityCountsDiv.innerHTML = html || "Nothing pulled yet.";
+}
+
+function getVariantBreakdown(rarity) {
+  if (!inventory[rarity]) return "None";
+  let breakdown = "";
+  // Determine variant color class based on rarity
+  let variantClass = "";
+  if (rarity === "Common") variantClass = "variant-common";
+  else if (rarity === "Uncommon") variantClass = "variant-uncommon";
+  else variantClass = "variant"; // default styling for others
+
+  for (const [variant, count] of Object.entries(inventory[rarity])) {
+    breakdown += `<div class="${variantClass}">${variant}: ${count}</div>`;
+  }
+  return breakdown;
+}
+
+function toggleVariants(id) {
+  const el = document.getElementById(id + "-variants");
+  if (el.style.display === "none") {
+    el.style.display = "block";
+  } else {
+    el.style.display = "none";
+  }
+}
+
+function checkGearsUnlock() {
+  let unlockedCount = 0;
+  currentLuck = 0;
+
+  for (const [gearName, gearData] of Object.entries(gearRecipes)) {
+    let canUnlock = true;
+    for (const [reqRarity, reqCount] of Object.entries(gearData.requirements)) {
+      if (getRarityCount(reqRarity) < reqCount) {
+        canUnlock = false;
+        break;
+      }
+    }
+    if (canUnlock) {
+      if (!unlockedGears[gearName]) {
+        if (money >= gearData.cost) {
+          money -= gearData.cost;
+          unlockedGears[gearName] = true;
+          // Removed alert per your request
+        } else {
+          canUnlock = false;
+        }
+      }
+    } else {
+      unlockedGears[gearName] = false;
+    }
+    if (unlockedGears[gearName]) {
+      unlockedCount++;
+      currentLuck += gearData.luckBonus;
+    }
+  }
+  updateGearListDisplay();
+  moneyDiv.textContent = `Money: ${money}`;
+  luckDiv.textContent = `Luck Bonus from Gears: ${(currentLuck * 100).toFixed(2)}%`;
+  autoSpinBtn.disabled = unlockedCount === 0;
+  saveGame();
+}
+
+
+
+  // Count how many gears unlocked
+  function unlockedGearsCount() {
+    return Object.values(unlockedGears).filter(Boolean).length;
+  }
+
+  // Update gear list display with progress bars
+// Update gear list display with clickable gear names to show requirements
+// Update gear list display with clickable gear names to show/hide requirements
+// Track which gear's recipe is currently open
+let openedGearName = null;
+
+function updateGearListDisplay() {
+  let html = "";
+
+  for (const [gearName, gearData] of Object.entries(gearRecipes)) {
+    const isUnlocked = unlockedGears[gearName];
+    // Count current requirements progress
+    let totalReq = 0;
+    let currentCount = 0;
+    let reqListHtml = "";
+
+    for (const [reqRarity, reqCount] of Object.entries(gearData.requirements)) {
+      totalReq += reqCount;
+      const playerCount = getRarityCount(reqRarity);
+      currentCount += Math.min(playerCount, reqCount);
+      const color = playerCount >= reqCount ? "green" : "red";
+      reqListHtml += `<div style="color:${color}">${reqCount} x ${reqRarity} (You have: ${playerCount})</div>`;
+    }
+
+    // Calculate progress percent
+    const progress = totalReq > 0 ? (currentCount / totalReq) * 100 : 100;
+
+    html += `
+      <div class="gear-box" style="border:1px solid #888; margin-bottom:8px; padding:8px; border-radius:5px;">
+        <div class="gear-title" style="cursor:pointer; user-select:none; font-weight:bold;" data-gear="${gearName}">
+          ${gearName} ${isUnlocked ? "✅" : "❌"}
+        </div>
+        <div class="gear-progress" style="background:#ddd; height:10px; border-radius:5px; margin:4px 0;">
+          <div class="gear-progress-bar" style="background:#4caf50; height:100%; width: ${progress}%; border-radius:5px;"></div>
+        </div>
+        <div class="gear-status" style="font-size:14px; margin-bottom:4px;">
+          ${isUnlocked ? `Unlocked! Luck +${(gearData.luckBonus*100).toFixed(1)}%` : `Progress: ${currentCount} / ${totalReq}`}
+        </div>
+        <div class="gear-requirements" style="display:none; padding-left:12px; font-size:13px; color:#333;">
+          <strong>Requirements:</strong>
+          ${reqListHtml}
+        </div>
+      </div>
+    `;
+  }
+
+  gearListDiv.innerHTML = html || "No gears collected yet.";
+
+  // Add click listeners to toggle requirement display
+  document.querySelectorAll(".gear-title").forEach(titleEl => {
+    titleEl.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const gear = titleEl.dataset.gear;
+      const box = titleEl.parentElement;
+      const reqDiv = box.querySelector(".gear-requirements");
+
+      if (reqDiv.style.display === "none") {
+        // Close all others first
+        document.querySelectorAll(".gear-requirements").forEach(div => {
+          div.style.display = "none";
+        });
+        reqDiv.style.display = "block";
+        openedGearName = gear;
+      } else {
+        reqDiv.style.display = "none";
+        openedGearName = null;
+      }
+    });
+  });
+
+  // Restore open gear requirements after UI rebuild
+  if (openedGearName) {
+    const openReqDiv = document.querySelector(`.gear-title[data-gear="${openedGearName}"]`)?.parentElement.querySelector(".gear-requirements");
+    if (openReqDiv) openReqDiv.style.display = "block";
+  }
+}
+
+// Clicking outside closes all open requirements
+document.body.addEventListener("click", () => {
+  document.querySelectorAll(".gear-requirements").forEach(reqDiv => {
+    reqDiv.style.display = "none";
+  });
+  openedGearName = null;
+});
+
+// Enable auto-spin button from start
+autoSpinBtn.disabled = false;
+
+  // Spin function
+  function spin() {
+  saveGame(); 
+    totalSpins++;
+    // Get rarity weighted by luck
+    const rarity = weightedRandomRarity();
+    // Auto-spin interruption logic
+    if (autoSpinEnabled && rarityRank[rarity] >= autoSpinRareThreshold) {
+      clearInterval(autoSpinInterval);
+      autoSpinInterval = null;
+      autoSpinEnabled = false;
+      autoSpinBtn.textContent = "Auto Spin: (Rare pull!)";
+      spinBtn.disabled = false;
+
+      // Optional: Play rare pull sound here
+      // new Audio("your-raresound.mp3").play();
+
+      // Resume after 5 seconds unless player clicks spin manually
+      setTimeout(() => {
+        if (!autoSpinEnabled) {
+          startAutoSpin();
+        }
+      }, 3000);
+    }
+    // Get variant
+    const variant = weightedRandomVariant(rarity);
+    // Add to inventory
+    addToInventory(rarity, variant);
+
+    // Update highest rarity pulled if needed
+    if (!highestRarityPulled || rarityRank[rarity] > rarityRank[highestRarityPulled]) {
+      highestRarityPulled = rarity;
+    }
+
+    // Calculate money earned (just example formula)
+    // More rare = more money, common = 1, uncommon = 3, rare = 7, etc
+    const moneyMap = {
+      "Common": 1,
+      "Uncommon": 3,
+      "Rare": 7,
+      "Epic": 12,
+      "Legendary": 25,
+      "Mythic": 40,
+      "Ancient": 60,
+      "Celestial": 100,
+      "Transcendent": 200,
+      "Omniversal": 350,
+      "Divine": 500,
+      "Phantom": 650,
+      "Quantum": 800,
+      "Astral": 1000,
+      "Glitched": 1500
+    };
+    const earned = moneyMap[rarity] || 1;
+    money += earned;
+
+    // Update UI
+    resultDiv.innerHTML = `You spun: <span class="rarity-${rarity.replace(/ /g,"-")}">${rarity}</span> <span class="variant">${variant}</span><br>Money earned: ${earned}`;
+    moneyDiv.textContent = `Money: ${money}`;
+    statsDiv.innerHTML = `Total Spins: ${totalSpins}<br>Rarest Pull: <span class="rarity-${highestRarityPulled?.replace(/ /g,"-") || "Common"}">${highestRarityPulled || "N/A"}</span>`;
+    updateInventoryDisplay();
+
+    // Check if any gears can unlock now
+    checkGearsUnlock();
+  }
+  
+  function saveGame() {
+  const gameData = {
+    inventory,
+    unlockedGears,
+    totalSpins,
+    money,
+    luckUpgradeLevel,
+    highestRarityPulled
+  };
+  localStorage.setItem("supaSpinSave", JSON.stringify(gameData));
+}
+
+  spinBtn.addEventListener("click", spin);
+
+  function startAutoSpin() {
+  let interval = 200;
+  if (unlockedGears["Gear 1: Luck Amulet"]) {
+    interval *= (1 - (gearRecipes["Gear 1: Luck Amulet"].spinRateBoost || 0));
+  }
+  autoSpinInterval = setInterval(spin, interval);
+  autoSpinEnabled = true;
+  autoSpinBtn.textContent = "Auto Spin: ON";
+  spinBtn.disabled = true;
+}
+
+function stopAutoSpin(reason = "OFF") {
+  clearInterval(autoSpinInterval);
+  autoSpinInterval = null;
+  autoSpinEnabled = false;
+  autoSpinBtn.textContent = `Auto Spin: ${reason}`;
+  spinBtn.disabled = false;
+}
+
+autoSpinBtn.addEventListener("click", () => {
+  if (autoSpinEnabled) stopAutoSpin("OFF");
+  else startAutoSpin();
+});
+
+  // Initialize
+  initRarityList();
+  updateGearListDisplay();
+  updateInventoryDisplay();
+  updateLuckUpgradeUI();
+  luckDiv.textContent = "Luck Bonus from Gears: 0%";
+
+</script>
+</body>
+</html>
