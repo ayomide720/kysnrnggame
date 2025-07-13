@@ -105,6 +105,28 @@
     display: block;
     margin-bottom: 8px;
   }
+  #upgrades-panel {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.upgrade-box {
+  margin-bottom: 15px;
+  font-size: 15px;
+}
+#buy-luck-upgrade {
+  margin-top: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
   select {
     width: 100%;
     font-size: 16px;
@@ -194,6 +216,14 @@
 </main>
 
 <div id="sidebar">
+  <div id="upgrades-panel">
+  <h3>Upgrades</h3>
+  <div class="upgrade-box">
+    <strong>Luck Upgrade</strong> (Level <span id="luck-upgrade-level">0</span>)<br>
+    Increases base luck by 10% per level.<br>
+    <button id="buy-luck-upgrade">Buy (Cost: <span id="luck-upgrade-cost">10,000</span>)</button>
+  </div>
+</div>
   <label for="rarity-list">All Rarities</label>
   <select id="rarity-list" size="16" readonly>
     <!-- Options populated by JS -->
@@ -342,29 +372,78 @@ document.addEventListener("click", startBGM, { once: true });
   };
 
   // Gear recipes: each gear requires certain counts of rarities to unlock
-  const gearRecipes = {
-     "Gear 1: Luck Amulet": {
-      requirements: { "Legendary": 50, "Epic": 45, "Celestial": 1 },
-      luckBonus: 0.75, // 50% luck
-      spinRateBoost: 0.25 // 15% faster autospin
-    },
-    "Gear 2: Fortune Ring": {
-      requirements: { "Mythic": 10, "Ancient": 15, "Celestial": 3 },
-      luckBonus: 1.25
-    },
-    "Gear 3: Destiny Crown": {
-      requirements: { "Transcendent": 5, "Omniversal": 2, "Divine": 1 },
-      luckBonus: 3.50
-    },
-    "Gear 4: Eternity Band": {
-      requirements: { "Phantom": 3, "Quantum": 4, "Astral": 3 },
-      luckBonus: 0.20
-    },
-    "Gear 5: Reality Shard": {
-      requirements: { "Glitched": 5, "Primordial": 2, "Ethereal": 3 },
-      luckBonus: 0.25
+  // === Gear Unlock with Money Cost ===
+// Modify gearRecipes to include a cost property
+const gearRecipes = {
+  "Gear 1: Luck Amulet": {
+    requirements: { "Legendary": 25, "Epic": 30, "Celestial": 1 },
+    cost: 25000,
+    luckBonus: 0.50, // 50%
+    spinRateBoost: 0.15
+  },
+  "Gear 2: Fortune Ring": {
+    requirements: { "Mythic": 15, "Ancient": 20, "Celestial": 2 },
+    cost: 50000,
+    luckBonus: 0.75,
+    moneyMultiplier: 0.25 // +25% money per spin
+  },
+  "Gear 3: Eccentric Engine": {
+    requirements: { "Epic": 45, "Legendary": 40, "Mythic": 10 },
+    cost: 100000,
+    luckBonus: 1.00,
+    rarityUpgradeChance: 0.25,
+    spinRateBoost: 0.15
+  },
+  "Gear 4: Seraphim Booster": {
+    requirements: { "Celestial": 4, "Transcendent": 2, "Mythic": 20 },
+    cost: 250000,
+    luckBonus: 1.50,
+    tenthSpinMoneyMultiplier: 40,
+    variantRarityMultiplier: 0.25 // 4x rarer variants (reduce chance by 75%)
+  },
+  "Gear 5: Lightspeed Obliterator": {
+    requirements: { "Transcendent": 5, "Omniversal": 3, "Divine": 1 },
+    cost: 500000,
+    luckBonus: 3.00,
+    thirdSpinLuckBoost: 25,
+    spinRateBoost: 0.95
+  },
+  "Gear 6: 404 Glitcher": {
+    requirements: { "Glitched": 7, "Primordial": 2, "Ethereal": 4 },
+    cost: 1000000,
+    luckBonus: 5.00,
+    addsGlitchedVariant: true,
+    glitchMoneyBoostChance: 0.5,
+    glitchMoneyMultiplierPositive: 5,
+    glitchMoneyMultiplierNegative: 0.5
+  }
+};
+
+
+  
+  // Secret Tap-Based Developer Command for Money (Mobile Friendly)
+// Secret Mobile Hold-to-Give-Money Command
+let holdStart = 0;
+
+document.body.addEventListener("touchstart", () => {
+  holdStart = Date.now();
+});
+
+document.body.addEventListener("touchend", () => {
+  const holdTime = Date.now() - holdStart;
+  if (holdTime >= 3000) { // held for 3 seconds
+    const giveAmount = prompt("Dev mode: Enter money to add:");
+    const amount = parseInt(giveAmount);
+    if (!isNaN(amount) && amount > 0) {
+      money += amount;
+      moneyDiv.textContent = `Money: ${money}`;
+      alert(`Added $${amount.toLocaleString()} 🤑`);
+      saveGame();
+    } else {
+      alert("Invalid amount.");
     }
-  };
+  }
+});
 
   // Keep inventory count of rarities and variants
   let inventory = {};
@@ -397,6 +476,37 @@ document.addEventListener("click", startBGM, { once: true });
   const rarityCountsDiv = document.getElementById("rarity-counts");
   const rarityListSelect = document.getElementById("rarity-list");
   const autoSpinRareThreshold = rarityRank["Transcendent"]; // Ancient and above
+  
+  // === Luck Upgrade System ===
+let luckUpgradeLevel = 0;
+let luckUpgradeBaseCost = 200;
+
+function getLuckUpgradeCost() {
+  return Math.floor(luckUpgradeBaseCost * Math.pow(1.75, luckUpgradeLevel));
+}
+
+function getLuckBonusFromUpgrade() {
+  return luckUpgradeLevel * 0.1; // Each level = +10% luck
+}
+
+function updateLuckUpgradeUI() {
+  document.getElementById("luck-upgrade-level").textContent = luckUpgradeLevel;
+  document.getElementById("luck-upgrade-cost").textContent = getLuckUpgradeCost().toLocaleString();
+}
+
+// Buy Luck Upgrade logic
+document.getElementById("buy-luck-upgrade").addEventListener("click", () => {
+  const cost = getLuckUpgradeCost();
+  if (money >= cost) {
+    money -= cost;
+    luckUpgradeLevel++;
+    updateLuckUpgradeUI();
+    moneyDiv.textContent = `Money: ${money}`;
+    saveGame();
+    checkGearsUnlock();
+    luckDiv.textContent = `Luck Bonus from Gears: ${(currentLuck * 100 + getLuckBonusFromUpgrade() * 100).toFixed(2)}%`;
+  }
+});
 
   // Initialize rarity list in sidebar
 // Helper: Format chance from weight
@@ -437,6 +547,7 @@ function loadGame() {
   const saved = localStorage.getItem("supaSpinSave");
   if (saved) {
     const data = JSON.parse(saved);
+    luckUpgradeLevel = data.luckUpgradeLevel || 0;
     inventory = data.inventory || {};
     unlockedGears = data.unlockedGears || {};
     totalSpins = data.totalSpins || 0;
@@ -451,8 +562,7 @@ loadGame();
   // Weighted random helper for selecting rarity based on base weights + luck
   function weightedRandomRarity() {
     // Sum weights with luck applied only if at least one gear unlocked
-    const luckMultiplier = unlockedGearsCount() > 0 ? 1 + currentLuck : 1;
-
+    const luckMultiplier = 1 + currentLuck + getLuckBonusFromUpgrade();
     let weightedEntries = [];
     let totalWeight = 0;
     for (const [rarity, baseWeight] of Object.entries(baseRarities)) {
@@ -564,36 +674,44 @@ function toggleVariants(id) {
   }
 }
 
-  // Check gear unlock status and update unlocked gears and luck bonus
-  function checkGearsUnlock() {
-    let unlockedCount = 0;
-    currentLuck = 0;
-    for (const [gearName, gearData] of Object.entries(gearRecipes)) {
-      let canUnlock = true;
-      for (const [reqRarity, reqCount] of Object.entries(gearData.requirements)) {
-        if (getRarityCount(reqRarity) < reqCount) {
-          canUnlock = false;
-          break;
-        }
-      }
-      if (canUnlock) {
-        if (!unlockedGears[gearName]) {
-          unlockedGears[gearName] = true;
-          unlockedCount++;
-        } else {
-          unlockedCount++;
-        }
-        currentLuck += gearData.luckBonus;
-      } else {
-        unlockedGears[gearName] = false;
+function checkGearsUnlock() {
+  let unlockedCount = 0;
+  currentLuck = 0;
+
+  for (const [gearName, gearData] of Object.entries(gearRecipes)) {
+    let canUnlock = true;
+    for (const [reqRarity, reqCount] of Object.entries(gearData.requirements)) {
+      if (getRarityCount(reqRarity) < reqCount) {
+        canUnlock = false;
+        break;
       }
     }
-    updateGearListDisplay();
-    luckDiv.textContent = `Luck Bonus from Gears: ${(currentLuck*100).toFixed(2)}%`;
-    // Enable auto-spin button if at least one gear unlocked
-    autoSpinBtn.disabled = unlockedCount === 0;
-    saveGame()
+    if (canUnlock) {
+      if (!unlockedGears[gearName]) {
+        if (money >= gearData.cost) {
+          money -= gearData.cost;
+          unlockedGears[gearName] = true;
+          // Removed alert per your request
+        } else {
+          canUnlock = false;
+        }
+      }
+    } else {
+      unlockedGears[gearName] = false;
+    }
+    if (unlockedGears[gearName]) {
+      unlockedCount++;
+      currentLuck += gearData.luckBonus;
+    }
   }
+  updateGearListDisplay();
+  moneyDiv.textContent = `Money: ${money}`;
+  luckDiv.textContent = `Luck Bonus from Gears: ${(currentLuck * 100).toFixed(2)}%`;
+  autoSpinBtn.disabled = unlockedCount === 0;
+  saveGame();
+}
+
+
 
   // Count how many gears unlocked
   function unlockedGearsCount() {
@@ -602,60 +720,88 @@ function toggleVariants(id) {
 
   // Update gear list display with progress bars
 // Update gear list display with clickable gear names to show requirements
+// Update gear list display with clickable gear names to show/hide requirements
+// Track which gear's recipe is currently open
+let openedGearName = null;
+
 function updateGearListDisplay() {
   let html = "";
+
   for (const [gearName, gearData] of Object.entries(gearRecipes)) {
     const isUnlocked = unlockedGears[gearName];
-    let progress = 0;
+    // Count current requirements progress
     let totalReq = 0;
     let currentCount = 0;
+    let reqListHtml = "";
+
     for (const [reqRarity, reqCount] of Object.entries(gearData.requirements)) {
       totalReq += reqCount;
-      currentCount += Math.min(getRarityCount(reqRarity), reqCount);
-    }
-    progress = totalReq === 0 ? 0 : (currentCount / totalReq) * 100;
-
-    // Build requirements list html
-    let reqListHtml = '<ul style="text-align:left; margin-top:5px; margin-bottom:5px;">';
-    for (const [reqRarity, reqCount] of Object.entries(gearData.requirements)) {
       const playerCount = getRarityCount(reqRarity);
+      currentCount += Math.min(playerCount, reqCount);
       const color = playerCount >= reqCount ? "green" : "red";
-      reqListHtml += `<li><span style="color:${color}">${reqRarity}: ${playerCount} / ${reqCount}</span></li>`;
+      reqListHtml += `<div style="color:${color}">${reqCount} x ${reqRarity} (You have: ${playerCount})</div>`;
     }
-    reqListHtml += "</ul>";
+
+    // Calculate progress percent
+    const progress = totalReq > 0 ? (currentCount / totalReq) * 100 : 100;
 
     html += `
-      <div class="gear-box">
-        <div class="gear-title" style="cursor:pointer; user-select:none;" data-gear="${gearName}">
+      <div class="gear-box" style="border:1px solid #888; margin-bottom:8px; padding:8px; border-radius:5px;">
+        <div class="gear-title" style="cursor:pointer; user-select:none; font-weight:bold;" data-gear="${gearName}">
           ${gearName} ${isUnlocked ? "✅" : "❌"}
         </div>
-        <div class="gear-progress">
-          <div class="gear-progress-bar" style="width: ${progress}%;"></div>
+        <div class="gear-progress" style="background:#ddd; height:10px; border-radius:5px; margin:4px 0;">
+          <div class="gear-progress-bar" style="background:#4caf50; height:100%; width: ${progress}%; border-radius:5px;"></div>
         </div>
-        <div class="gear-status">
-          ${isUnlocked ? "Unlocked! Luck +" + (gearData.luckBonus*100).toFixed(1) + "%" : `Progress: ${currentCount}/${totalReq}`}
+        <div class="gear-status" style="font-size:14px; margin-bottom:4px;">
+          ${isUnlocked ? `Unlocked! Luck +${(gearData.luckBonus*100).toFixed(1)}%` : `Progress: ${currentCount} / ${totalReq}`}
         </div>
-        <div class="gear-requirements" style="display:none; padding-left:10px; font-size:14px;">
+        <div class="gear-requirements" style="display:none; padding-left:12px; font-size:13px; color:#333;">
           <strong>Requirements:</strong>
           ${reqListHtml}
         </div>
-      </div>`;
+      </div>
+    `;
   }
+
   gearListDiv.innerHTML = html || "No gears collected yet.";
 
-  // Add click listeners to toggle requirements
+  // Add click listeners to toggle requirement display
   document.querySelectorAll(".gear-title").forEach(titleEl => {
-    titleEl.addEventListener("click", () => {
+    titleEl.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const gear = titleEl.dataset.gear;
       const box = titleEl.parentElement;
       const reqDiv = box.querySelector(".gear-requirements");
+
       if (reqDiv.style.display === "none") {
+        // Close all others first
+        document.querySelectorAll(".gear-requirements").forEach(div => {
+          div.style.display = "none";
+        });
         reqDiv.style.display = "block";
+        openedGearName = gear;
       } else {
         reqDiv.style.display = "none";
+        openedGearName = null;
       }
     });
   });
+
+  // Restore open gear requirements after UI rebuild
+  if (openedGearName) {
+    const openReqDiv = document.querySelector(`.gear-title[data-gear="${openedGearName}"]`)?.parentElement.querySelector(".gear-requirements");
+    if (openReqDiv) openReqDiv.style.display = "block";
+  }
 }
+
+// Clicking outside closes all open requirements
+document.body.addEventListener("click", () => {
+  document.querySelectorAll(".gear-requirements").forEach(reqDiv => {
+    reqDiv.style.display = "none";
+  });
+  openedGearName = null;
+});
 
 // Enable auto-spin button from start
 autoSpinBtn.disabled = false;
@@ -732,6 +878,7 @@ autoSpinBtn.disabled = false;
     unlockedGears,
     totalSpins,
     money,
+    luckUpgradeLevel,
     highestRarityPulled
   };
   localStorage.setItem("supaSpinSave", JSON.stringify(gameData));
@@ -767,6 +914,7 @@ autoSpinBtn.addEventListener("click", () => {
   initRarityList();
   updateGearListDisplay();
   updateInventoryDisplay();
+  updateLuckUpgradeUI();
   luckDiv.textContent = "Luck Bonus from Gears: 0%";
 
 </script>
