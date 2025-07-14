@@ -1635,36 +1635,6 @@ autoSpinBtn.addEventListener("click", () => {
   if (autoSpinEnabled) stopAutoSpin("OFF");
   else startAutoSpin();
 });
-// Your existing setup and initialization code, e.g.:
-// initRarityList();
-// updateGearListDisplay();
-// updateInventoryDisplay();
-// etc...
-
-// Now add secret code handler after the UI elements exist
-const secretCode = "yopapa"; // Change to your private dev code
-
-document.getElementById("secretCodeSubmit").addEventListener("click", () => {
-  const input = document.getElementById("secretCodeInput").value.trim();
-  const msgEl = document.getElementById("secretCodeMessage");
-
-  if (input === secretCode) {
-    // Unlock all gears
-    for (const gearName of Object.keys(gearRecipes)) {
-      unlockedGears[gearName] = true;
-    }
-
-    updateGearListDisplay();
-
-    msgEl.style.color = "green";
-    msgEl.textContent = "✅ All gears unlocked!";
-  } else {
-    msgEl.style.color = "red";
-    msgEl.textContent = "❌ Invalid code.";
-  }
-
-  document.getElementById("secretCodeInput").value = "";
-});
   // Initialize
   initRarityList();
   updateGearListDisplay();
