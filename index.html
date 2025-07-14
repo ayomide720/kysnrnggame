@@ -47,6 +47,7 @@
   .rarity-Common        { color: #666; }  
   .rarity-Uncommon      { color: #2ecc71; }  
   .rarity-Rare          { color: #3498db; }  
+  .rarity-Steelbone     { color: ##76798c; font-weight: bold; }
   .rarity-Epic          { color: #9b59b6; }  
   .rarity-Legendary     { color: #f1c40f; }  
   .rarity-Mythic        { color: #e67e22; }  
@@ -243,10 +244,58 @@ function startBGM() {
 }
 document.addEventListener("click", startBGM, { once: true });
 
+const notificationContainer = document.createElement("div");
+notificationContainer.style.position = "fixed";
+notificationContainer.style.bottom = "20px";
+notificationContainer.style.left = "50%";
+notificationContainer.style.transform = "translateX(-50%)";
+notificationContainer.style.display = "flex";
+notificationContainer.style.flexDirection = "column-reverse";
+notificationContainer.style.alignItems = "center";
+notificationContainer.style.zIndex = "9999";
+document.body.appendChild(notificationContainer);
+
+let fortuneRingNotified = false;
+
+function showNotification(message, color = "#00c8ff", duration = 2500) {
+  const note = document.createElement("div");
+  note.textContent = message;
+  note.style.position = "relative";
+  note.style.background = color;
+  note.style.color = "#fff";
+  note.style.padding = "10px 18px";
+  note.style.marginTop = "10px";
+  note.style.borderRadius = "10px";
+  note.style.fontWeight = "bold";
+  note.style.boxShadow = "0 3px 10px rgba(0,0,0,0.3)";
+  note.style.fontSize = "15px";
+  note.style.opacity = "0";
+  note.style.transform = "translateY(-40px)";
+  note.style.transition = "all 0.4s ease-out";
+
+  notificationContainer.appendChild(note);
+
+  // Animate in (bounce down)
+  requestAnimationFrame(() => {
+    note.style.opacity = "1";
+    note.style.transform = "translateY(0)";
+  });
+
+  // Wait, then animate back up and fade
+  setTimeout(() => {
+    note.style.opacity = "0";
+    note.style.transform = "translateY(-30px)";
+    setTimeout(() => {
+      note.remove();
+    }, 400);
+  }, duration);
+}
+
   const baseRarities = {
     "Common": 10000,
     "Uncommon": 5000,
     "Rare": 2000,
+    "Steelbone": 1500,
     "Epic": 1000,
     "Legendary": 500,
     "Mythic": 200,
@@ -258,6 +307,7 @@ document.addEventListener("click", startBGM, { once: true });
     "Phantom": 12 / 25,
     "Quantum": 15 / 200,
     "Astral": 20 / 250,
+    "Primordial": 1 / 150,
     "Glitched": 25 / 50000
   };
 
@@ -284,6 +334,9 @@ document.addEventListener("click", startBGM, { once: true });
       {name:"Neat", weight: 20},
       {name:"Glow-Edge", weight: 15},
       {name:"Sharp", weight: 10}
+    ],
+    "Steelbone": [
+      {name:"Aegis", weight: 1}
     ],
     "Epic": [
       {name:"Crimson", weight: 30},
@@ -361,6 +414,9 @@ document.addEventListener("click", startBGM, { once: true });
       {name:"Nebula", weight: 5},
       {name:"Lunar", weight: 3},
       {name:"Solar", weight: 1}
+    ],
+    "Primordial": [
+      {name: "Beyond Time", weight: 0.1},
     ],
     "Glitched": [
       {name:"Corrupted", weight: 10},
@@ -463,7 +519,7 @@ const weatherTypes = {
   "Mystic Storm": {
     duration: 60000,
     chance: 0.01,
-    effectDescription: "Celestial rarities are 15% more likely.",
+    effectDescription: "Celestial is 25% more likely. Mystic variants are unlocked.",
     rarityBoost: { "Celestial": 0.25 },
     unlockVariants: ["Mystic"]
   },
@@ -476,9 +532,9 @@ const weatherTypes = {
   },
   "Void Eclipse": {
     duration: 70000,
-    chance: 0.006,
+    chance: 0.0037,
     effectDescription: "Increased Glitched drop chance. Unlocks Void variants.",
-    rarityBoost: { "Glitched": 0.5 },
+    rarityBoost: { "Glitched": 5 },
     unlockVariants: ["Void"]
   },
   "Lucky Winds": {
@@ -713,20 +769,22 @@ function updateInventoryDisplay() {
   let html = "";
   for (const rarity of rarityOrder) {
     const count = getRarityCount(rarity);
+    const hasEverPulled = inventory[rarity] !== undefined;
     const rarityId = `rarity-${rarity.replace(/ /g, "-")}`;
 
-    if (count > 0) {
-      // Player has this rarity — show name and count as usual
+    if (hasEverPulled) {
+      // Player has seen this rarity — show it, even if count is 0
+      const displayCount = count > 0 ? count : 0;
       html += `
-        <div class="${rarityId}" style="cursor:pointer; font-weight:bold;" onclick="toggleVariants('${rarityId}')">
-          ▶ <strong>${rarity}</strong>: ${count}
+        <div class="${rarityId}" style="cursor:pointer; font-weight:bold; opacity: ${count > 0 ? 1 : 0.5};" onclick="toggleVariants('${rarityId}')">
+          ▶ <strong>${rarity}</strong>: ${displayCount}
         </div>
         <div id="${rarityId}-variants" style="display:none; padding-left: 15px; font-size: 14px;">
           ${getVariantBreakdown(rarity)}
         </div>
       `;
     } else {
-      // Player does NOT have this rarity — show ??? and chance denominator
+      // Player has never pulled this rarity
       const denom = getChanceDenominator(rarity);
       html += `
         <div class="rarity-unknown" style="font-style: italic; color: #999;">
@@ -735,9 +793,10 @@ function updateInventoryDisplay() {
       `;
     }
   }
-  rarityCountsDiv.innerHTML = html || "Nothing pulled yet.";
-}
 
+  rarityCountsDiv.innerHTML = html || "Nothing pulled yet.";
+  }
+  
 function getVariantBreakdown(rarity) {
   if (!inventory[rarity]) return "None";
   let breakdown = "";
@@ -761,6 +820,15 @@ function toggleVariants(id) {
     el.style.display = "none";
   }
 }
+function checkRequirements(requirements) {
+  for (const [rarity, needed] of Object.entries(requirements)) {
+    if (getRarityCount(rarity) < needed) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function checkGearsUnlock() {
   let unlockedCount = 0;
   currentLuck = 0;
@@ -889,6 +957,25 @@ autoSpinBtn.disabled = false;
 
   // Base weighted rarity pick with luck included
   let rarity = weightedRandomRarity();
+    // Money earned mapping
+  const moneyMap = {
+    "Common": 1,
+    "Uncommon": 3,
+    "Rare": 7,
+    "Epic": 12,
+    "Legendary": 25,
+    "Mythic": 40,
+    "Ancient": 60,
+    "Celestial": 100,
+    "Transcendent": 200,
+    "Omniversal": 350,
+    "Divine": 500,
+    "Phantom": 650,
+    "Quantum": 800,
+    "Astral": 1000,
+    "Primordial": 1250,
+    "Glitched": 1500
+  };
 
   // Apply weather rarity boost (if any)
   if (window.currentWeather && window.currentWeather.rarityBoost) {
@@ -899,6 +986,45 @@ autoSpinBtn.disabled = false;
       rarity = weightedRandomRarityWithWeatherBoost(rarity, boost);
     }
   }
+  
+  let earned = moneyMap[rarity] || 1;
+
+// Fortune Ring (flat money multiplier)
+// Fortune Ring (flat money multiplier)
+if (unlockedGears["Gear 2: Fortune Ring"]) {
+  const bonus = gearRecipes["Gear 2: Fortune Ring"].moneyMultiplier || 0;
+  earned *= (1 + bonus);
+  
+  // Only notify once
+  if (!fortuneRingNotified) {
+    showNotification(`💰 Fortune Ring: +${(bonus * 100).toFixed(0)}% Money!`, "#4caf50");
+    fortuneRingNotified = true;
+  }
+}
+  
+  // Seraphim Booster (10th spin multiplier)
+  if (totalSpins % 10 === 0 && unlockedGears["Gear 4: Seraphim Booster"]) {
+    const multiplier = gearRecipes["Gear 4: Seraphim Booster"].tenthSpinMoneyMultiplier || 1;
+    earned *= multiplier;
+    showNotification(`💥 Tenth Spin Bonus x${multiplier}!`, "#ff9800");
+  }
+  
+  // 404 Glitcher (random money boost or nerf on Glitched rarity)
+  if (unlockedGears["Gear 6: 404 Glitcher"] && rarity === "Glitched") {
+    const gearData = gearRecipes["Gear 6: 404 Glitcher"];
+    if (Math.random() < (gearData.glitchMoneyBoostChance || 0)) {
+      const positive = Math.random() < 0.5; // 50/50 chance for buff or nerf
+      if (positive) {
+        earned *= gearData.glitchMoneyMultiplierPositive || 1;
+        showNotification(`🟪 404 Glitcher Bonus x${gearData.glitchMoneyMultiplierPositive}!`, "#9c27b0");
+      } else {
+        earned *= gearData.glitchMoneyMultiplierNegative || 1;
+        showNotification(`⚠️ 404 Glitcher Glitch: x${gearData.glitchMoneyMultiplierNegative}`, "#ff5252");
+      }
+    }
+  }
+
+money += earned;
 
   // Auto-spin interruption logic
   if (autoSpinEnabled && rarityRank[rarity] >= autoSpinRareThreshold) {
@@ -942,27 +1068,9 @@ autoSpinBtn.disabled = false;
     highestRarityPulled = rarity;
   }
 
-  // Money earned mapping
-  const moneyMap = {
-    "Common": 1,
-    "Uncommon": 3,
-    "Rare": 7,
-    "Epic": 12,
-    "Legendary": 25,
-    "Mythic": 40,
-    "Ancient": 60,
-    "Celestial": 100,
-    "Transcendent": 200,
-    "Omniversal": 350,
-    "Divine": 500,
-    "Phantom": 650,
-    "Quantum": 800,
-    "Astral": 1000,
-    "Glitched": 1500
-  };
 
-  const earned = moneyMap[rarity] || 1;
-  money += earned;
+
+
 
     // Update UI
     resultDiv.innerHTML = `You spun: <span class="rarity-${rarity.replace(/ /g,"-")}">${rarity}</span> <span class="variant">${variant}</span><br>Money earned: ${earned}`;
