@@ -43,27 +43,167 @@
     text-align: center;  
   }  
 
-  /* Rarity Colors */  
-  .rarity-Common        { color: #666; }  
-  .rarity-Uncommon      { color: #2ecc71; }  
-  .rarity-Rare          { color: #3498db; }  
-  .rarity-Steelbone     { color: ##76798c; font-weight: bold; }
-  .rarity-Epic          { color: #9b59b6; }  
-  .rarity-Legendary     { color: #f1c40f; }  
-  .rarity-Mythic        { color: #e67e22; }  
-  .rarity-Ancient       { color: #d35400; }  
-  .rarity-Celestial     { color: #1abc9c; }  
-  .rarity-Transcendent  { color: #e91e63; }  
-  .rarity-Omniversal    { color: #ff0000; font-weight: bold; }  
-  .rarity-Divine        { color: gold; }  
-  .rarity-Phantom       { color: slateblue; }  
-  .rarity-Quantum       { color: darkcyan; }  
-  .rarity-Astral        { color: mediumorchid; }  
-  .rarity-Glitched      { color: darkred; }  
-  .rarity-Primordial    { color: teal; font-weight: bold; }  
-  .rarity-Ethereal      { color: #a29bfe; font-style: italic; }  
-  .rarity-Reality-Bound { color: #8e44ad; font-weight: bold; }  
-  .rarity-Genesis       { color: #000; background: #fff; padding: 2px 6px; border-radius: 6px; }  
+@import url('https://fonts.googleapis.com/css2?family=Orbitron&family=Playfair+Display&family=Uncial+Antiqua&family=Raleway&family=Great+Vibes&family=Montserrat:wght@700&display=swap');
+
+.rarity-Common        { color: #666; }  
+.rarity-Uncommon      { color: #2ecc71; }  
+.rarity-Rare          { color: #3498db; }  
+.rarity-Steelbone     { color: #76798c; font-weight: bold; }  /* fixed extra # */
+.rarity-Epic          { color: #9b59b6; }  
+.rarity-Legendary     { color: #f1c40f; }  
+.rarity-Mythic        { color: #e67e22; }  
+.rarity-Cracked     { color: #888; font-style: italic; }
+.rarity-Chipped     { color: #999; }
+.rarity-Broken      { color: #666; text-decoration: line-through; }
+.rarity-Basic       { color: #aaa; }
+.rarity-Dull        { color: #999; font-style: italic; }
+.rarity-Tarnished   { color: #bbb; }
+.rarity-Dusty       { color: #aaa; }
+.rarity-Firm        { color: #666; font-weight: bold; }
+.rarity-Polished    { color: #777; }
+.rarity-Refined     { color: #8c8c8c; font-weight: bold; }
+
+/* Phantom rarity */
+.rarity-Phantom {
+  color: slateblue;
+  font-family: 'Orbitron', sans-serif;
+  animation: pulseFade 2s infinite ease-in-out;
+}
+
+/* Divine rarity */
+.rarity-Divine {
+  color: gold;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+}
+
+/* Pulse animation */
+@keyframes pulseFade {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+
+/* Steelbone */
+.rarity-Steelbone {
+  color: #76798c;
+  font-weight: bold;
+  font-family: 'Orbitron', sans-serif;
+  text-shadow: 0 0 8px #a3a7b0;
+  animation: glowSteelbone 3s ease-in-out infinite alternate;
+}
+@keyframes glowSteelbone {
+  0%   { text-shadow: 0 0 8px #a3a7b0; }
+  100% { text-shadow: 0 0 20px #8a8fa0; }
+}
+
+/* Ancient */
+.rarity-Ancient {
+  color: #d35400;
+  font-family: 'Uncial Antiqua', cursive;
+  font-weight: 600;
+  text-shadow: 0 0 8px #e67e22;
+  animation: glowAncient 3.5s ease-in-out infinite alternate;
+}
+@keyframes glowAncient {
+  0%   { text-shadow: 0 0 8px #e67e22; }
+  100% { text-shadow: 0 0 18px #f39c12; }
+}
+
+/* Celestial */
+.rarity-Celestial {
+  color: #1abc9c;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  text-shadow: 0 0 10px #16a085;
+  animation: glowCelestial 2.5s ease-in-out infinite alternate;
+}
+@keyframes glowCelestial {
+  0%   { text-shadow: 0 0 10px #16a085; }
+  100% { text-shadow: 0 0 20px #1abc9c; }
+}
+
+/* Above Quantum */
+
+.rarity-Astral {
+  color: mediumorchid;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 700;
+  text-shadow: 0 0 12px #b280b2;
+  animation: glowAstral 3s ease-in-out infinite alternate;
+}
+@keyframes glowAstral {
+  0%   { text-shadow: 0 0 12px #b280b2; }
+  100% { text-shadow: 0 0 24px #c49dcc; }
+}
+
+.rarity-Glitched {
+  color: darkred;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  text-shadow: 0 0 10px #7b0000;
+  animation: glowGlitched 2.5s ease-in-out infinite alternate;
+}
+@keyframes glowGlitched {
+  0%   { text-shadow: 0 0 10px #7b0000; }
+  100% { text-shadow: 0 0 22px #a00000; }
+}
+
+.rarity-Primordial {
+  color: teal;
+  font-weight: bold;
+  font-family: 'Great Vibes', cursive;
+  text-shadow: 0 0 15px #008080;
+  animation: glowPrimordial 4s ease-in-out infinite alternate;
+}
+@keyframes glowPrimordial {
+  0%   { text-shadow: 0 0 15px #008080; }
+  100% { text-shadow: 0 0 30px #00a0a0; }
+}
+
+.rarity-Ethereal {
+  color: #a29bfe;
+  font-family: 'Raleway', sans-serif;
+  font-style: italic;
+  font-weight: 600;
+  text-shadow: 0 0 14px #8c87ff;
+  animation: glowEthereal 3.5s ease-in-out infinite alternate;
+}
+@keyframes glowEthereal {
+  0%   { text-shadow: 0 0 14px #8c87ff; }
+  100% { text-shadow: 0 0 28px #b0adff; }
+}
+
+.rarity-Reality-Bound {
+  color: #8e44ad;
+  font-weight: bold;
+  font-family: 'Montserrat', sans-serif;
+  text-shadow: 0 0 14px #5a2f71;
+  animation: glowRealityBound 3s ease-in-out infinite alternate;
+}
+@keyframes glowRealityBound {
+  0%   { text-shadow: 0 0 14px #5a2f71; }
+  100% { text-shadow: 0 0 26px #8e44ad; }
+}
+
+.rarity-Genesis {
+  color: #000;
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  text-shadow: 0 0 12px #555;
+  animation: glowGenesis 4s ease-in-out infinite alternate;
+}
+@keyframes glowGenesis {
+  0%   { text-shadow: 0 0 12px #555; }
+  100% { text-shadow: 0 0 24px #888; }
+}
 
   .variant {  
     font-style: italic;  
@@ -85,6 +225,56 @@
   color: #27ae60; /* green */
   font-weight: 600;
   user-select: none;
+}
+/* Base animation keyframes */
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 6px currentColor; }
+  50% { box-shadow: 0 0 20px currentColor; transform: scale(1.03); }
+  100% { box-shadow: 0 0 6px currentColor; }
+}
+
+@keyframes colorCycle {
+  0%   { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+/* Animated Rarity Styles */
+
+.rarity-Glitched {
+  color: darkred;
+  font-weight: bold;
+  animation: pulseGlow 1.5s infinite;
+}
+
+.rarity-Primordial {
+  color: teal;
+  font-weight: bold;
+  animation: pulseGlow 1.6s infinite ease-in-out;
+}
+
+.rarity-Ethereal {
+  color: #a29bfe;
+  font-style: italic;
+  animation: colorCycle 3s linear infinite;
+}
+
+.rarity-Reality-Bound {
+  color: #8e44ad;
+  font-weight: bold;
+  background: linear-gradient(45deg, #8e44ad, #d0c1f7);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: colorCycle 4s linear infinite;
+}
+
+.rarity-Genesis {
+  color: #fff;
+  background: linear-gradient(90deg, #000, #ff0, #000);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 900;
+  animation: pulseGlow 1.2s infinite, colorCycle 5s linear infinite;
 }
   /* Sidebar dropdown styling */
   #sidebar {
@@ -192,6 +382,8 @@
   font-size: 14px;
   margin-top: 5px;
 }
+/* Floating particle container */
+
 </style>
 </head>
 <body>
@@ -207,8 +399,16 @@
   <div id="luck">Luck Bonus from Gears: 0%</div>
   <div id="auto-spin-rate">Auto Spin Rate: OFF</div>
   <div id="gears">
+    <div id="spinBoostDisplay" style="position: fixed; top: 10px; right: 10px; 
+  background: rgba(0,0,0,0.6); color: white; padding: 8px 12px; border-radius: 8px;
+  font-family: monospace; font-weight: bold; z-index: 1000;">
+  Spin Speed Boost: 0%
+</div>
     <h3>Gear Status</h3>
     <div id="gear-list">No gears collected yet.</div>
+    <div class="gear-description" style="font-style: italic; color: #555; margin-bottom: 6px;">
+  ${description}
+</div>
     <div id="inventory-display">
       <h3>Your Rarity Inventory</h3>
       <div id="rarity-counts">Nothing pulled yet.</div>
@@ -217,6 +417,9 @@
 </main>
 
 <div id="sidebar">
+  <input type="text" id="secretCodeInput" placeholder="Enter secret code" />
+<button id="secretCodeSubmit">Submit</button>
+<div id="secretCodeMessage"></div>
   <div id="upgrades-panel">
   <h3>Upgrades</h3>
   <div class="upgrade-box">
@@ -244,6 +447,7 @@ function startBGM() {
 }
 document.addEventListener("click", startBGM, { once: true });
 
+// Create container once
 const notificationContainer = document.createElement("div");
 notificationContainer.style.position = "fixed";
 notificationContainer.style.bottom = "20px";
@@ -255,9 +459,32 @@ notificationContainer.style.alignItems = "center";
 notificationContainer.style.zIndex = "9999";
 document.body.appendChild(notificationContainer);
 
+const notificationTimeouts = new Map();
 let fortuneRingNotified = false;
 
 function showNotification(message, color = "#00c8ff", duration = 2500) {
+  // Check if notification with same message exists
+  let existing = [...notificationContainer.children].find(
+    (note) => note.textContent === message
+  );
+
+  if (existing) {
+    clearTimeout(notificationTimeouts.get(existing));
+
+    const timeoutId = setTimeout(() => {
+      existing.style.opacity = "0";
+      existing.style.transform = "translateY(-30px)";
+      setTimeout(() => {
+        existing.remove();
+        notificationTimeouts.delete(existing);
+      }, 400);
+    }, duration);
+
+    notificationTimeouts.set(existing, timeoutId);
+    return; // Don't create a new duplicate notification
+  }
+
+  // Create new notification
   const note = document.createElement("div");
   note.textContent = message;
   note.style.position = "relative";
@@ -275,41 +502,60 @@ function showNotification(message, color = "#00c8ff", duration = 2500) {
 
   notificationContainer.appendChild(note);
 
-  // Animate in (bounce down)
   requestAnimationFrame(() => {
     note.style.opacity = "1";
     note.style.transform = "translateY(0)";
   });
 
-  // Wait, then animate back up and fade
-  setTimeout(() => {
+  const timeoutId = setTimeout(() => {
     note.style.opacity = "0";
     note.style.transform = "translateY(-30px)";
     setTimeout(() => {
       note.remove();
+      notificationTimeouts.delete(note);
     }, 400);
   }, duration);
+
+  notificationTimeouts.set(note, timeoutId);
 }
 
-  const baseRarities = {
-    "Common": 10000,
-    "Uncommon": 5000,
-    "Rare": 2000,
-    "Steelbone": 1500,
-    "Epic": 1000,
-    "Legendary": 500,
-    "Mythic": 200,
-    "Ancient": 100,
-    "Celestial": 70,
-    "Transcendent": 10 / 95,
-    "Omniversal": 5 / 500,
-    "Divine": 7 / 50,
-    "Phantom": 12 / 25,
-    "Quantum": 15 / 200,
-    "Astral": 20 / 250,
-    "Primordial": 1 / 150,
-    "Glitched": 25 / 50000
-  };
+const rarityDropRates = {
+  "Cracked": 1 / 25,
+  "Chipped": 1 / 33,
+  "Broken": 1 / 40,
+  "Basic": 1 / 50,
+  "Dull": 1 / 66,
+  "Tarnished": 1 / 80,
+  "Common": 1 / 100,
+  "Dusty": 1 / 133,
+  "Uncommon": 1 / 200,
+  "Firm": 1 / 333,
+  "Polished": 1 / 400,
+  "Refined": 1 / 500,
+  "Rare": 1 / 1000,
+  "Steelbone": 1 / 2000,
+  "Epic": 1 / 3333,
+  "Legendary": 1 / 10000,
+  "Mythic": 1 / 13333,
+  "Ancient": 1 / 20000,
+  "Celestial": 1 / 50000,
+  "Transcendent": 1 / 100000,
+  "Omniversal": 1 / 200000,
+  "Divine": 1 / 333333,
+  "Phantom": 1 / 500000,
+  "Quantum": 1 / 1000000,
+  "Astral": 1 / 2000000,
+  "Primordial": 1 / 200000,
+  "Glitched": 1 / 50000000,
+  "Reality-Bound": 1 / 90000000,
+  "Ethereal": 1 / 106000000,
+  "Genesis": 1 / 2000000000
+};
+
+const baseRarities = {};
+for (const [rarity, dropRate] of Object.entries(rarityDropRates)) {
+  baseRarities[rarity] = dropRate;
+}
 
   const variants = {
     "Common": [
@@ -432,52 +678,183 @@ function showNotification(message, color = "#00c8ff", duration = 2500) {
 // Modify gearRecipes to include a cost property
 const gearRecipes = {
   "Gear 1: Luck Amulet": {
-    requirements: { "Legendary": 25, "Epic": 30, "Celestial": 1 },
+    requirements: { "Common": 100, "Uncommon": 50, "Rare": 10 },
+    cost: 10000,
+    luckBonus: 1.25,
+    spinRateBoost: 0.1
+  },
+
+  "Gear 2: Fortune Ring": {
+    requirements: { "Uncommon": 100, "Rare": 30, "Epic": 3 },
     cost: 25000,
-    luckBonus: 1.25, // 50%
+    luckBonus: 2.5,
+    moneyMultiplier: 0.15
+  },
+
+  "Gear 3: Eccentric Engine": {
+    requirements: { "Rare": 50, "Epic": 20, "Legendary": 2 },
+    cost: 75000,
+    luckBonus: 4.0,
+    rarityUpgradeChance: 0.10,
+    spinRateBoost: 0.12
+  },
+
+  "Gear 4: Seraphim Booster": {
+    requirements: {
+      "Epic": 40,
+      "Legendary": 15,
+      "Mythic": 5,
+      "Ancient": 3,
+      "Celestial": 2,
+      "Transcendent": 1
+    },
+    cost: 150000,
+    luckBonus: 7.5,
+    tenthSpinMoneyMultiplier: 5,
+    variantRarityMultiplier: 1.1
+  },
+
+  "Gear 5: Lightspeed Obliterator": {
+    requirements: {
+      "Legendary": 20,
+      "Mythic": 10,
+      "Ancient": 5,
+      "Celestial": 3,
+      "Transcendent": 2,
+      "Omniversal": 1
+    },
+    cost: 350000,
+    luckBonus: 12.5,
+    thirdSpinLuckBoost: 12,
     spinRateBoost: 0.25
   },
-  "Gear 2: Fortune Ring": {
-    requirements: { "Mythic": 15, "Ancient": 20, "Celestial": 2 },
-    cost: 50000,
-    luckBonus: 7.75,
-    moneyMultiplier: 0.25 // +25% money per spin
-  },
-  "Gear 3: Eccentric Engine": {
-    requirements: { "Epic": 45, "Legendary": 40, "Mythic": 10 },
-    cost: 100000,
-    luckBonus: 10.00,
-    rarityUpgradeChance: 0.25,
-    spinRateBoost: 0.15
-  },
-  "Gear 4: Seraphim Booster": {
-    requirements: { "Celestial": 4, "Transcendent": 2, "Mythic": 20 },
-    cost: 250000,
-    luckBonus: 21.50,
-    tenthSpinMoneyMultiplier: 40,
-    variantRarityMultiplier: 1.25 // 4x rarer variants (reduce chance by 75%)
-  },
-  "Gear 5: Lightspeed Obliterator": {
-    requirements: { "Transcendent": 1, "Omniversal": 1, "Divine": 1 },
-    cost: 500000,
-    luckBonus: 25.00,
-    thirdSpinLuckBoost: 25,
-    spinRateBoost: 1.15
-  },
+
   "Gear 6: 404 Glitcher": {
-    requirements: { "Glitched": 7, "Primordial": 2, "Ethereal": 4 },
-    cost: 1000000,
-    luckBonus: 500.00,
+    requirements: {
+      "Mythic": 15,
+      "Ancient": 7,
+      "Celestial": 5,
+      "Transcendent": 3,
+      "Omniversal": 2,
+      "Divine": 1
+    },
+    cost: 750000,
+    luckBonus: 30,
     addsGlitchedVariant: true,
-    glitchMoneyBoostChance: 0.5,
-    glitchMoneyMultiplierPositive: 5,
-    glitchMoneyMultiplierNegative: 0.5
+    glitchMoneyBoostChance: 0.35,
+    glitchMoneyMultiplierPositive: 4,
+    glitchMoneyMultiplierNegative: 0.6
+  },
+
+  "Gear 7: Omnicore Reactor": {
+    requirements: {
+      "Ancient": 20,
+      "Celestial": 8,
+      "Transcendent": 5,
+      "Omniversal": 3,
+      "Divine": 2,
+      "Phantom": 1,
+      "Quantum": 1
+    },
+    cost: 1500000,
+    luckBonus: 40,
+    moneyMultiplier: 0.8,
+    variantLuckBoost: 0.4
+  },
+
+  "Gear 8: Eternity Processor": {
+    requirements: {
+      "Celestial": 15,
+      "Transcendent": 8,
+      "Omniversal": 5,
+      "Divine": 4,
+      "Phantom": 2,
+      "Quantum": 2,
+      "Astral": 1,
+      "Primordial": 1
+    },
+    cost: 3000000,
+    spinRateBoost: 0.75,
+    tenthSpinMoneyMultiplier: 8,
+    variantRarityMultiplier: 1.3
+  },
+
+  "Gear 9: Genesis Drive": {
+    requirements: {
+      "Omniversal": 5,
+      "Divine": 5,
+      "Phantom": 4,
+      "Quantum": 3,
+      "Astral": 2,
+      "Primordial": 2,
+      "Glitched": 1,
+      "Ethereal": 1,
+      "Reality-Bound": 1
+    },
+    cost: 7000000,
+    luckBonus: 300,
+    bonusLuckChance: 0.4,
+    moneyMultiplier: 0.4
+  },
+
+  "Gear 10: Paradox Core": {
+    requirements: {
+      "Divine": 10,
+      "Phantom": 10,
+      "Quantum": 8,
+      "Astral": 5,
+      "Primordial": 4,
+      "Glitched": 3,
+      "Ethereal": 2,
+      "Reality-Bound": 2,
+      "Genesis": 1,
+      "Steelbone": 1
+    },
+    cost: 12000000,
+    paradoxSpinChance: 0.04,
+    glitchMoneyImmunity: true
+  },
+
+  "Gear 11: Godwave Singularity": {
+    requirements: {
+      "Cracked": 20000,
+      "Genesis": 1,
+      "Ethereal": 2,
+      "Reality-Bound": 2,
+      "Astral": 3,
+      "Primordial": 4,
+      "Glitched": 3,
+      "Quantum": 3,
+      "Phantom": 3,
+      "Divine": 10,
+      "Omniversal": 3,
+      "Transcendent": 5,
+      "Celestial": 300,
+      "Ancient": 200,
+      "Mythic": 1500,
+      "Steelbone": 200
+    },
+    cost: 25000000,
+    luckBonus: 3000,
+    spinRateBoost: 0.8,
+    godwaveMultiplier: 8,
+    overrideSpinCap: true
   }
 };
 
-
-  
-
+  const gearDescriptions = {
+  "Gear 1: Luck Amulet": "A simple amulet that increases your luck by 125%, making rare pulls more common and speeding up your spins by 25%.",
+  "Gear 2: Fortune Ring": "A mystical ring that boosts your money earned per spin by 25%, turning small wins into bigger fortunes.",
+  "Gear 3: Eccentric Engine": "A finely tuned device that increases your luck by 1000% and gives a 25% chance to upgrade rarities, accelerating your progress and spinning 15% faster.",
+  "Gear 4: Seraphim Booster": "Harness the power of the Seraphim to multiply your 10th spin's payout by 40x and increase variant rarity by 25%, unlocking rarer variants.",
+  "Gear 5: Lightspeed Obliterator": "Unleash blinding speed to boost your spin rate by 115% and gain a 25% temporary luck surge every third spin.",
+  "Gear 6: 404 Glitcher": "Embrace the unpredictable with a gear that adds 50000% luck and can randomly boost (x5) or nerf (x0.5) your money on Glitched rarity pulls.",
+  "Gear 7: Omnicore Reactor": "A powerful reactor that increases money earnings by 50%, boosts luck by 200%, and accelerates spin rate by 30%, pushing you closer to ultimate rarity.",
+  "Gear 8: Eternity Processor": "An advanced processor that speeds up spins by 40%, increases variant chances by 35%, and boosts rare payouts by 60%.",
+  "Gear 9: Genesis Drive": "The drive that controls genesis-level power, greatly enhancing luck by 400% and money multipliers by 300% for high-tier pulls.",
+  "Gear 10: Paradox Core": "A core that manipulates paradoxes to protect you from glitches and unlock rare spin bonuses, increasing luck by 500% and spin speed by 50%.",
+  "Gear 11: Godwave Singularity": "The pinnacle of all gear, granting massive luck boosts of 1000%, spin speed boosts of 150%, and unparalleled money multipliers up to 10x."
+};
 
   // Keep inventory count of rarities and variants
   let inventory = {};
@@ -509,7 +886,7 @@ const gearRecipes = {
   const autoSpinRateDiv = document.getElementById("auto-spin-rate");
   const rarityCountsDiv = document.getElementById("rarity-counts");
   const rarityListSelect = document.getElementById("rarity-list");
-  const autoSpinRareThreshold = rarityRank["Transcendent"]; // Ancient and above
+  const autoSpinRareThreshold = rarityRank["Reality-Bound"]; // Ancient and above
   
 // === WEATHER SYSTEM ===
 
@@ -687,28 +1064,31 @@ function loadGame() {
 // Load first
 loadGame();
 
-  // Weighted random helper for selecting rarity based on base weights + luck
-  function weightedRandomRarity() {
-    // Sum weights with luck applied only if at least one gear unlocked
-    const luckMultiplier = 1 + currentLuck + getLuckBonusFromUpgrade();
-    let weightedEntries = [];
-    let totalWeight = 0;
-    for (const [rarity, baseWeight] of Object.entries(baseRarities)) {
-      // Apply luck multiplier to rarities above Legendary only (to make them easier)
-      let weight = baseWeight;
-      if (rarityRank[rarity] >= rarityRank["Legendary"]) {
-        weight = baseWeight * luckMultiplier;
-      }
-      weightedEntries.push({rarity, weight});
-      totalWeight += weight;
+function weightedRandomRarity(extraLuck = 0) {
+  const luckMultiplier = 1 + currentLuck + getLuckBonusFromUpgrade() + (extraLuck / 100);
+
+  let weightedEntries = [];
+  let totalWeight = 0;
+
+  for (const [rarity, baseWeight] of Object.entries(baseRarities)) {
+    let weight = baseWeight;
+
+    // Apply luck multiplier to rarities above Legendary only
+    if (rarityRank[rarity] >= rarityRank["Legendary"]) {
+      weight = baseWeight * luckMultiplier;
     }
-    let randomWeight = Math.random() * totalWeight;
-    for (const entry of weightedEntries) {
-      if (randomWeight < entry.weight) return entry.rarity;
-      randomWeight -= entry.weight;
-    }
-    // fallback
-    return "Common";
+
+    weightedEntries.push({ rarity, weight });
+    totalWeight += weight;
+  }
+
+  let randomWeight = Math.random() * totalWeight;
+  for (const entry of weightedEntries) {
+    if (randomWeight < entry.weight) return entry.rarity;
+    randomWeight -= entry.weight;
+  }
+
+  return "Common";
   }
 
   // Weighted random helper for variants within rarity
@@ -765,6 +1145,15 @@ function getChanceDenominator(rarity) {
   return "1/" + Math.round(1 / chance);
 }
 
+function getRaritySpan(rarity) {
+  const specialRarities = ["Steelbone", "Celestial", "Ancient"];
+  if (specialRarities.includes(rarity)) {
+    return `<span class="floating-particles rarity-${rarity.replace(/ /g, "-")}">${rarity}</span>`;
+  } else {
+    return `<span class="rarity-${rarity.replace(/ /g, "-")}">${rarity}</span>`;
+  }
+}
+
 function updateInventoryDisplay() {
   let html = "";
   for (const rarity of rarityOrder) {
@@ -777,7 +1166,7 @@ function updateInventoryDisplay() {
       const displayCount = count > 0 ? count : 0;
       html += `
         <div class="${rarityId}" style="cursor:pointer; font-weight:bold; opacity: ${count > 0 ? 1 : 0.5};" onclick="toggleVariants('${rarityId}')">
-          ▶ <strong>${rarity}</strong>: ${displayCount}
+          ▶ <strong>${getRaritySpan(rarity)}</strong>: ${displayCount}
         </div>
         <div id="${rarityId}-variants" style="display:none; padding-left: 15px; font-size: 14px;">
           ${getVariantBreakdown(rarity)}
@@ -795,7 +1184,7 @@ function updateInventoryDisplay() {
   }
 
   rarityCountsDiv.innerHTML = html || "Nothing pulled yet.";
-  }
+}
   
 function getVariantBreakdown(rarity) {
   if (!inventory[rarity]) return "None";
@@ -873,6 +1262,8 @@ function updateGearListDisplay() {
 
   for (const [gearName, gearData] of Object.entries(gearRecipes)) {
     const isUnlocked = unlockedGears[gearName];
+    const description = gearDescriptions[gearName] || "No description available.";
+
     // Count current requirements progress
     let totalReq = 0;
     let currentCount = 0;
@@ -894,6 +1285,11 @@ function updateGearListDisplay() {
         <div class="gear-title" style="cursor:pointer; user-select:none; font-weight:bold;" data-gear="${gearName}">
           ${gearName} ${isUnlocked ? "✅" : "❌"}
         </div>
+
+        <div class="gear-description" style="font-style: italic; color: #555; margin-bottom: 6px;">
+          ${description}
+        </div>
+
         <div class="gear-progress" style="background:#ddd; height:10px; border-radius:5px; margin:4px 0;">
           <div class="gear-progress-bar" style="background:#4caf50; height:100%; width: ${progress}%; border-radius:5px;"></div>
         </div>
@@ -937,8 +1333,7 @@ function updateGearListDisplay() {
     const openReqDiv = document.querySelector(`.gear-title[data-gear="${openedGearName}"]`)?.parentElement.querySelector(".gear-requirements");
     if (openReqDiv) openReqDiv.style.display = "block";
   }
-}
-
+  }
 // Clicking outside closes all open requirements
 document.body.addEventListener("click", () => {
   document.querySelectorAll(".gear-requirements").forEach(reqDiv => {
@@ -959,23 +1354,37 @@ autoSpinBtn.disabled = false;
   let rarity = weightedRandomRarity();
     // Money earned mapping
   const moneyMap = {
-    "Common": 1,
-    "Uncommon": 3,
-    "Rare": 7,
-    "Epic": 12,
-    "Legendary": 25,
-    "Mythic": 40,
-    "Ancient": 60,
-    "Celestial": 100,
-    "Transcendent": 200,
-    "Omniversal": 350,
-    "Divine": 500,
-    "Phantom": 650,
-    "Quantum": 800,
-    "Astral": 1000,
-    "Primordial": 1250,
-    "Glitched": 1500
-  };
+  "Cracked": 0.1,
+  "Chipped": 0.25,
+  "Broken": 0.5,
+  "Basic": 0.75,
+  "Dull": 0.9,
+  "Tarnished": 1,
+  "Common": 1.25,
+  "Dusty": 1.5,
+  "Uncommon": 3,
+  "Firm": 4,
+  "Polished": 5,
+  "Refined": 6,
+  "Rare": 7,
+  "Steelbone": 9,
+  "Epic": 12,
+  "Legendary": 25,
+  "Mythic": 40,
+  "Ancient": 60,
+  "Celestial": 100,
+  "Transcendent": 200,
+  "Omniversal": 350,
+  "Divine": 500,
+  "Phantom": 650,
+  "Quantum": 800,
+  "Astral": 1000,
+  "Primordial": 1250,
+  "Glitched": 1500,
+  "Ethereal": 2000,
+  "Reality-Bound": 5000,
+  "Genesis": 10000
+};
 
   // Apply weather rarity boost (if any)
   if (window.currentWeather && window.currentWeather.rarityBoost) {
@@ -1008,7 +1417,14 @@ if (unlockedGears["Gear 2: Fortune Ring"]) {
     earned *= multiplier;
     showNotification(`💥 Tenth Spin Bonus x${multiplier}!`, "#ff9800");
   }
-  
+    
+  // Lightspeed Obliterator (every 3rd spin = temporary luck boost)
+let bonusLuck = 0;
+if (unlockedGears["Gear 5: Lightspeed Obliterator"] && totalSpins % 3 === 0) {
+  bonusLuck += gearRecipes["Gear 5: Lightspeed Obliterator"].thirdSpinLuckBoost || 0;
+  showNotification(`⚡ Lightspeed Bonus: +${bonusLuck}% Luck!`, "#00bcd4");
+}
+    
   // 404 Glitcher (random money boost or nerf on Glitched rarity)
   if (unlockedGears["Gear 6: 404 Glitcher"] && rarity === "Glitched") {
     const gearData = gearRecipes["Gear 6: 404 Glitcher"];
@@ -1023,6 +1439,43 @@ if (unlockedGears["Gear 2: Fortune Ring"]) {
       }
     }
   }
+  
+
+
+// Existing gears you already have...
+
+// Gear 7: Omnicore Reactor
+if (unlockedGears["Gear 7: Omnicore Reactor"]) {
+  const mult = gearRecipes["Gear 7: Omnicore Reactor"].moneyMultiplier || 0;
+  earned *= (1 + mult);
+  showNotification(`🔆 Omnicore Reactor +${(mult * 100).toFixed(0)}% Money!`, "#ffa726");
+}
+
+// Gear 8: Eternity Processor (10th spin multiplier)
+if (unlockedGears["Gear 8: Eternity Processor"] && totalSpins % 10 === 0) {
+  const mult = gearRecipes["Gear 8: Eternity Processor"].tenthSpinMoneyMultiplier || 1;
+  earned *= mult;
+  showNotification(`♾️ Eternity Boost x${mult}!`, "#5c6bc0");
+}
+
+// Gear 9: Genesis Drive (random luck boost)
+if (unlockedGears["Gear 9: Genesis Drive"] && Math.random() < (gearRecipes["Gear 9: Genesis Drive"].bonusLuckChance || 0)) {
+  bonusLuck += 1.0; // +100% luck temporarily
+  showNotification("🌌 Genesis Surge: +100% Luck!", "#673ab7");
+}
+
+// Gear 10: Paradox Core (5% chance to duplicate earned money)
+if (unlockedGears["Gear 10: Paradox Core"] && Math.random() < (gearRecipes["Gear 10: Paradox Core"].paradoxSpinChance || 0)) {
+  money += earned; // duplicate money gain
+  showNotification("🌀 Paradox Echo: Spin Duplicated!", "#00acc1");
+}
+
+// Gear 11: Godwave Singularity (every 50th spin x10 money)
+if (unlockedGears["Gear 11: Godwave Singularity"] && totalSpins % 50 === 0) {
+  const mult = gearRecipes["Gear 11: Godwave Singularity"].godwaveMultiplier || 1;
+  earned *= mult;
+  showNotification(`🌠 Godwave Blast: x${mult} Money!`, "#ffeb3b");
+}
 
 money += earned;
 
@@ -1067,16 +1520,24 @@ money += earned;
   if (!highestRarityPulled || rarityRank[rarity] > rarityRank[highestRarityPulled]) {
     highestRarityPulled = rarity;
   }
-
-
-
+  
+  function getChanceDenominator(rarity) {
+  const rate = baseRarities[rarity];
+  if (!rate || rate <= 0) return "?";
+  return Math.round(1 / rate).toLocaleString(); // Adds commas for large numbers
+}
+// Your spin function or wherever you update UI after a spin
+function updateSpinResultUI(rarity, variant, earned, money, totalSpins, highestRarityPulled) {
+  resultDiv.innerHTML = `You spun: <span class="rarity-${rarity.replace(/ /g, "-")}">${rarity} (1/${getChanceDenominator(rarity)})</span> <span class="variant">${variant}</span><br>Money earned: ${earned}`;
+  moneyDiv.textContent = `Money: ${money}`;
+  statsDiv.innerHTML = `Total Spins: ${totalSpins}<br>Rarest Pull: <span class="rarity-${(highestRarityPulled || "Common").replace(/ /g, "-")}">${highestRarityPulled || "N/A"}</span>`;
+  updateInventoryDisplay();
+}
 
 
     // Update UI
-    resultDiv.innerHTML = `You spun: <span class="rarity-${rarity.replace(/ /g,"-")}">${rarity}</span> <span class="variant">${variant}</span><br>Money earned: ${earned}`;
-    moneyDiv.textContent = `Money: ${money}`;
-    statsDiv.innerHTML = `Total Spins: ${totalSpins}<br>Rarest Pull: <span class="rarity-${highestRarityPulled?.replace(/ /g,"-") || "Common"}">${highestRarityPulled || "N/A"}</span>`;
-    updateInventoryDisplay();
+    updateSpinResultUI(rarity, variant, earned, money, totalSpins, highestRarityPulled);
+
     
     // Helper function for rarity re-roll with weather boost
 function weightedRandomRarityWithWeatherBoost(baseRarity, boost) {
@@ -1125,15 +1586,37 @@ function weightedRandomRarityWithWeatherBoost(baseRarity, boost) {
   spinBtn.addEventListener("click", spin);
 
   function startAutoSpin() {
-  let interval = 200;
-  if (unlockedGears["Gear 1: Luck Amulet"]) {
-    interval *= (1 - (gearRecipes["Gear 1: Luck Amulet"].spinRateBoost || 0));
+  let baseInterval = 200;
+  let totalBoost = 0;
+
+  // Sum spinRateBoost from all unlocked gears
+  for (const gearName in unlockedGears) {
+    if (unlockedGears[gearName]) {
+      totalBoost += gearRecipes[gearName].spinRateBoost || 0;
+    }
   }
+
+  // Cap total boost to 90%
+  totalBoost = Math.min(totalBoost, 250);
+
+  // Update on-screen spin boost display
+  const boostPercent = (totalBoost * 100).toFixed(1);
+  const spinBoostDiv = document.getElementById("spinBoostDisplay");
+  if (spinBoostDiv) {
+    spinBoostDiv.textContent = `Spin Speed Boost: ${boostPercent}%`;
+  }
+
+  // Calculate interval with boost
+  let interval = baseInterval * (1 - totalBoost);
+  interval = Math.max(interval, 50);
+
+  if (autoSpinInterval) clearInterval(autoSpinInterval);
   autoSpinInterval = setInterval(spin, interval);
+
   autoSpinEnabled = true;
   autoSpinBtn.textContent = "Auto Spin: ON";
   spinBtn.disabled = true;
-}
+  }
 
 function stopAutoSpin(reason = "OFF") {
   clearInterval(autoSpinInterval);
@@ -1141,13 +1624,47 @@ function stopAutoSpin(reason = "OFF") {
   autoSpinEnabled = false;
   autoSpinBtn.textContent = `Auto Spin: ${reason}`;
   spinBtn.disabled = false;
+
+  const spinBoostDiv = document.getElementById("spinBoostDisplay");
+  if (spinBoostDiv) {
+    spinBoostDiv.textContent = `Spin Speed Boost: 0%`;
+  }
 }
 
 autoSpinBtn.addEventListener("click", () => {
   if (autoSpinEnabled) stopAutoSpin("OFF");
   else startAutoSpin();
 });
+// Your existing setup and initialization code, e.g.:
+// initRarityList();
+// updateGearListDisplay();
+// updateInventoryDisplay();
+// etc...
 
+// Now add secret code handler after the UI elements exist
+const secretCode = "yopapa"; // Change to your private dev code
+
+document.getElementById("secretCodeSubmit").addEventListener("click", () => {
+  const input = document.getElementById("secretCodeInput").value.trim();
+  const msgEl = document.getElementById("secretCodeMessage");
+
+  if (input === secretCode) {
+    // Unlock all gears
+    for (const gearName of Object.keys(gearRecipes)) {
+      unlockedGears[gearName] = true;
+    }
+
+    updateGearListDisplay();
+
+    msgEl.style.color = "green";
+    msgEl.textContent = "✅ All gears unlocked!";
+  } else {
+    msgEl.style.color = "red";
+    msgEl.textContent = "❌ Invalid code.";
+  }
+
+  document.getElementById("secretCodeInput").value = "";
+});
   // Initialize
   initRarityList();
   updateGearListDisplay();
