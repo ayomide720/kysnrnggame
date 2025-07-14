@@ -406,8 +406,8 @@
 </div>
     <h3>Gear Status</h3>
     <div id="gear-list">No gears collected yet.</div>
-    <div class="gear-description" style="font-style: italic; color: #555; margin-bottom: 6px;">
-  ${description}
+    <div id="gear-description" class="gear-description" style="...">
+  Select a gear to see its description.
 </div>
     <div id="inventory-display">
       <h3>Your Rarity Inventory</h3>
@@ -434,18 +434,26 @@
   </select>
 </div>
 <script>
-let bgmStarted = false;
-function startBGM() {
-  if (!bgmStarted) {
-    const audio = document.getElementById("bgm-audio");
-    audio.volume = 0.3;
-    audio.play().catch(err => {
-      console.log("Autoplay blocked:", err);
-    });
-    bgmStarted = true;
+  document.addEventListener("DOMContentLoaded", () => {
+  let bgmStarted = false;
+
+  function startBGM() {
+    if (!bgmStarted) {
+      const audio = document.getElementById("bgm-audio");
+      if (audio) {
+        audio.volume = 0.3;
+        audio.play().catch(err => {
+          console.log("Autoplay blocked:", err);
+        });
+        bgmStarted = true;
+      } else {
+        console.warn("BGM audio element not found.");
+      }
+    }
   }
-}
-document.addEventListener("click", startBGM, { once: true });
+
+  // Play BGM on first click
+  document.addEventListener("click", startBGM, { once: true });
 
 // Create container once
 const notificationContainer = document.createElement("div");
