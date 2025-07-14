@@ -1583,8 +1583,6 @@ function weightedRandomRarityWithWeatherBoost(baseRarity, boost) {
   localStorage.setItem("supaSpinSave", JSON.stringify(gameData));
 }
 
-
-  
   spinBtn.addEventListener("click", spin);
 
   function startAutoSpin() {
@@ -1637,7 +1635,14 @@ autoSpinBtn.addEventListener("click", () => {
   if (autoSpinEnabled) stopAutoSpin("OFF");
   else startAutoSpin();
 });
-  const secretCode = "yopapa"; // Change to your private dev code
+// Your existing setup and initialization code, e.g.:
+// initRarityList();
+// updateGearListDisplay();
+// updateInventoryDisplay();
+// etc...
+
+// Now add secret code handler after the UI elements exist
+const secretCode = "yopapa"; // Change to your private dev code
 
 document.getElementById("secretCodeSubmit").addEventListener("click", () => {
   const input = document.getElementById("secretCodeInput").value.trim();
