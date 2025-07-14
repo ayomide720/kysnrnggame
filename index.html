@@ -42,13 +42,6 @@
     font-size: 16px;  
     text-align: center;  
   }  
-  #worker-available {
-  max-height: 200px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  padding: 8px;
-  border-radius: 6px;
-}
 
   /* Rarity Colors */  
   .rarity-Common        { color: #666; }  
@@ -224,13 +217,6 @@
 </main>
 
 <div id="sidebar">
-  <div id="worker-panel" style="padding:10px;">
-  <h3>🧱 Workers</h3>
-  <div id="worker-slots" style="display:flex; gap:12px;"></div>
-  <div id="available-workers" style="margin-top:10px;"></div>
-  <h3>Equipped Workers</h3>
-<div id="worker-slots"></div>
-</div>
   <div id="upgrades-panel">
   <h3>Upgrades</h3>
   <div class="upgrade-box">
@@ -305,100 +291,6 @@ function showNotification(message, color = "#00c8ff", duration = 2500) {
   }, duration);
 }
 
-const maxWorkers = 3;
-let activeWorkers = []; // 3 slots
-let unlockedWorkers = {}; // keeps track of what’s unlocked
-
-const workerTypes = {
-  "Spinbot Alpha": {
-    cost: 40000,
-    effect: "Boosts luck by 135%",
-    luckBonus: 1.35
-  },
-  "Echo Unit": {
-    cost: 40000,
-    effect: "Doubles each spin",
-    spinMultiplier: 2
-  },
-  "Variant Miner": {
-    cost: 30000,
-    effect: "25% more chance to roll rare variants",
-    variantBoost: 0.25
-  },
-  "Chrono Core": {
-    unlockByGear: "Gear 4: Seraphim Booster", // unlocks in World 2
-    effect: "Reduces auto-spin cooldown by 30%",
-    autoSpinDelayBoost: 0.3
-  }
-};
-
-function getWorkerBonuses() {
-  let totalLuck = 0;
-  let spinRateMultiplier = 2;
-
-  for (const worker of activeWorkers) {
-    if (!worker) continue;
-    const data = workerTypes[worker];
-    if (data.luckBoost) totalLuck += data.luckBoost;
-    if (data.spinRateMultiplier) spinRateMultiplier *= data.spinRateMultiplier;
-  }
-
-  return { totalLuck, spinRateMultiplier };
-}
-  
-function buyWorker(name) {
-  const worker = workerTypes[name];
-  if (!worker || unlockedWorkers[name]) return;
-
-  if (money >= worker.cost) {
-    money -= worker.cost;
-    unlockedWorkers[name] = true;
-    moneyDiv.textContent = `Money: ${money.toLocaleString()}`;
-    saveGame();
-    updateWorkerUI();
-    showNotification(`👷 ${name} hired!`, "#4caf50");
-  } else {
-    showNotification(`❌ Not enough money to hire ${name}.`, "#f44336");
-  }
-  }
-  function updateWorkerSlots() {
-  const slotDiv = document.getElementById("worker-slots");
-  slotDiv.innerHTML = "";
-
-  for (let i = 0; i < 3; i++) {
-    const name = equippedWorkers[i];
-    if (name) {
-      slotDiv.innerHTML += `
-        <div style="margin:4px 0; font-weight:bold;">
-          ${name} <button onclick="unequipWorker(${i})">❌ Remove</button>
-        </div>
-      `;
-    } else {
-      slotDiv.innerHTML += `
-        <div style="margin:4px 0; font-style:italic; color:#888;">
-          Empty Slot
-        </div>
-      `;
-    }
-  }
-  const spinDoublingWorkers = ["Echo Unit"];
-
-
-function equipWorker(name) {
-  if (equippedWorkers.includes(name)) return alert("Worker already equipped.");
-  if (equippedWorkers.length >= 3) return alert("All 3 worker slots are full.");
-  equippedWorkers.push(name);
-  updateWorkerSlots();
-  saveGame();
-}
-
-function unequipWorker(index) {
-  equippedWorkers.splice(index, 1);
-  updateWorkerSlots();
-  saveGame();
-}
-  updateWorkerBonuses();
-  }
   const baseRarities = {
     "Common": 10000,
     "Uncommon": 5000,
@@ -584,89 +476,7 @@ const gearRecipes = {
 };
 
 
-  function updateWorkerUI() {
-  const slotsDiv = document.getElementById("worker-slots");
-  slotsDiv.innerHTML = "";
-
-  activeWorkers.forEach((worker, index) => {
-    const slot = document.createElement("div");
-    slot.style.border = "1px solid #999";
-    slot.style.padding = "8px";
-    slot.style.width = "150px";
-    slot.style.borderRadius = "5px";
-    slot.style.marginBottom = "6px";
-    slot.style.background = "#f9f9f9";
-
-    if (worker) {
-      slot.innerHTML = `
-        <strong>${worker}</strong><br>
-        <em style="font-size: 12px; color: #555;">${workerTypes[worker].effect}</em><br>
-        <button onclick="removeWorker(${index})">Unequip</button>
-      `;
-    } else {
-      slot.innerHTML = `
-        <strong>Empty Slot</strong><br>
-        <button onclick="openWorkerShop(${index})">Assign</button>
-      `;
-    }
-
-    slotsDiv.appendChild(slot);
-  });
-
-  // === Available Workers UI ===
-  const availDiv = document.getElementById("available-workers");
-  availDiv.innerHTML = "<h4 style='margin-bottom: 6px;'>Available Workers</h4>";
-
-  for (const [name, data] of Object.entries(workerTypes)) {
-    const isGearUnlocked = data.unlockByGear ? unlockedGears[data.unlockByGear] : true;
-    const isUnlocked = unlockedWorkers[name] || false;
-    const isAffordable = money >= (data.cost || 0);
-
-    if (!isGearUnlocked) continue;
-
-    const workerDiv = document.createElement("div");
-    workerDiv.style.borderBottom = "1px solid #ddd";
-    workerDiv.style.padding = "6px 0";
-
-    let innerHTML = `<strong>${name}</strong> — <span style="font-size: 12px; color: #666;">${data.effect}</span><br>`;
-
-    if (!isUnlocked) {
-      innerHTML += `
-        Cost: $${data.cost.toLocaleString()}<br>
-        <button onclick="buyWorker('${name}')" ${!isAffordable ? "disabled" : ""}>Hire</button>
-      `;
-    } else {
-      const alreadyAssigned = activeWorkers.includes(name);
-      innerHTML += `
-        <button onclick="assignWorker('${name}')" ${alreadyAssigned ? "disabled" : ""}>
-          ${alreadyAssigned ? "Assigned" : "Assign"}
-        </button>
-      `;
-    }
-
-    workerDiv.innerHTML = innerHTML;
-    availDiv.appendChild(workerDiv);
-  }
-  }
   
-function openWorkerShop(slotIndex) {
-  selectedSlot = slotIndex;
-  updateWorkerUI(); // for now this just refreshes
-}
-
-function assignWorker(workerName) {
-  if (activeWorkers.includes(workerName)) return; // already equipped
-  const emptySlot = selectedSlot ?? activeWorkers.indexOf(null);
-  if (emptySlot === -1) return;
-
-  activeWorkers[emptySlot] = workerName;
-  updateWorkerUI();
-}
-
-function removeWorker(index) {
-  activeWorkers[index] = null;
-  updateWorkerUI();
-}
 
 
   // Keep inventory count of rarities and variants
@@ -812,39 +622,17 @@ function updateLuckUpgradeUI() {
   document.getElementById("luck-upgrade-cost").textContent = getLuckUpgradeCost().toLocaleString();
 }
 
-function getTotalLuck() {
-  let totalLuck = getLuckBonusFromUpgrade();
-
-  // Add gear luck bonuses
-  for (const [gearName, gearData] of Object.entries(gearRecipes)) {
-    if (unlockedGears[gearName]) {
-      totalLuck += gearData.luckBonus || 0;
-    }
-  }
-
-  // Add luck bonuses from active workers
-  for (const worker of activeWorkers) {
-    if (worker && workerTypes[worker].luckBonus) {
-      totalLuck += workerTypes[worker].luckBonus;
-    }
-  }
-
-  return totalLuck;
-}
 // Buy Luck Upgrade logic
 document.getElementById("buy-luck-upgrade").addEventListener("click", () => {
   const cost = getLuckUpgradeCost();
   if (money >= cost) {
     money -= cost;
     luckUpgradeLevel++;
-
     updateLuckUpgradeUI();
-    moneyDiv.textContent = `Money: ${money.toLocaleString()}`;
+    moneyDiv.textContent = `Money: ${money}`;
     saveGame();
     checkGearsUnlock();
-
-    // Use total luck calculation (includes gear + upgrades)
-    luckDiv.textContent = `Total Luck Bonus: ${(getTotalLuck() * 100).toFixed(2)}%`;
+      luckDiv.textContent = `Luck Bonus from Gears: ${(currentLuck * 100 + getLuckBonusFromUpgrade() * 100).toFixed(2)}%`;
   }
 });
 
@@ -893,38 +681,34 @@ function loadGame() {
     totalSpins = data.totalSpins || 0;
     money = data.money || 0;
     highestRarityPulled = data.highestRarityPulled || null;
-    activeWorkers = data.activeWorkers || [null, null, null];
-    unlockedWorkers = data.unlockedWorkers || {};
   }
 }
 
 // Load first
 loadGame();
-updateWorkerUI();
 
   // Weighted random helper for selecting rarity based on base weights + luck
   function weightedRandomRarity() {
-  const luckMultiplier = 1 + getTotalLuck();
-  let weightedEntries = [];
-  let totalWeight = 0;
-
-  for (const [rarity, baseWeight] of Object.entries(baseRarities)) {
-    let weight = baseWeight;
-    if (rarityRank[rarity] >= rarityRank["Legendary"]) {
-      weight = baseWeight * luckMultiplier;
+    // Sum weights with luck applied only if at least one gear unlocked
+    const luckMultiplier = 1 + currentLuck + getLuckBonusFromUpgrade();
+    let weightedEntries = [];
+    let totalWeight = 0;
+    for (const [rarity, baseWeight] of Object.entries(baseRarities)) {
+      // Apply luck multiplier to rarities above Legendary only (to make them easier)
+      let weight = baseWeight;
+      if (rarityRank[rarity] >= rarityRank["Legendary"]) {
+        weight = baseWeight * luckMultiplier;
+      }
+      weightedEntries.push({rarity, weight});
+      totalWeight += weight;
     }
-    weightedEntries.push({ rarity, weight });
-    totalWeight += weight;
-  }
-
-  let randomWeight = Math.random() * totalWeight;
-
-  for (const entry of weightedEntries) {
-    if (randomWeight < entry.weight) return entry.rarity;
-    randomWeight -= entry.weight;
-  }
-
-  return "Common"; // fallback
+    let randomWeight = Math.random() * totalWeight;
+    for (const entry of weightedEntries) {
+      if (randomWeight < entry.weight) return entry.rarity;
+      randomWeight -= entry.weight;
+    }
+    // fallback
+    return "Common";
   }
 
   // Weighted random helper for variants within rarity
@@ -1204,15 +988,6 @@ autoSpinBtn.disabled = false;
   }
   
   let earned = moneyMap[rarity] || 1;
-  
-  // Apply worker money multipliers
-for (const worker of activeWorkers) {
-  if (worker && workerTypes[worker].moneyMultiplier) {
-    const bonus = workerTypes[worker].moneyMultiplier;
-    earned *= (1 + bonus);
-    showNotification(`💵 ${worker}: +${(bonus * 100).toFixed(0)}% Money!`, "#4caf50");
-  }
-}
 
 // Fortune Ring (flat money multiplier)
 // Fortune Ring (flat money multiplier)
@@ -1250,27 +1025,6 @@ if (unlockedGears["Gear 2: Fortune Ring"]) {
   }
 
 money += earned;
-
-function updateWorkerBonuses() {
-  let totalSpinMultiplier = 2;
-  let totalLuck = 0;
-
-  for (const worker of equippedWorkers) {
-    const data = workerTypes[worker];
-    if (data) {
-      totalSpinMultiplier *= data.spinRateMultiplier || 1;
-      totalLuck += data.luckBonus || 0;
-    }
-  }
-
-  // Apply to game state
-  workerSpinMultiplier = totalSpinMultiplier;
-  workerLuckBonus = totalLuck;
-
-  // Update spin rate display
-  autoSpinRateDiv.textContent = `Auto Spin Rate: x${(workerSpinMultiplier).toFixed(2)}`;
-  luckDiv.textContent = `Total Luck Bonus: ${((currentLuck + getLuckBonusFromUpgrade() + workerLuckBonus) * 100).toFixed(2)}%`;
-}
 
   // Auto-spin interruption logic
   if (autoSpinEnabled && rarityRank[rarity] >= autoSpinRareThreshold) {
@@ -1370,51 +1124,17 @@ function weightedRandomRarityWithWeatherBoost(baseRarity, boost) {
 
   spinBtn.addEventListener("click", spin);
 
-  function getSpinsPerInterval() {
-  let spins = 1;
-  for (const worker of activeWorkers) {
-    if (worker && workerTypes[worker]?.extraSpinsPerTick) {
-      spins += workerTypes[worker].extraSpinsPerTick;
-    }
-  }
-  return spins;
-}
-
-function startAutoSpin() {
+  function startAutoSpin() {
   let interval = 200;
-
-  // Apply gear spin rate boosts
   if (unlockedGears["Gear 1: Luck Amulet"]) {
     interval *= (1 - (gearRecipes["Gear 1: Luck Amulet"].spinRateBoost || 0));
   }
-
-  // Apply spin rate boosts from active workers
-  for (const worker of activeWorkers) {
-    if (worker && workerTypes[worker].spinRateBoost) {
-      interval *= (1 - workerTypes[worker].spinRateBoost);
-    }
-  }
-
-  // Clamp to minimum interval (optional)
-  interval = Math.max(interval, 50);
-
-  // === ECHO UNIT logic ===
-  let spinMulti = 1;
-  if (activeWorkers.includes("Echo Unit")) {
-    spinMulti = 2;
-  }
-
-  autoSpinInterval = setInterval(() => {
-    for (let i = 0; i < spinMulti; i++) {
-      spin();
-    }
-  }, interval);
-
+  autoSpinInterval = setInterval(spin, interval);
   autoSpinEnabled = true;
   autoSpinBtn.textContent = "Auto Spin: ON";
   spinBtn.disabled = true;
-  }
-  
+}
+
 function stopAutoSpin(reason = "OFF") {
   clearInterval(autoSpinInterval);
   autoSpinInterval = null;
