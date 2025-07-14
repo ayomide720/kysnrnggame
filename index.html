@@ -362,6 +362,16 @@ document.addEventListener("click", startBGM, { once: true });
       {name:"Lunar", weight: 3},
       {name:"Solar", weight: 1}
     ],
+    "Primordial": [
+      {name:"Timestruck", weight: 1}
+    ],
+    "Ethereal": [
+      {name:"Divine", weight: 0.5}
+    ],
+    "Genesis": [
+      {name:"Gaia", weight: 1}
+    ],
+
     "Glitched": [
       {name:"Corrupted", weight: 10},
       {name:"Broken", weight: 7},
@@ -390,14 +400,14 @@ const gearRecipes = {
   "Gear 3: Eccentric Engine": {
     requirements: { "Epic": 45, "Legendary": 40, "Mythic": 10 },
     cost: 100000,
-    luckBonus: 2.00,
+    luckBonus: 1.50,
     rarityUpgradeChance: 0.25,
     spinRateBoost: 0.15
   },
   "Gear 4: ◇ Seraphim Booster ◇": {
     requirements: { "Celestial": 4, "Transcendent": 2, "Mythic": 20 },
     cost: 250000,
-    luckBonus: 1.50,
+    luckBonus: 2.20,
     tenthSpinMoneyMultiplier: 40,
     variantRarityMultiplier: 1.25 // 4x rarer variants (reduce chance by 75%)
   },
@@ -431,7 +441,7 @@ document.body.addEventListener("touchstart", () => {
 
 document.body.addEventListener("touchend", () => {
   const holdTime = Date.now() - holdStart;
-  if (holdTime >= 3000) { // held for 3 seconds
+  if (holdTime >= 10000) { // held for 3 seconds
     const giveAmount = prompt("Dev mode: Enter money to add:");
     const amount = parseInt(giveAmount);
     if (!isNaN(amount) && amount > 0) {
