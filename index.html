@@ -362,16 +362,6 @@ document.addEventListener("click", startBGM, { once: true });
       {name:"Lunar", weight: 3},
       {name:"Solar", weight: 1}
     ],
-    "Primordial": [
-      {name:"Timestruck", weight: 1}
-    ],
-    "Ethereal": [
-      {name:"Divine", weight: 0.5}
-    ],
-    "Genesis": [
-      {name:"Gaia", weight: 1}
-    ],
-
     "Glitched": [
       {name:"Corrupted", weight: 10},
       {name:"Broken", weight: 7},
@@ -391,7 +381,7 @@ const gearRecipes = {
     luckBonus: 1.25, // 50%
     spinRateBoost: 0.25
   },
-  "Gear 2: ○ Fortune Ring ○": {
+  "Gear 2: Fortune Ring": {
     requirements: { "Mythic": 15, "Ancient": 20, "Celestial": 2 },
     cost: 50000,
     luckBonus: 1.75,
@@ -400,14 +390,14 @@ const gearRecipes = {
   "Gear 3: Eccentric Engine": {
     requirements: { "Epic": 45, "Legendary": 40, "Mythic": 10 },
     cost: 100000,
-    luckBonus: 1.50,
+    luckBonus: 2.00,
     rarityUpgradeChance: 0.25,
     spinRateBoost: 0.15
   },
-  "Gear 4: ◇ Seraphim Booster ◇": {
+  "Gear 4: Seraphim Booster": {
     requirements: { "Celestial": 4, "Transcendent": 2, "Mythic": 20 },
     cost: 250000,
-    luckBonus: 2.20,
+    luckBonus: 1.50,
     tenthSpinMoneyMultiplier: 40,
     variantRarityMultiplier: 1.25 // 4x rarer variants (reduce chance by 75%)
   },
@@ -431,29 +421,7 @@ const gearRecipes = {
 
 
   
-  // Secret Tap-Based Developer Command for Money (Mobile Friendly)
-// Secret Mobile Hold-to-Give-Money Command
-let holdStart = 0;
 
-document.body.addEventListener("touchstart", () => {
-  holdStart = Date.now();
-});
-
-document.body.addEventListener("touchend", () => {
-  const holdTime = Date.now() - holdStart;
-  if (holdTime >= 10000) { // held for 3 seconds
-    const giveAmount = prompt("Dev mode: Enter money to add:");
-    const amount = parseInt(giveAmount);
-    if (!isNaN(amount) && amount > 0) {
-      money += amount;
-      moneyDiv.textContent = `Money: ${money}`;
-      alert(`Added $${amount.toLocaleString()} 🤑`);
-      saveGame();
-    } else {
-      alert("Invalid amount.");
-    }
-  }
-});
 
   // Keep inventory count of rarities and variants
   let inventory = {};
@@ -487,6 +455,100 @@ document.body.addEventListener("touchend", () => {
   const rarityListSelect = document.getElementById("rarity-list");
   const autoSpinRareThreshold = rarityRank["Transcendent"]; // Ancient and above
   
+// === WEATHER SYSTEM ===
+
+let currentWeather = null;
+
+const weatherTypes = {
+  "Mystic Storm": {
+    duration: 60000,
+    chance: 0.01,
+    effectDescription: "Celestial rarities are 15% more likely.",
+    rarityBoost: { "Celestial": 0.25 },
+    unlockVariants: ["Mystic"]
+  },
+  "Solar Flare": {
+    duration: 45000,
+    chance: 0.0075,
+    effectDescription: "Ancient and Mythic increased. Unlocks Solar variants.",
+    rarityBoost: { "Ancient": 0.2, "Mythic": 0.1 },
+    unlockVariants: ["Solar"]
+  },
+  "Void Eclipse": {
+    duration: 70000,
+    chance: 0.006,
+    effectDescription: "Increased Glitched drop chance. Unlocks Void variants.",
+    rarityBoost: { "Glitched": 0.5 },
+    unlockVariants: ["Void"]
+  },
+  "Lucky Winds": {
+    duration: 30000,
+    chance: 0.015,
+    effectDescription: "+20% global luck bonus.",
+    globalLuckBoost: 0.2,
+    unlockVariants: ["Windblessed"]
+  }
+};
+
+// === WEATHER BANNER SETUP ===
+const weatherBanner = document.createElement("div");
+weatherBanner.style.position = "fixed";
+weatherBanner.style.top = "10px";
+weatherBanner.style.left = "50%";
+weatherBanner.style.transform = "translateX(-50%)";
+weatherBanner.style.padding = "8px 14px";
+weatherBanner.style.borderRadius = "10px";
+weatherBanner.style.background = "#222";
+weatherBanner.style.color = "#fff";
+weatherBanner.style.fontWeight = "bold";
+weatherBanner.style.zIndex = "9999";
+weatherBanner.style.fontSize = "14px";
+weatherBanner.style.textAlign = "center";
+document.body.appendChild(weatherBanner);
+
+function updateWeatherBanner() {
+  if (currentWeather) {
+    weatherBanner.textContent = `🌩️ ${currentWeather.name} Active - ${currentWeather.effectDescription}`;
+  } else {
+    weatherBanner.textContent = "☀️ No weather active";
+  }
+}
+
+// === WEATHER LOGIC ===
+function applyWeather(name) {
+  const data = weatherTypes[name];
+  if (!data) return;
+
+  currentWeather = {
+    name,
+    ...data
+  };
+  updateWeatherBanner();
+
+  setTimeout(() => {
+    clearWeather();
+  }, data.duration);
+}
+
+function clearWeather() {
+  currentWeather = null;
+  updateWeatherBanner();
+}
+
+// === WEATHER CHECK LOOP (Every 1s) ===
+setInterval(() => {
+  if (!currentWeather) {
+    for (const [weatherName, weatherData] of Object.entries(weatherTypes)) {
+      if (Math.random() < weatherData.chance) {
+        applyWeather(weatherName);
+        break; // only one weather at a time
+      }
+    }
+  }
+}, 1000);
+
+// === Initialize Weather UI on Page Load ===
+updateWeatherBanner();  
   // === Luck Upgrade System ===
 let luckUpgradeLevel = 0;
 let luckUpgradeBaseCost = 200;
@@ -514,7 +576,7 @@ document.getElementById("buy-luck-upgrade").addEventListener("click", () => {
     moneyDiv.textContent = `Money: ${money}`;
     saveGame();
     checkGearsUnlock();
-    luckDiv.textContent = `Luck Bonus from Gears: ${(currentLuck * 100 + getLuckBonusFromUpgrade() * 100).toFixed(2)}%`;
+      luckDiv.textContent = `Luck Bonus from Gears: ${(currentLuck * 100 + getLuckBonusFromUpgrade() * 100).toFixed(2)}%`;
   }
 });
 
@@ -595,17 +657,33 @@ loadGame();
 
   // Weighted random helper for variants within rarity
   function weightedRandomVariant(rarity) {
-    const variantList = variants[rarity];
-    if (!variantList) return null;
-    let totalWeight = variantList.reduce((acc,v) => acc + v.weight, 0);
-    let rnd = Math.random() * totalWeight;
-    for (const variant of variantList) {
-      if (rnd < variant.weight) return variant.name;
-      rnd -= variant.weight;
+  let variantList = variants[rarity];
+  if (!variantList) return null;
+
+  // Clone the variantList to avoid modifying original
+  let combinedVariants = variantList.slice();
+
+  // Add weather unlock variants if active and relevant
+  if (window.currentWeather?.unlockVariants) {
+    for (const weatherVariantName of window.currentWeather.unlockVariants) {
+      // Check if this variant is already in the list to avoid duplicates
+      if (!combinedVariants.some(v => v.name === weatherVariantName)) {
+        combinedVariants.push({ name: weatherVariantName, weight: 1 }); // weight can be adjusted
+      }
     }
-    return variantList[0].name;
   }
 
+  // Calculate total weight
+  let totalWeight = combinedVariants.reduce((acc, v) => acc + v.weight, 0);
+  let rnd = Math.random() * totalWeight;
+
+  for (const variant of combinedVariants) {
+    if (rnd < variant.weight) return variant.name;
+    rnd -= variant.weight;
+  }
+
+  return combinedVariants[0].name;
+  }
   // Update inventory counts
   function addToInventory(rarity, variant) {
     if (!inventory[rarity]) inventory[rarity] = {};
@@ -683,39 +761,27 @@ function toggleVariants(id) {
     el.style.display = "none";
   }
 }
-
 function checkGearsUnlock() {
   let unlockedCount = 0;
   currentLuck = 0;
 
   for (const [gearName, gearData] of Object.entries(gearRecipes)) {
-    let canUnlock = true;
-    for (const [reqRarity, reqCount] of Object.entries(gearData.requirements)) {
-      if (getRarityCount(reqRarity) < reqCount) {
-        canUnlock = false;
-        break;
-      }
+    const hasRequirements = checkRequirements(gearData.requirements);
+
+    // Auto-unlock if not already unlocked and requirements are met
+    if (!unlockedGears[gearName] && hasRequirements) {
+      unlockedGears[gearName] = true;
     }
-    if (canUnlock) {
-      if (!unlockedGears[gearName]) {
-        if (money >= gearData.cost) {
-          money -= gearData.cost;
-          unlockedGears[gearName] = true;
-          // Removed alert per your request
-        } else {
-          canUnlock = false;
-        }
-      }
-    } else {
-      unlockedGears[gearName] = false;
-    }
+
+    // Apply bonuses if unlocked
     if (unlockedGears[gearName]) {
       unlockedCount++;
-      currentLuck += gearData.luckBonus;
+      currentLuck += gearData.luckBonus || 0;
     }
   }
+
   updateGearListDisplay();
-  moneyDiv.textContent = `Money: ${money}`;
+  moneyDiv.textContent = `Money: ${money.toLocaleString()}`;
   luckDiv.textContent = `Luck Bonus from Gears: ${(currentLuck * 100).toFixed(2)}%`;
   autoSpinBtn.disabled = unlockedCount === 0;
   saveGame();
@@ -818,65 +884,119 @@ autoSpinBtn.disabled = false;
 
   // Spin function
   function spin() {
-  saveGame(); 
-    totalSpins++;
-    // Get rarity weighted by luck
-    const rarity = weightedRandomRarity();
-    // Auto-spin interruption logic
-    if (autoSpinEnabled && rarityRank[rarity] >= autoSpinRareThreshold) {
-      clearInterval(autoSpinInterval);
-      autoSpinInterval = null;
-      autoSpinEnabled = false;
-      autoSpinBtn.textContent = "Auto Spin: (Rare pull!)";
-      spinBtn.disabled = false;
+  saveGame();
+  totalSpins++;
 
-      // Optional: Play rare pull sound here
-      // new Audio("your-raresound.mp3").play();
+  // Base weighted rarity pick with luck included
+  let rarity = weightedRandomRarity();
 
-      // Resume after 5 seconds unless player clicks spin manually
-      setTimeout(() => {
-        if (!autoSpinEnabled) {
-          startAutoSpin();
-        }
-      }, 3000);
+  // Apply weather rarity boost (if any)
+  if (window.currentWeather && window.currentWeather.rarityBoost) {
+    const boost = window.currentWeather.rarityBoost[rarity];
+    if (boost) {
+      // Here you can re-roll or increase chance.
+      // Simplest: add chance boost by reselecting rarity with boosted weights
+      rarity = weightedRandomRarityWithWeatherBoost(rarity, boost);
     }
-    // Get variant
-    const variant = weightedRandomVariant(rarity);
-    // Add to inventory
-    addToInventory(rarity, variant);
+  }
 
-    // Update highest rarity pulled if needed
-    if (!highestRarityPulled || rarityRank[rarity] > rarityRank[highestRarityPulled]) {
-      highestRarityPulled = rarity;
+  // Auto-spin interruption logic
+  if (autoSpinEnabled && rarityRank[rarity] >= autoSpinRareThreshold) {
+    clearInterval(autoSpinInterval);
+    autoSpinInterval = null;
+    autoSpinEnabled = false;
+    autoSpinBtn.textContent = "Auto Spin: (Rare pull!)";
+    spinBtn.disabled = false;
+
+    // Optional: Play rare pull sound here
+    // new Audio("your-raresound.mp3").play();
+
+    setTimeout(() => {
+      if (!autoSpinEnabled) {
+        startAutoSpin();
+      }
+    }, 3000);
+  }
+
+  // Pick variant normally
+  let variant = weightedRandomVariant(rarity);
+
+  // If current weather unlocks variants for this rarity, boost chance for those
+  if (window.currentWeather && window.currentWeather.unlockVariants) {
+    const unlockedVariants = window.currentWeather.unlockVariants;
+    if (!variant || !unlockedVariants.includes(variant)) {
+      // Try to pick a variant from unlocked list if any exist
+      const variantsForRarity = variants[rarity] || [];
+      const filtered = variantsForRarity.filter(v => unlockedVariants.includes(v.name));
+      if (filtered.length > 0) {
+        variant = filtered[Math.floor(Math.random() * filtered.length)].name;
+      }
     }
+  }
 
-    // Calculate money earned (just example formula)
-    // More rare = more money, common = 1, uncommon = 3, rare = 7, etc
-    const moneyMap = {
-      "Common": 1,
-      "Uncommon": 3,
-      "Rare": 7,
-      "Epic": 12,
-      "Legendary": 25,
-      "Mythic": 40,
-      "Ancient": 60,
-      "Celestial": 100,
-      "Transcendent": 200,
-      "Omniversal": 350,
-      "Divine": 500,
-      "Phantom": 650,
-      "Quantum": 800,
-      "Astral": 1000,
-      "Glitched": 1500
-    };
-    const earned = moneyMap[rarity] || 1;
-    money += earned;
+  // Add to inventory
+  addToInventory(rarity, variant);
+
+  // Update highest rarity pulled
+  if (!highestRarityPulled || rarityRank[rarity] > rarityRank[highestRarityPulled]) {
+    highestRarityPulled = rarity;
+  }
+
+  // Money earned mapping
+  const moneyMap = {
+    "Common": 1,
+    "Uncommon": 3,
+    "Rare": 7,
+    "Epic": 12,
+    "Legendary": 25,
+    "Mythic": 40,
+    "Ancient": 60,
+    "Celestial": 100,
+    "Transcendent": 200,
+    "Omniversal": 350,
+    "Divine": 500,
+    "Phantom": 650,
+    "Quantum": 800,
+    "Astral": 1000,
+    "Glitched": 1500
+  };
+
+  const earned = moneyMap[rarity] || 1;
+  money += earned;
 
     // Update UI
     resultDiv.innerHTML = `You spun: <span class="rarity-${rarity.replace(/ /g,"-")}">${rarity}</span> <span class="variant">${variant}</span><br>Money earned: ${earned}`;
     moneyDiv.textContent = `Money: ${money}`;
     statsDiv.innerHTML = `Total Spins: ${totalSpins}<br>Rarest Pull: <span class="rarity-${highestRarityPulled?.replace(/ /g,"-") || "Common"}">${highestRarityPulled || "N/A"}</span>`;
     updateInventoryDisplay();
+    
+    // Helper function for rarity re-roll with weather boost
+function weightedRandomRarityWithWeatherBoost(baseRarity, boost) {
+  // Create adjusted chances applying boost to baseRarity
+  const baseChances = getBaseRarityChances(); // Implement this to get base chances map
+
+  // Increase boosted rarity chance by multiplying its weight
+  let adjustedChances = { ...baseChances };
+  if (adjustedChances[baseRarity]) {
+    adjustedChances[baseRarity] *= (1 + boost);
+  }
+
+  // Normalize chances
+  const total = Object.values(adjustedChances).reduce((a,b) => a+b, 0);
+  for (const r in adjustedChances) {
+    adjustedChances[r] /= total;
+  }
+
+  // Weighted random selection
+  let rand = Math.random();
+  let cumulative = 0;
+  for (const [r, chance] of Object.entries(adjustedChances)) {
+    cumulative += chance;
+    if (rand <= cumulative) return r;
+  }
+
+  return baseRarity; // fallback
+}
 
     // Check if any gears can unlock now
     checkGearsUnlock();
