@@ -463,7 +463,16 @@ body {
     <strong>Luck Upgrade</strong> (Level <span id="luck-upgrade-level">0</span>)<br>
     Increases base luck by 10% per level.<br>
     <button id="buy-luck-upgrade">Buy (Cost: <span id="luck-upgrade-cost">10,000</span>)</button>
+    <button id="toggle-image-showcase-btn" style="margin-bottom:10px;">Show/Hide Rarity Images</button>
+
+<div id="image-showcase" style="display:none; border: 1px solid #ccc; padding: 10px; max-width: 600px; margin-top: 10px; background: #fafafa; overflow-x: auto; white-space: nowrap;">
+  <!-- Images will appear here -->
+</div>
   </div>
+  <div id="image-showcase" style="margin-top: 40px; padding: 20px;">
+  <h2>Your Collection</h2>
+  <div id="rarity-image-grid" style="display: flex; flex-wrap: wrap; gap: 15px;"></div>
+</div>
 </div>
   <label for="rarity-list">All Rarities</label>
   <select id="rarity-list" size="16" readonly>
@@ -555,6 +564,53 @@ function showNotification(message, color = "#00c8ff", duration = 2500) {
 
   notificationTimeouts.set(note, timeoutId);
 }
+// Toggle show/hide the image showcase div
+document.getElementById("toggle-image-showcase-btn").addEventListener("click", () => {
+  const showcase = document.getElementById("image-showcase");
+  if (showcase.style.display === "none" || showcase.style.display === "") {
+    updateImageShowcase();
+    showcase.style.display = "block";
+  } else {
+    showcase.style.display = "none";
+  }
+});
+
+function updateImageShowcase() {
+  const container = document.getElementById("image-showcase");
+  container.innerHTML = ""; // Clear previous
+
+  for (const rarity of rarityOrder) {
+    if (!inventory[rarity]) continue; // Show only owned rarities
+
+    const raritySlug = rarity.toLowerCase().replace(/ /g, "-");
+    const count = getRarityCount(rarity);
+
+    const wrapper = document.createElement("div");
+    wrapper.style = "display: inline-block; text-align: center; font-size: 12px; margin: 5px;";
+
+    const img = document.createElement("img");
+    img.src = `https://raw.githubusercontent.com/ayomide720/kysnrnggame/main/${raritySlug}.png`;
+    img.alt = rarity;
+    img.title = `${rarity} × ${count}`;
+    img.style = "width: 64px; height: 64px; image-rendering: pixelated; display: block; margin: 0 auto;";
+
+    const label = document.createElement("div");
+    label.innerHTML = `<span class="rarity-${rarity.replace(/ /g, "-")}">${rarity}</span>`;
+
+    img.onload = () => {
+      wrapper.appendChild(img);
+      wrapper.appendChild(label);
+    };
+
+    img.onerror = () => {
+      // If no image, just show the label text
+      wrapper.appendChild(label);
+    };
+
+    // Append wrapper immediately so at least label appears
+    container.appendChild(wrapper);
+  }
+  }
 
 const rarityDropRates = {
   "Cracked": 1 / 25,
