@@ -790,8 +790,8 @@ for (const [rarity, dropRate] of Object.entries(rarityDropRates)) {
 // Modify gearRecipes to include a cost property
 const gearRecipes = {
   "Gear 1: Luck Amulet": {
-    requirements: { "Common": 10, "Uncommon": 1 },
-    cost: 1,
+    requirements: { "Common": 250, "Uncommon": 125, "Rare": 25 },
+    cost: 15000,
     luckBonus: 1.25,
     spinRateBoost: 0.1
   },
@@ -955,7 +955,7 @@ const gearRecipes = {
 };
 
   const gearDescriptions = {
-  "Gear 1: Luck Amulet": "A simple amulet that increases your luck by 125%, making rare pulls more common and speeding up your spins by 25%. Also grants access to autospin.",
+  "Gear 1: Luck Amulet": "A simple amulet that increases your luck by 125%, making rare pulls more common and speeding up your spins by 25%.",
   "Gear 2: Fortune Ring": "A mystical ring that boosts your money earned per spin by 25%, turning small wins into bigger fortunes.",
   "Gear 3: Eccentric Engine": "A finely tuned device that increases your luck by 1000% and gives a 25% chance to upgrade rarities, accelerating your progress and spinning 15% faster.",
   "Gear 4: Seraphim Booster": "Harness the power of the Seraphim to multiply your 10th spin's payout by 40x and increase variant rarity by 25%, unlocking rarer variants.",
@@ -1281,10 +1281,11 @@ function weightedRandomRarity(extraLuck = 0) {
   }
   // Update inventory counts
   function addToInventory(rarity, variant) {
-    if (!inventory[rarity]) inventory[rarity] = {};
-    if (!inventory[rarity][variant]) inventory[rarity][variant] = 0;
-    inventory[rarity][variant]++;
-  }
+  if (!variant) variant = "Default"; // fallback variant name
+  if (!inventory[rarity]) inventory[rarity] = {};
+  if (!inventory[rarity][variant]) inventory[rarity][variant] = 0;
+  inventory[rarity][variant]++;
+}
 
 
 
@@ -1306,55 +1307,68 @@ function getRaritySpan(rarity) {
 
 function updateInventoryDisplay() {
   const rarityCountsDiv = document.getElementById("rarity-counts");
-  rarityCountsDiv.innerHTML = ""; // Clear existing content to rebuild
+  rarityCountsDiv.innerHTML = ""; // Clear existing content to rebuild the display
 
+  // Loop through all rarities in their defined order
   for (const rarity of rarityOrder) {
-    const count = getRarityCount(rarity);
-    const hasEverPulled = inventory[rarity] !== undefined && count > 0; // Check if pulled at least once
+    const count = getRarityCount(rarity); // Get the current total count for this rarity
 
-    const rarityId = `rarity-display-${rarity.replace(/ /g, "-")}`; // Use unique ID for display elements
+    // Determine if this rarity has EVER been pulled before
+    // We'll use the 'inventory' object itself for simplicity,
+    // assuming if inventory[rarity] exists, it means it's been pulled at some point.
+    // This is more robust than checking Object.keys().length if variants can be fully consumed.
+    const hasEverPulled = inventory.hasOwnProperty(rarity);
+
+    const rarityId = `rarity-display-${rarity.replace(/ /g, "-")}`;
     const variantId = `${rarityId}-variants`;
 
+    // If the rarity has been pulled at least once, display its details
     if (hasEverPulled) {
-      const displayCount = count;
-
       const rarityDiv = document.createElement("div");
       rarityDiv.id = rarityId;
-      rarityDiv.className = `rarity-${rarity.replace(/ /g, "-")}`; // Keep the class for styling
-      rarityDiv.style.cursor = "pointer";
+      // Apply the correct CSS class for rarity coloring
+      rarityDiv.className = `rarity-${rarity.replace(/ /g, "-")}`;
+      rarityDiv.style.cursor = "pointer"; // Make it look clickable
       rarityDiv.style.fontWeight = "bold";
-      rarityDiv.innerHTML = `▶ <strong>${getRaritySpan(rarity)}</strong>: <span class="rarity-count">${displayCount}</span>`;
 
+      // Display the rarity name and its current count.
+      // The getRaritySpan function applies special styling for some rarities.
+      rarityDiv.innerHTML = `▶ <strong>${getRaritySpan(rarity)}</strong>: <span class="rarity-count">${count}</span>`;
+
+      // Add click listener to toggle the display of its variants
       rarityDiv.addEventListener("click", () => {
         const variantDiv = document.getElementById(variantId);
         if (variantDiv) {
           const isVisible = variantDiv.style.display === "block";
-          variantDiv.style.display = isVisible ? "none" : "block";
+          variantDiv.style.display = isVisible ? "none" : "block"; // Toggle visibility
+          rarityDiv.innerHTML = `<strong>${isVisible ? '▶' : '▼'} ${getRaritySpan(rarity)}</strong>: <span class="rarity-count">${count}</span>`; // Update arrow
         }
       });
 
       const variantDiv = document.createElement("div");
       variantDiv.id = variantId;
-      variantDiv.style.display = "none";
+      variantDiv.style.display = "none"; // Variants are hidden by default
       variantDiv.style.paddingLeft = "15px";
       variantDiv.style.fontSize = "14px";
+      // Get and display the breakdown of specific variants for this rarity
       variantDiv.innerHTML = getVariantBreakdown(rarity);
 
-      rarityCountsDiv.appendChild(rarityDiv);
-      rarityCountsDiv.appendChild(variantDiv);
+      rarityCountsDiv.appendChild(rarityDiv);    // Add the rarity title
+      rarityCountsDiv.appendChild(variantDiv);   // Add the hidden variants container
     } else {
-      // If not pulled yet, display the "???" with its chance
+      // If the rarity has NOT been pulled yet, display "???" and its chance
       const denom = getChanceDenominator(rarity);
       const unknownDiv = document.createElement("div");
       unknownDiv.id = rarityId; // Still give it an ID for consistency
-      unknownDiv.className = "rarity-unknown";
+      unknownDiv.className = "rarity-unknown"; // A class for un-pulled rarities
       unknownDiv.style.fontStyle = "italic";
-      unknownDiv.style.color = "#999";
-      unknownDiv.textContent = `??? - 1/${denom}`;
+      unknownDiv.style.color = "#999"; // Greyed out for unknown rarities
+      unknownDiv.textContent = `??? - 1/${denom}`; // Show "???" and its chance
       rarityCountsDiv.appendChild(unknownDiv);
     }
   }
-}
+  }
+
 
 
 function getVariantBreakdown(rarity) {
@@ -1760,33 +1774,26 @@ function updateSpinResultUI(rarity, variant, earned, money, totalSpins, highestR
   spinBtn.addEventListener("click", spin);
 
   function startAutoSpin() {
-  let baseInterval = 200;
+  const baseInterval = 200; // default spin delay in ms
   let totalBoost = 0;
 
-  // Sum spinRateBoost from all unlocked gears
   for (const gearName in unlockedGears) {
-    if (unlockedGears[gearName]) {
+    if (unlockedGears[gearName] && gearRecipes[gearName]) {
       totalBoost += gearRecipes[gearName].spinRateBoost || 0;
     }
   }
 
-  // Cap total boost to 90%
-  totalBoost = Math.min(totalBoost, 250);
+  totalBoost = Math.min(Math.max(totalBoost, 0), 0.95); // cap between 0%–95%
+  const interval = Math.max(baseInterval * (1 - totalBoost), 50);
 
-  // Update on-screen spin boost display
-  const boostPercent = (totalBoost * 100).toFixed(1);
+  // Update spin speed UI
   const spinBoostDiv = document.getElementById("spinBoostDisplay");
   if (spinBoostDiv) {
-    spinBoostDiv.textContent = `Spin Speed Boost: ${boostPercent}%`;
+    spinBoostDiv.textContent = `Spin Speed Boost: ${(totalBoost * 100).toFixed(1)}%`;
   }
 
-  // Calculate interval with boost
-  let interval = baseInterval * (1 - totalBoost);
-  interval = Math.max(interval, 50);
-
-  if (autoSpinInterval) clearInterval(autoSpinInterval);
+  clearInterval(autoSpinInterval);
   autoSpinInterval = setInterval(spin, interval);
-
   autoSpinEnabled = true;
   autoSpinBtn.textContent = "Auto Spin: ON";
   spinBtn.disabled = true;
