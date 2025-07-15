@@ -3,35 +3,35 @@
 <head>
 <meta charset="UTF-8" />
 <title>Supa Spin Simulator</title>
-<style>  
-  body {  
-    background: #f0f2f5;  
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  
-    display: flex;  
-    flex-direction: row;  
-    align-items: flex-start;  
-    padding: 30px;  
-    min-height: 100vh;  
-    margin: 0;  
-    gap: 30px;  
-  }  
-  main {  
-    flex: 1;  
+<style>
+  body {
+    background: #f0f2f5;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 30px;
+    min-height: 100vh;
+    margin: 0;
+    gap: 30px;
+  }
+  main {
+    flex: 1;
     max-width: 600px;
-  }  
-  h1 {  
-    margin-bottom: 10px;  
-  }  
-  button {  
-    padding: 12px 30px;  
-    font-size: 18px;  
-    border: none;  
-    border-radius: 8px;  
-    background-color: #111;  
-    color: white;  
-    cursor: pointer;  
-    margin: 10px 10px 10px 0;  
-  }  
+  }
+  h1 {
+    margin-bottom: 10px;
+  }
+  button {
+    padding: 12px 30px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    background-color: #111;
+    color: white;
+    cursor: pointer;
+    margin: 10px 10px 10px 0;
+  }
 /* Apply a clean modern font to the entire page */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -47,7 +47,8 @@ body {
 #stats,
 #money,
 #gears,
-#luck {
+#luck,
+#artifacts-panel { /* Added artifacts-panel */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
   font-weight: 500;
@@ -68,7 +69,8 @@ body {
 #stats:hover,
 #money:hover,
 #gears:hover,
-#luck:hover {
+#luck:hover,
+#artifacts-panel:hover { /* Added artifacts-panel */
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
@@ -82,13 +84,13 @@ body {
 
 @import url('https://fonts.googleapis.com/css2?family=Orbitron&family=Playfair+Display&family=Uncial+Antiqua&family=Raleway&family=Great+Vibes&family=Montserrat:wght@700&display=swap');
 
-.rarity-Common        { color: #666; }  
-.rarity-Uncommon      { color: #2ecc71; }  
-.rarity-Rare          { color: #3498db; }  
-.rarity-Steelbone     { color: #76798c; font-weight: bold; }  /* fixed extra # */
-.rarity-Epic          { color: #9b59b6; }  
-.rarity-Legendary     { color: #f1c40f; }  
-.rarity-Mythic        { color: #e67e22; }  
+.rarity-Common        { color: #666; }
+.rarity-Uncommon      { color: #2ecc71; }
+.rarity-Rare          { color: #3498db; }
+.rarity-Steelbone     { color: #76798c; font-weight: bold; }
+.rarity-Epic          { color: #9b59b6; }
+.rarity-Legendary     { color: #f1c40f; }
+.rarity-Mythic        { color: #e67e22; }
 .rarity-Cracked     { color: #888; font-style: italic; }
 .rarity-Chipped     { color: #999; }
 .rarity-Broken      { color: #666; text-decoration: line-through; }
@@ -242,14 +244,14 @@ body {
   100% { text-shadow: 0 0 24px #888; }
 }
 
-  .variant {  
-    font-style: italic;  
-    margin-left: 5px;  
-    padding: 2px 6px;  
-    border-radius: 5px;  
-    background: #eee;  
-    font-weight: 600;  
-    user-select: none;  
+  .variant {
+    font-style: italic;
+    margin-left: 5px;
+    padding: 2px 6px;
+    border-radius: 5px;
+    background: #eee;
+    font-weight: 600;
+    user-select: none;
   }
   /* Variant colors by rarity */
 .variant-common {
@@ -297,7 +299,6 @@ body {
 
 .rarity-Reality-Bound {
   color: #8e44ad;
-  font-weight: bold;
   background: linear-gradient(45deg, #8e44ad, #d0c1f7);
   background-clip: text;
   -webkit-background-clip: text;
@@ -321,7 +322,7 @@ body {
     border-radius: 12px;
     box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
   }
-  
+
   #auto-spin-rate {
   margin-top: 10px;
   font-size: 16px;
@@ -333,18 +334,18 @@ body {
     display: block;
     margin-bottom: 8px;
   }
-  #upgrades-panel {
+  #upgrades-panel, #artifacts-panel { /* Added artifacts-panel */
   margin-top: 20px;
   padding: 20px;
   border-radius: 12px;
   background: white;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
-.upgrade-box {
+.upgrade-box, .artifact-box { /* Added .artifact-box */
   margin-bottom: 15px;
   font-size: 15px;
 }
-#buy-luck-upgrade {
+#buy-luck-upgrade, .buy-artifact-btn { /* Added .buy-artifact-btn */
   margin-top: 8px;
   padding: 6px 12px;
   font-size: 14px;
@@ -353,6 +354,20 @@ body {
   color: white;
   border: none;
   cursor: pointer;
+}
+.buy-gear-btn {
+  margin-top: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  background: #007bff; /* Blue for gear buy button */
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.buy-gear-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
 
   select {
@@ -436,7 +451,7 @@ body {
   <div id="luck">Luck Bonus from Gears: 0%</div>
   <div id="auto-spin-rate">Auto Spin Rate: OFF</div>
   <div id="gears">
-    <div id="spinBoostDisplay" style="position: fixed; top: 10px; right: 10px; 
+    <div id="spinBoostDisplay" style="position: fixed; top: 10px; right: 10px;
   background: rgba(0,0,0,0.6); color: white; padding: 8px 12px; border-radius: 8px;
   font-family: monospace; font-weight: bold; z-index: 1000;">
   Spin Speed Boost: 0%
@@ -466,18 +481,22 @@ body {
     <button id="toggle-image-showcase-btn" style="margin-bottom:10px;">Show/Hide Rarity Images</button>
 
 <div id="image-showcase" style="display:none; border: 1px solid #ccc; padding: 10px; max-width: 600px; margin-top: 10px; background: #fafafa; overflow-x: auto; white-space: nowrap;">
-  <!-- Images will appear here -->
-</div>
+  </div>
   </div>
   <div id="image-showcase" style="margin-top: 40px; padding: 20px;">
   <h2>Your Collection</h2>
   <div id="rarity-image-grid" style="display: flex; flex-wrap: wrap; gap: 15px;"></div>
 </div>
 </div>
+
+<div id="artifacts-panel">
+  <h3>Artifacts</h3>
+  <div id="artifact-list">No artifacts discovered yet.</div>
+</div>
+
   <label for="rarity-list">All Rarities</label>
   <select id="rarity-list" size="16" readonly>
-    <!-- Options populated by JS -->
-  </select>
+    </select>
 </div>
 <script>
 let bgmStarted = false;
@@ -595,7 +614,7 @@ function updateImageShowcase() {
     img.style = "width: 64px; height: 64px; image-rendering: pixelated; display: block; margin: 0 auto;";
 
     const label = document.createElement("div");
-    label.innerHTML = `<span class="rarity-${rarity.replace(/ /g, "-")}">${rarity}</span>`;
+    label.innerHTML = `<span class="rarity-${rarity.replace(/ /g,"-")}">${rarity}</span>`;
 
     img.onload = () => {
       wrapper.appendChild(img);
@@ -610,7 +629,7 @@ function updateImageShowcase() {
     // Append wrapper immediately so at least label appears
     container.appendChild(wrapper);
   }
-  }
+}
 
 const rarityDropRates = {
   "Cracked": 1 / 25,
@@ -640,8 +659,8 @@ const rarityDropRates = {
   "Astral": 1 / 2000000,
   "Primordial": 1 / 200000,
   "Glitched": 1 / 50000000,
-  "Reality-Bound": 1 / 90000000,
   "Ethereal": 1 / 106000000,
+  "Reality-Bound": 1 / 90000000,
   "Genesis": 1 / 2000000000
 };
 
@@ -953,6 +972,8 @@ const gearRecipes = {
   let inventory = {};
   // Keep track of unlocked gears
   let unlockedGears = {};
+  // Keep track of discovered artifacts
+  let discoveredArtifacts = {}; // New state variable for artifacts
   // Total spins
   let totalSpins = 0;
   // Money
@@ -969,6 +990,11 @@ const gearRecipes = {
   let autoSpinEnabled = false;
   let autoSpinInterval = null;
 
+  // === ARTIFACT SYSTEM (REWORKED) ===
+  let artifactPermanentLuck = 0; // For Reality Anchor - MOVED TO TOP
+  let genesisCascadeActive = false; // For Echo of Creation
+  let genesisCascadeEndTime = 0; // For Echo of Creation
+
   const spinBtn = document.getElementById("spin-btn");
   const autoSpinBtn = document.getElementById("auto-spin-btn");
   const resultDiv = document.getElementById("result");
@@ -979,8 +1005,8 @@ const gearRecipes = {
   const autoSpinRateDiv = document.getElementById("auto-spin-rate");
   const rarityCountsDiv = document.getElementById("rarity-counts");
   const rarityListSelect = document.getElementById("rarity-list");
-  const autoSpinRareThreshold = rarityRank["Reality-Bound"]; // Ancient and above
-  
+  const autoSpinRareThreshold = rarityRank["Reality-Bound"];
+
 // === WEATHER SYSTEM ===
 
 let currentWeather = null;
@@ -1074,7 +1100,7 @@ setInterval(() => {
 }, 1000);
 
 // === Initialize Weather UI on Page Load ===
-updateWeatherBanner();  
+updateWeatherBanner();
   // === Luck Upgrade System ===
 let luckUpgradeLevel = 0;
 let luckUpgradeBaseCost = 200;
@@ -1102,12 +1128,10 @@ document.getElementById("buy-luck-upgrade").addEventListener("click", () => {
     moneyDiv.textContent = `Money: ${money}`;
     saveGame();
     checkGearsUnlock();
-      luckDiv.textContent = `Luck Bonus from Gears: ${(currentLuck * 100 + getLuckBonusFromUpgrade() * 100).toFixed(2)}%`;
   }
 });
 
-  // Initialize rarity list in sidebar
-// Helper: Format chance from weight
+  // Helper: Format chance from weight
 function formatChance(weight) {
   const totalWeight = Object.values(baseRarities).reduce((a,b) => a + b, 0);
   if (weight === 0) return "N/A";
@@ -1115,6 +1139,16 @@ function formatChance(weight) {
   const inv = Math.round(1 / chance);
   return `1/${inv.toLocaleString()}`;
 }
+
+// Helper to get chance denominator string "1/XYZ"
+function getChanceDenominator(rarity) {
+  const weight = baseRarities[rarity];
+  if (!weight) return "?";
+  const totalWeight = Object.values(baseRarities).reduce((a,b) => a + b, 0); // Recalculate totalBaseWeight
+  const chance = weight / totalWeight;
+  return Math.round(1 / chance).toLocaleString(); // Adds commas for large numbers
+}
+
 
 // Initialize rarity list in sidebar with ??? for not pulled rarities
 function initRarityList() {
@@ -1124,7 +1158,7 @@ function initRarityList() {
     const pulledCount = getRarityCount(rarity);
     if (pulledCount === 0) {
       // Not pulled yet — show ??? and chance
-      option.textContent = `??? - ${formatChance(baseRarities[rarity])}`;
+      option.textContent = `??? - 1/${getChanceDenominator(rarity)}`;
       option.className = "rarity-" + rarity.replace(/ /g,"-");
       option.style.fontStyle = "italic";
       option.style.color = "#999";
@@ -1140,7 +1174,24 @@ function initRarityList() {
 }
 
 // Then, inside your spin() function, add this line near the end to refresh sidebar after each spin:
-initRarityList();
+// initRarityList(); // This is called in updateSpinResultUI
+
+function saveGame() {
+  const data = {
+    luckUpgradeLevel: luckUpgradeLevel,
+    inventory: inventory,
+    unlockedGears: unlockedGears,
+    discoveredArtifacts: discoveredArtifacts,
+    totalSpins: totalSpins,
+    money: money,
+    highestRarityPulled: highestRarityPulled,
+    artifactPermanentLuck: artifactPermanentLuck,
+    genesisCascadeActive: genesisCascadeActive,
+    genesisCascadeEndTime: genesisCascadeEndTime
+  };
+  localStorage.setItem("supaSpinSave", JSON.stringify(data));
+}
+
 function loadGame() {
   const saved = localStorage.getItem("supaSpinSave");
   if (saved) {
@@ -1148,9 +1199,17 @@ function loadGame() {
     luckUpgradeLevel = data.luckUpgradeLevel || 0;
     inventory = data.inventory || {};
     unlockedGears = data.unlockedGears || {};
+    discoveredArtifacts = data.discoveredArtifacts || {}; // Load artifacts
     totalSpins = data.totalSpins || 0;
     money = data.money || 0;
     highestRarityPulled = data.highestRarityPulled || null;
+    // Load artifact-specific states
+    artifactPermanentLuck = data.artifactPermanentLuck || 0;
+    genesisCascadeActive = data.genesisCascadeActive || false;
+    genesisCascadeEndTime = data.genesisCascadeEndTime || 0;
+    if (genesisCascadeActive && Date.now() > genesisCascadeEndTime) {
+        genesisCascadeActive = false; // End cascade if expired
+    }
   }
 }
 
@@ -1158,7 +1217,8 @@ function loadGame() {
 loadGame();
 
 function weightedRandomRarity(extraLuck = 0) {
-  const luckMultiplier = 1 + currentLuck + getLuckBonusFromUpgrade() + (extraLuck / 100);
+  let totalLuck = currentLuck + getLuckBonusFromUpgrade() + artifactPermanentLuck + (extraLuck / 100); // Added artifact permanent luck
+  const luckMultiplier = 1 + totalLuck;
 
   let weightedEntries = [];
   let totalWeight = 0;
@@ -1170,6 +1230,12 @@ function weightedRandomRarity(extraLuck = 0) {
     if (rarityRank[rarity] >= rarityRank["Legendary"]) {
       weight = baseWeight * luckMultiplier;
     }
+
+    // Apply weather rarity boost
+    if (window.currentWeather && window.currentWeather.rarityBoost && window.currentWeather.rarityBoost[rarity]) {
+      weight *= (1 + window.currentWeather.rarityBoost[rarity]);
+    }
+
 
     weightedEntries.push({ rarity, weight });
     totalWeight += weight;
@@ -1219,8 +1285,8 @@ function weightedRandomRarity(extraLuck = 0) {
     if (!inventory[rarity][variant]) inventory[rarity][variant] = 0;
     inventory[rarity][variant]++;
   }
-  
-  
+
+
 
   // Calculate total count of a rarity (all variants)
   function getRarityCount(rarity) {
@@ -1229,17 +1295,6 @@ function weightedRandomRarity(extraLuck = 0) {
   }
 
   // Update the rarity counts display
-// Precompute total weight of base rarities
-const totalBaseWeight = Object.values(baseRarities).reduce((a,b) => a + b, 0);
-
-// Helper to get chance denominator string "1/XYZ"
-function getChanceDenominator(rarity) {
-  const weight = baseRarities[rarity];
-  if (!weight) return "?";
-  const chance = weight / totalBaseWeight;
-  return "1/" + Math.round(1 / chance);
-}
-
 function getRaritySpan(rarity) {
   const specialRarities = ["Steelbone", "Celestial", "Ancient"];
   if (specialRarities.includes(rarity)) {
@@ -1250,70 +1305,58 @@ function getRaritySpan(rarity) {
 }
 
 function updateInventoryDisplay() {
+  const rarityCountsDiv = document.getElementById("rarity-counts");
+  rarityCountsDiv.innerHTML = ""; // Clear existing content to rebuild
+
   for (const rarity of rarityOrder) {
     const count = getRarityCount(rarity);
-    const hasEverPulled = inventory[rarity] !== undefined;
-    const rarityId = `rarity-${rarity.replace(/ /g, "-")}`;
+    const hasEverPulled = inventory[rarity] !== undefined && count > 0; // Check if pulled at least once
+
+    const rarityId = `rarity-display-${rarity.replace(/ /g, "-")}`; // Use unique ID for display elements
     const variantId = `${rarityId}-variants`;
-    const existingRarityDiv = document.getElementById(rarityId);
 
     if (hasEverPulled) {
-      const displayCount = count > 0 ? count : 0;
+      const displayCount = count;
 
-      if (!existingRarityDiv) {
-        // === CREATE RARITY DIV ===
-        const rarityDiv = document.createElement("div");
-        rarityDiv.id = rarityId;
-        rarityDiv.className = rarityId;
-        rarityDiv.style.cursor = "pointer";
-        rarityDiv.style.fontWeight = "bold";
-        rarityDiv.style.opacity = count > 0 ? "1" : "0.5";
-        rarityDiv.innerHTML = `▶ <strong>${getRaritySpan(rarity)}</strong>: <span class="rarity-count">${displayCount}</span>`;
+      const rarityDiv = document.createElement("div");
+      rarityDiv.id = rarityId;
+      rarityDiv.className = `rarity-${rarity.replace(/ /g, "-")}`; // Keep the class for styling
+      rarityDiv.style.cursor = "pointer";
+      rarityDiv.style.fontWeight = "bold";
+      rarityDiv.innerHTML = `▶ <strong>${getRaritySpan(rarity)}</strong>: <span class="rarity-count">${displayCount}</span>`;
 
-        // Attach click to toggle its variant div
-        rarityDiv.addEventListener("click", () => {
-          const variantDiv = document.getElementById(variantId);
-          if (variantDiv) {
-            const isVisible = variantDiv.style.display === "block";
-            variantDiv.style.display = isVisible ? "none" : "block";
-          }
-        });
-
-        // === CREATE VARIANT DIV ===
-        const variantDiv = document.createElement("div");
-        variantDiv.id = variantId;
-        variantDiv.style.display = "none";
-        variantDiv.style.paddingLeft = "15px";
-        variantDiv.style.fontSize = "14px";
-        variantDiv.innerHTML = getVariantBreakdown(rarity);
-
-        rarityCountsDiv.appendChild(rarityDiv);
-        rarityCountsDiv.appendChild(variantDiv);
-      } else {
-        // === UPDATE EXISTING DIV ===
-        existingRarityDiv.querySelector(".rarity-count").textContent = displayCount;
-        existingRarityDiv.style.opacity = count > 0 ? "1" : "0.5";
-
+      rarityDiv.addEventListener("click", () => {
         const variantDiv = document.getElementById(variantId);
         if (variantDiv) {
-          variantDiv.innerHTML = getVariantBreakdown(rarity);
+          const isVisible = variantDiv.style.display === "block";
+          variantDiv.style.display = isVisible ? "none" : "block";
         }
-      }
+      });
+
+      const variantDiv = document.createElement("div");
+      variantDiv.id = variantId;
+      variantDiv.style.display = "none";
+      variantDiv.style.paddingLeft = "15px";
+      variantDiv.style.fontSize = "14px";
+      variantDiv.innerHTML = getVariantBreakdown(rarity);
+
+      rarityCountsDiv.appendChild(rarityDiv);
+      rarityCountsDiv.appendChild(variantDiv);
     } else {
-      if (!existingRarityDiv) {
-        const denom = getChanceDenominator(rarity);
-        const unknownDiv = document.createElement("div");
-        unknownDiv.id = rarityId;
-        unknownDiv.className = "rarity-unknown";
-        unknownDiv.style.fontStyle = "italic";
-        unknownDiv.style.color = "#999";
-        unknownDiv.textContent = `??? - ${denom}`;
-        rarityCountsDiv.appendChild(unknownDiv);
-      }
+      // If not pulled yet, display the "???" with its chance
+      const denom = getChanceDenominator(rarity);
+      const unknownDiv = document.createElement("div");
+      unknownDiv.id = rarityId; // Still give it an ID for consistency
+      unknownDiv.className = "rarity-unknown";
+      unknownDiv.style.fontStyle = "italic";
+      unknownDiv.style.color = "#999";
+      unknownDiv.textContent = `??? - 1/${denom}`;
+      rarityCountsDiv.appendChild(unknownDiv);
     }
   }
-  }
-  
+}
+
+
 function getVariantBreakdown(rarity) {
   if (!inventory[rarity]) return "None";
   let breakdown = "";
@@ -1329,15 +1372,6 @@ function getVariantBreakdown(rarity) {
   return breakdown;
 }
 
-function toggleVariants(id) {
-  const el = document.getElementById(id + "-variants");
-  if (el.style.display === "none") {
-    el.style.display = "block";
-  } else {
-    el.style.display = "none";
-  }
-}
-
 
 function checkRequirements(requirements) {
   for (const [rarity, needed] of Object.entries(requirements)) {
@@ -1349,44 +1383,61 @@ function checkRequirements(requirements) {
 }
 
 function checkGearsUnlock() {
+  currentLuck = 0; // Reset current luck for gear calculations
+
+  let totalGearLuck = 0;
   let unlockedCount = 0;
-  currentLuck = 0;
 
   for (const [gearName, gearData] of Object.entries(gearRecipes)) {
-    const hasRequirements = checkRequirements(gearData.requirements);
-
-    // Auto-unlock if not already unlocked and requirements are met
-    if (!unlockedGears[gearName] && hasRequirements) {
-      unlockedGears[gearName] = true;
-    }
-
-    // Apply bonuses if unlocked
     if (unlockedGears[gearName]) {
       unlockedCount++;
-      currentLuck += gearData.luckBonus || 0;
+      totalGearLuck += gearData.luckBonus || 0;
     }
   }
 
-  // ✅ Include permanent luck upgrade here
-  currentLuck += getLuckBonusFromUpgrade();
+  // Add permanent luck upgrade to currentLuck
+  currentLuck = totalGearLuck + getLuckBonusFromUpgrade();
+
+  // Update luck display to include artifact permanent luck
+  luckDiv.textContent = `Luck Bonus from Gears + Artifacts: ${(currentLuck * 100 + artifactPermanentLuck * 100).toFixed(2)}%`;
 
   updateGearListDisplay();
   moneyDiv.textContent = `Money: ${money.toLocaleString()}`;
-  luckDiv.textContent = `Luck Bonus from Gears: ${(currentLuck * 100).toFixed(2)}%`;
   autoSpinBtn.disabled = unlockedCount === 0;
   saveGame();
+}
+
+// Function to consume rarities from inventory
+function consumeRarities(requirements) {
+  for (const [rarity, needed] of Object.entries(requirements)) {
+    let stillNeeded = needed;
+    if (!inventory[rarity]) continue; // No items of this rarity to consume
+
+    for (const variant in inventory[rarity]) {
+      if (stillNeeded <= 0) break;
+
+      const available = inventory[rarity][variant];
+      const toRemove = Math.min(available, stillNeeded);
+
+      inventory[rarity][variant] -= toRemove;
+      stillNeeded -= toRemove;
+
+      if (inventory[rarity][variant] <= 0) {
+        delete inventory[rarity][variant];
+      }
+    }
+    if (Object.keys(inventory[rarity]).length === 0) {
+      delete inventory[rarity]; // Remove rarity entry if no variants left
+    }
   }
-
-
+}
 
   // Count how many gears unlocked
   function unlockedGearsCount() {
     return Object.values(unlockedGears).filter(Boolean).length;
   }
 
-  // Update gear list display with progress bars
-// Update gear list display with clickable gear names to show requirements
-// Update gear list display with clickable gear names to show/hide requirements
+  // Update gear list display with clickable gear names to show/hide requirements
 // Track which gear's recipe is currently open
 let openedGearName = null;
 
@@ -1395,6 +1446,8 @@ function updateGearListDisplay() {
 
   for (const [gearName, gearData] of Object.entries(gearRecipes)) {
     const isUnlocked = unlockedGears[gearName];
+    const hasRequirements = checkRequirements(gearData.requirements);
+    const canAfford = money >= gearData.cost;
     const description = gearDescriptions[gearName] || "No description available.";
 
     // Count current requirements progress
@@ -1410,8 +1463,20 @@ function updateGearListDisplay() {
       reqListHtml += `<div style="color:${color}">${reqCount} x ${reqRarity} (You have: ${playerCount})</div>`;
     }
 
+    const costColor = canAfford ? "green" : "red";
+    reqListHtml += `<div>Cost: <span style="color:${costColor}">${gearData.cost.toLocaleString()} M</span></div>`;
+
     // Calculate progress percent
     const progress = totalReq > 0 ? (currentCount / totalReq) * 100 : 100;
+
+    let buttonHtml = "";
+    if (!isUnlocked) {
+      if (hasRequirements && canAfford) {
+        buttonHtml = `<button class="buy-gear-btn" data-gear="${gearName}">Buy</button>`;
+      } else {
+        buttonHtml = `<button disabled>Cannot Buy</button>`;
+      }
+    }
 
     html += `
       <div class="gear-box" style="border:1px solid #888; margin-bottom:8px; padding:8px; border-radius:5px;">
@@ -1433,6 +1498,7 @@ function updateGearListDisplay() {
           <strong>Requirements:</strong>
           ${reqListHtml}
         </div>
+        ${buttonHtml}
       </div>
     `;
   }
@@ -1461,12 +1527,33 @@ function updateGearListDisplay() {
     });
   });
 
+  // Add event listeners for new buy gear buttons
+  document.querySelectorAll(".buy-gear-btn").forEach(button => {
+    button.addEventListener("click", (event) => {
+      const gearName = event.target.dataset.gear;
+      const gearData = gearRecipes[gearName];
+
+      if (gearData && checkRequirements(gearData.requirements) && money >= gearData.cost) {
+        money -= gearData.cost;
+        consumeRarities(gearData.requirements); // Consume the rarities
+        unlockedGears[gearName] = true;
+        showNotification(`⚙️ Gear Unlocked: ${gearName}!`, "#007bff");
+        saveGame();
+        updateMoneyDisplay();
+        updateGearListDisplay(); // Re-evaluate and update gear display
+        updateInventoryDisplay(); // Update inventory since rarities were consumed
+        checkGearsUnlock(); // Re-evaluate total bonuses
+      }
+    });
+  });
+
+
   // Restore open gear requirements after UI rebuild
   if (openedGearName) {
     const openReqDiv = document.querySelector(`.gear-title[data-gear="${openedGearName}"]`)?.parentElement.querySelector(".gear-requirements");
     if (openReqDiv) openReqDiv.style.display = "block";
   }
-  }
+}
 // Clicking outside closes all open requirements
 document.body.addEventListener("click", () => {
   document.querySelectorAll(".gear-requirements").forEach(reqDiv => {
@@ -1480,99 +1567,99 @@ autoSpinBtn.disabled = false;
 
   // Spin function
   function spin() {
-  saveGame();
+  // Money earned mapping
+  const moneyMap = {
+    "Cracked": 0.1, "Chipped": 0.25, "Broken": 0.5, "Basic": 0.75, "Dull": 0.9,
+    "Tarnished": 1, "Common": 1.25, "Dusty": 1.5, "Uncommon": 3, "Firm": 4,
+    "Polished": 5, "Refined": 6, "Rare": 7, "Steelbone": 9, "Epic": 12,
+    "Legendary": 25, "Mythic": 40, "Ancient": 60, "Celestial": 100,
+    "Transcendent": 200, "Omniversal": 350, "Divine": 500, "Phantom": 650,
+    "Quantum": 800, "Astral": 1000, "Primordial": 1250, "Glitched": 1500,
+    "Ethereal": 2000, "Reality-Bound": 5000, "Genesis": 10000
+  };
+
+  let rarity = weightedRandomRarity();
+  let variant = weightedRandomVariant(rarity);
+  let earned = (moneyMap[rarity] || 1);
+
+  // Check for Genesis Cascade before anything else, overrides normal spin
+  if (genesisCascadeActive && Date.now() < genesisCascadeEndTime) {
+      let forcedRarity = "Genesis";
+      let nextGenesisIndex = rarityRank[forcedRarity];
+      if (nextGenesisIndex < rarityOrder.length - 1) { // If Genesis isn't the absolute highest
+          const higherRarities = rarityOrder.slice(nextGenesisIndex);
+          // Pick a random rarity from Genesis onwards, weighted towards higher tiers
+          let totalHigherWeight = higherRarities.reduce((sum, r) => sum + (baseRarities[r] * 5), 0); // Boost higher rarities during cascade
+          let randomHigherWeight = Math.random() * totalHigherWeight;
+          for (const r of higherRarities) {
+              if (randomHigherWeight < (baseRarities[r] * 5)) { // Apply same boost for selection
+                  forcedRarity = r;
+                  break;
+              }
+              randomHigherWeight -= (baseRarities[r] * 5);
+          }
+      }
+      rarity = forcedRarity;
+      variant = weightedRandomVariant(rarity);
+      earned = moneyMap[rarity] || 1; // Recalculate earned based on new rarity
+  }
+
+
   totalSpins++;
 
-  // Base weighted rarity pick with luck included
-  let rarity = weightedRandomRarity();
-    // Money earned mapping
-  const moneyMap = {
-  "Cracked": 0.1,
-  "Chipped": 0.25,
-  "Broken": 0.5,
-  "Basic": 0.75,
-  "Dull": 0.9,
-  "Tarnished": 1,
-  "Common": 1.25,
-  "Dusty": 1.5,
-  "Uncommon": 3,
-  "Firm": 4,
-  "Polished": 5,
-  "Refined": 6,
-  "Rare": 7,
-  "Steelbone": 9,
-  "Epic": 12,
-  "Legendary": 25,
-  "Mythic": 40,
-  "Ancient": 60,
-  "Celestial": 100,
-  "Transcendent": 200,
-  "Omniversal": 350,
-  "Divine": 500,
-  "Phantom": 650,
-  "Quantum": 800,
-  "Astral": 1000,
-  "Primordial": 1250,
-  "Glitched": 1500,
-  "Ethereal": 2000,
-  "Reality-Bound": 5000,
-  "Genesis": 10000
-};
 
-  // Apply weather rarity boost (if any)
-  if (window.currentWeather && window.currentWeather.rarityBoost) {
-    const boost = window.currentWeather.rarityBoost[rarity];
-    if (boost) {
-      // Here you can re-roll or increase chance.
-      // Simplest: add chance boost by reselecting rarity with boosted weights
-      rarity = weightedRandomRarityWithWeatherBoost(rarity, boost);
+    // Orb of Foresight: Reroll chance
+    if (discoveredArtifacts["Orb of Foresight"] && rarityRank[rarity] < rarityRank["Rare"] && Math.random() < 0.15) { // 15% chance to reroll if below Rare
+        showNotification(`🔮 Orb of Foresight: Rerolling ${rarity}!`, "#673ab7");
+        rarity = weightedRandomRarity(); // Reroll
+        variant = weightedRandomVariant(rarity); // Get new variant
+        earned = moneyMap[rarity] || 1; // Recalculate earned
     }
-  }
-  
-  let earned = moneyMap[rarity] || 1;
 
-// Fortune Ring (flat money multiplier)
-// Fortune Ring (flat money multiplier)
-if (unlockedGears["Gear 2: Fortune Ring"]) {
-  const bonus = gearRecipes["Gear 2: Fortune Ring"].moneyMultiplier || 0;
-  earned *= (1 + bonus);
-  
-  // Only notify once
-  if (!fortuneRingNotified) {
-    showNotification(`💰 Fortune Ring: +${(bonus * 100).toFixed(0)}% Money!`, "#4caf50");
-    fortuneRingNotified = true;
-  }
-}
-  
-  // Seraphim Booster (10th spin multiplier)
-  if (totalSpins % 10 === 0 && unlockedGears["Gear 4: Seraphim Booster"]) {
-    const multiplier = gearRecipes["Gear 4: Seraphim Booster"].tenthSpinMoneyMultiplier || 1;
-    earned *= multiplier;
-    showNotification(`💥 Tenth Spin Bonus x${multiplier}!`, "#ff9800");
-  }
-    
-  // Lightspeed Obliterator (every 3rd spin = temporary luck boost)
-let bonusLuck = 0;
+    // Amulet of Abundance: Duplicate money
+    if (discoveredArtifacts["Amulet of Abundance"] && Math.random() < 0.10) { // 10% chance to duplicate money
+        money += earned; // Add money again
+        showNotification(`💎 Amulet of Abundance: Money Duplicated!`, "#ff9800");
+    }
+
+    // Chronos Shard: Extra spin
+    if (discoveredArtifacts["Chronos Shard"] && Math.random() < 0.05) { // 5% chance for an extra spin
+        setTimeout(() => {
+            showNotification(`⏳ Chronos Shard: Extra Spin!`, "#00bcd4");
+            spin(); // Trigger another spin immediately
+        }, 100); // Small delay to show notification first
+    }
+
+    // Reality Anchor: Permanent stacking luck (applied in checkGearsUnlock)
+    if (discoveredArtifacts["Reality Anchor"] && totalSpins % 100 === 0) {
+        artifactPermanentLuck += 0.01; // +1% permanent luck every 100 spins
+        showNotification(`⚓ Reality Anchor: Luck increased to +${(artifactPermanentLuck * 100).toFixed(0)}%!`, "#2196f3");
+        checkGearsUnlock(); // Update luck display
+    }
+
+  let bonusLuck = 0;
+// Lightspeed Obliterator (every 3rd spin = temporary luck boost)
 if (unlockedGears["Gear 5: Lightspeed Obliterator"] && totalSpins % 3 === 0) {
   bonusLuck += gearRecipes["Gear 5: Lightspeed Obliterator"].thirdSpinLuckBoost || 0;
-  showNotification(`⚡ Lightspeed Bonus: +${bonusLuck}% Luck!`, "#00bcd4");
+  showNotification(`⚡ Lightspeed Bonus: +${(gearRecipes["Gear 5: Lightspeed Obliterator"].thirdSpinLuckBoost * 100).toFixed(0)}% Luck!`, "#00bcd4");
 }
-    
+
   // 404 Glitcher (random money boost or nerf on Glitched rarity)
   if (unlockedGears["Gear 6: 404 Glitcher"] && rarity === "Glitched") {
     const gearData = gearRecipes["Gear 6: 404 Glitcher"];
     if (Math.random() < (gearData.glitchMoneyBoostChance || 0)) {
-      const positive = Math.random() < 0.5; // 50/50 chance for buff or nerf
-      if (positive) {
-        earned *= gearData.glitchMoneyMultiplierPositive || 1;
-        showNotification(`🟪 404 Glitcher Bonus x${gearData.glitchMoneyMultiplierPositive}!`, "#9c27b0");
-      } else {
-        earned *= gearData.glitchMoneyMultiplierNegative || 1;
-        showNotification(`⚠️ 404 Glitcher Glitch: x${gearData.glitchMoneyMultiplierNegative}`, "#ff5252");
-      }
+        const positive = Math.random() < 0.5; // 50/50 chance for buff or nerf
+        if (!positive && discoveredArtifacts["Reality Anchor"]) { // If it would have been negative, but immunity is active
+            showNotification(`🛡️ Reality Anchor: Glitch avoided!`, "#2196f3");
+        } else if (positive) {
+            earned *= gearData.glitchMoneyMultiplierPositive || 1;
+            showNotification(`🟪 404 Glitcher Bonus x${gearData.glitchMoneyMultiplierPositive}!`, "#9c27b0");
+        } else { // It's negative, and no immunity
+            earned *= gearData.glitchMoneyMultiplierNegative || 1;
+            showNotification(`⚠️ 404 Glitcher Glitch: x${(gearData.glitchMoneyMultiplierNegative).toFixed(2)}`, "#ff5252");
+        }
     }
   }
-  
 
 
 // Existing gears you already have...
@@ -1610,7 +1697,19 @@ if (unlockedGears["Gear 11: Godwave Singularity"] && totalSpins % 50 === 0) {
   showNotification(`🌠 Godwave Blast: x${mult} Money!`, "#ffeb3b");
 }
 
-money += earned;
+  // Echo of Creation: Genesis Cascade
+  if (discoveredArtifacts["Echo of Creation"] && Math.random() < 0.005) { // 0.5% chance
+      genesisCascadeActive = true;
+      genesisCascadeEndTime = Date.now() + (30 * 1000); // 30 seconds duration
+      showNotification(`✨ Genesis Cascade Active for 30s! All pulls are Genesis or higher!`, "#FFD700", 5000);
+  }
+
+  processSpinResult(rarity, variant, earned);
+  saveGame();
+}
+
+function processSpinResult(rarity, variant, earned) {
+  money += earned;
 
   // Auto-spin interruption logic
   if (autoSpinEnabled && rarityRank[rarity] >= autoSpinRareThreshold) {
@@ -1624,26 +1723,11 @@ money += earned;
     // new Audio("your-raresound.mp3").play();
 
     setTimeout(() => {
-      if (!autoSpinEnabled) {
-        startAutoSpin();
+      // Re-enable auto spin if not manually stopped
+      if (!autoSpinEnabled) { // Only restart if still in an auto-spin state (not manually turned off)
+         startAutoSpin();
       }
-    }, 3000);
-  }
-
-  // Pick variant normally
-  let variant = weightedRandomVariant(rarity);
-
-  // If current weather unlocks variants for this rarity, boost chance for those
-  if (window.currentWeather && window.currentWeather.unlockVariants) {
-    const unlockedVariants = window.currentWeather.unlockVariants;
-    if (!variant || !unlockedVariants.includes(variant)) {
-      // Try to pick a variant from unlocked list if any exist
-      const variantsForRarity = variants[rarity] || [];
-      const filtered = variantsForRarity.filter(v => unlockedVariants.includes(v.name));
-      if (filtered.length > 0) {
-        variant = filtered[Math.floor(Math.random() * filtered.length)].name;
-      }
-    }
+    }, 3000); // Wait 3 seconds before resuming
   }
 
   // Add to inventory
@@ -1653,68 +1737,25 @@ money += earned;
   if (!highestRarityPulled || rarityRank[rarity] > rarityRank[highestRarityPulled]) {
     highestRarityPulled = rarity;
   }
-  
-  function getChanceDenominator(rarity) {
-  const rate = baseRarities[rarity];
-  if (!rate || rate <= 0) return "?";
-  return Math.round(1 / rate).toLocaleString(); // Adds commas for large numbers
+
+  // Update UI
+  updateSpinResultUI(rarity, variant, earned, money, totalSpins, highestRarityPulled);
+
+  // Check if any gears can unlock now
+  checkGearsUnlock();
+  // Check if any artifacts can be discovered
+  updateArtifactsPanelAndBonuses();
 }
-// Your spin function or wherever you update UI after a spin
+
+
 function updateSpinResultUI(rarity, variant, earned, money, totalSpins, highestRarityPulled) {
-  resultDiv.innerHTML = `<span class="rarity-${rarity.replace(/ /g, "-")}">${rarity} (1/${getChanceDenominator(rarity)})</span> <span class="variant">${variant}</span><br>Money earned: ${earned}`;
-  moneyDiv.textContent = ` M ${money}`;
-  statsDiv.innerHTML = `Total Spins: ${totalSpins}<br>Rarest Pull: <span class="rarity-${(highestRarityPulled || "Common").replace(/ /g, "-")}">${highestRarityPulled || "N/A"}</span>`;
+  resultDiv.innerHTML = `<span class="rarity-${rarity.replace(/ /g, "-")}">${rarity} (1/${getChanceDenominator(rarity)})</span> <span class="variant">${variant}</span><br>Money earned: ${earned.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+  moneyDiv.textContent = ` M ${money.toLocaleString()}`;
+  statsDiv.innerHTML = `Total Spins: ${totalSpins.toLocaleString()}<br>Rarest Pull: <span class="rarity-${(highestRarityPulled || "Common").replace(/ /g, "-")}">${highestRarityPulled || "N/A"}</span>`;
   updateInventoryDisplay();
+  initRarityList();
 }
 
-
-    // Update UI
-    updateSpinResultUI(rarity, variant, earned, money, totalSpins, highestRarityPulled);
-
-    
-    // Helper function for rarity re-roll with weather boost
-function weightedRandomRarityWithWeatherBoost(baseRarity, boost) {
-  // Create adjusted chances applying boost to baseRarity
-  const baseChances = getBaseRarityChances(); // Implement this to get base chances map
-
-  // Increase boosted rarity chance by multiplying its weight
-  let adjustedChances = { ...baseChances };
-  if (adjustedChances[baseRarity]) {
-    adjustedChances[baseRarity] *= (1 + boost);
-  }
-
-  // Normalize chances
-  const total = Object.values(adjustedChances).reduce((a,b) => a+b, 0);
-  for (const r in adjustedChances) {
-    adjustedChances[r] /= total;
-  }
-
-  // Weighted random selection
-  let rand = Math.random();
-  let cumulative = 0;
-  for (const [r, chance] of Object.entries(adjustedChances)) {
-    cumulative += chance;
-    if (rand <= cumulative) return r;
-  }
-
-  return baseRarity; // fallback
-}
-
-    // Check if any gears can unlock now
-    checkGearsUnlock();
-  }
-  
-  function saveGame() {
-  const gameData = {
-    inventory,
-    unlockedGears,
-    totalSpins,
-    money,
-    luckUpgradeLevel,
-    highestRarityPulled
-  };
-  localStorage.setItem("supaSpinSave", JSON.stringify(gameData));
-}
 
   spinBtn.addEventListener("click", spin);
 
@@ -1786,11 +1827,17 @@ document.getElementById("secretCodeSubmit").addEventListener("click", () => {
     for (const gearName of Object.keys(gearRecipes)) {
       unlockedGears[gearName] = true;
     }
+    // Discover all artifacts
+    for (const artifactName of Object.keys(artifactRecipes)) {
+      discoveredArtifacts[artifactName] = true;
+    }
+
 
     updateGearListDisplay();
-
+    updateArtifactsPanelAndBonuses(); // Update artifacts display after unlocking all
+    checkGearsUnlock(); // Recalculate bonuses
     msgEl.style.color = "green";
-    msgEl.textContent = "✅ All gears unlocked!";
+    msgEl.textContent = "✅ All gears and artifacts unlocked!";
   } else {
     msgEl.style.color = "red";
     msgEl.textContent = "❌ Invalid code.";
@@ -1798,13 +1845,139 @@ document.getElementById("secretCodeSubmit").addEventListener("click", () => {
 
   document.getElementById("secretCodeInput").value = "";
 });
-  // Initialize
+
+
+// === ARTIFACT SYSTEM (REWORKED) ===
+const artifactRecipes = {
+  "Orb of Foresight": {
+    requirements: { "Epic": 50, "Rare": 200, "Uncommon": 500 },
+    cost: 50000,
+    description: "Grants a 15% chance to reroll your spin result if it's below 'Rare'."
+  },
+  "Amulet of Abundance": {
+    requirements: { "Legendary": 10, "Epic": 80, "Rare": 300 },
+    cost: 150000,
+    description: "Provides a 10% chance to duplicate the money earned from your spin."
+  },
+  "Chronos Shard": {
+    requirements: { "Mythic": 5, "Legendary": 20, "Ancient": 2 },
+    cost: 500000,
+    description: "Grants a 5% chance for an immediate, free extra spin after your current one."
+  },
+  "Reality Anchor": {
+    requirements: { "Reality-Bound": 1, "Ethereal": 2, "Glitched": 3 },
+    cost: 5000000,
+    description: "Prevents negative Glitched effects and grants +1% permanent luck every 100 spins."
+  },
+  "Echo of Creation": {
+    requirements: { "Genesis": 1, "Primordial": 2, "Astral": 3 },
+    cost: 10000000,
+    description: "Grants a 0.5% chance for a 'Genesis Cascade', forcing Genesis or higher rarity pulls for 30 seconds."
+  }
+};
+
+
+function updateArtifactsPanelAndBonuses() { // Renamed from checkArtifactDiscovery
+  const artifactListDiv = document.getElementById("artifact-list");
+  let html = "";
+  let anyDiscoverable = false;
+
+  for (const [artifactName, artifactData] of Object.entries(artifactRecipes)) {
+    const isDiscovered = discoveredArtifacts[artifactName];
+    const hasRequirements = checkRequirements(artifactData.requirements);
+    const canAfford = money >= artifactData.cost;
+
+    let reqListHtml = "";
+    for (const [reqRarity, reqCount] of Object.entries(artifactData.requirements)) {
+      const playerCount = getRarityCount(reqRarity);
+      const color = playerCount >= reqCount ? "green" : "red";
+      reqListHtml += `<div style="color:${color}">${reqCount} x ${reqRarity} (You have: ${playerCount})</div>`;
+    }
+    const costColor = canAfford ? "green" : "red";
+    reqListHtml += `<div>Cost: <span style="color:${costColor}">${artifactData.cost.toLocaleString()} M</span></div>`;
+
+    let buttonHtml = "";
+    if (!isDiscovered) {
+      if (hasRequirements && canAfford) {
+        buttonHtml = `<button class="buy-artifact-btn" data-artifact="${artifactName}">Discover</button>`;
+        anyDiscoverable = true;
+      } else {
+        buttonHtml = `<button disabled>Cannot Discover</button>`;
+      }
+    }
+
+    html += `
+      <div class="artifact-box" style="border:1px solid #888; margin-bottom:8px; padding:8px; border-radius:5px;">
+        <div style="font-weight:bold;">${artifactName} ${isDiscovered ? "🌟" : "❓"}</div>
+        <div style="font-style: italic; color: #555; margin-bottom: 6px;">${artifactData.description}</div>
+        <div style="font-size:14px;">
+          ${isDiscovered ? "<strong>Discovered!</strong>" : "<strong>Requirements:</strong>" + reqListHtml}
+        </div>
+        ${buttonHtml}
+      </div>
+    `;
+  }
+
+  artifactListDiv.innerHTML = html || "No artifacts defined.";
+
+  // Add event listeners for new discover buttons
+  document.querySelectorAll(".buy-artifact-btn").forEach(button => {
+    button.addEventListener("click", (event) => {
+      const artifactName = event.target.dataset.artifact;
+      const artifactData = artifactRecipes[artifactName];
+
+      if (artifactData && checkRequirements(artifactData.requirements) && money >= artifactData.cost) {
+        money -= artifactData.cost;
+        consumeRarities(artifactData.requirements);
+        discoveredArtifacts[artifactName] = true;
+        showNotification(`✨ Artifact Found: ${artifactName}!`, "#ffcc00");
+        saveGame();
+        updateMoneyDisplay();
+        updateArtifactsPanelAndBonuses(); // Re-evaluate and update artifact display
+        updateInventoryDisplay(); // Update inventory since rarities were consumed
+        checkGearsUnlock(); // Re-evaluate gear requirements too
+      }
+    });
+  });
+
+  // Update UI elements that depend on artifact bonuses
+  luckDiv.textContent = `Luck Bonus from Gears + Artifacts: ${(currentLuck * 100 + artifactPermanentLuck * 100).toFixed(2)}%`;
+  updateMoneyDisplay();
+  updateSpinBoostDisplay();
+}
+
+
+function updateMoneyDisplay() {
+  moneyDiv.textContent = `Money: ${money.toLocaleString()}`;
+}
+
+function updateSpinBoostDisplay() {
+  let totalBoost = 0;
+  for (const gearName in unlockedGears) {
+    if (unlockedGears[gearName]) {
+      totalBoost += gearRecipes[gearName].spinRateBoost || 0;
+    }
+  }
+
+  totalBoost = Math.min(totalBoost, 250); // Cap boost
+
+  const boostPercent = (totalBoost * 100).toFixed(1);
+  const spinBoostDiv = document.getElementById("spinBoostDisplay");
+  if (spinBoostDiv) {
+    spinBoostDiv.textContent = `Spin Speed Boost: ${boostPercent}%`;
+  }
+}
+
+
+  // Initial calls to update UI
   initRarityList();
   updateGearListDisplay();
   updateInventoryDisplay();
   updateLuckUpgradeUI();
-  luckDiv.textContent = "Luck Bonus from Gears: 0%";
-
+  updateArtifactsPanelAndBonuses(); // Call to initialize artifacts display
+  checkGearsUnlock(); // This also updates currentLuck and luckDiv
+  updateMoneyDisplay();
+  updateSpinBoostDisplay();
 </script>
 </body>
 </html>
