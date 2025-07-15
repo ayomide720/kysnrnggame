@@ -1698,9 +1698,9 @@ if (unlockedGears["Gear 11: Godwave Singularity"] && totalSpins % 50 === 0) {
 }
 
   // Echo of Creation: Genesis Cascade
-  if (discoveredArtifacts["Echo of Creation"] && Math.random() < 0.005) { // 0.5% chance
+  if (discoveredArtifacts["Echo of Creation"] && Math.random() < 0.00001) { // 0.5% chance
       genesisCascadeActive = true;
-      genesisCascadeEndTime = Date.now() + (30 * 1000); // 30 seconds duration
+      genesisCascadeEndTime = Date.now() + (10 * 1000); // 30 seconds duration
       showNotification(`✨ Genesis Cascade Active for 30s! All pulls are Genesis or higher!`, "#FFD700", 5000);
   }
 
