@@ -48,7 +48,9 @@ body {
 #money,
 #gears,
 #luck,
-#artifacts-panel { /* Added artifacts-panel */
+#artifacts-panel,
+#settings-panel, /* Added settings-panel */
+#achievements-panel { /* Added achievements-panel */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
   font-weight: 500;
@@ -70,7 +72,9 @@ body {
 #money:hover,
 #gears:hover,
 #luck:hover,
-#artifacts-panel:hover { /* Added artifacts-panel */
+#artifacts-panel:hover,
+#settings-panel:hover, /* Added settings-panel */
+#achievements-panel:hover { /* Added achievements-panel */
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
@@ -334,7 +338,7 @@ body {
     display: block;
     margin-bottom: 8px;
   }
-  #upgrades-panel, #artifacts-panel { /* Added artifacts-panel */
+  #upgrades-panel, #artifacts-panel, #settings-panel, #achievements-panel { /* Added settings and achievements */
   margin-top: 20px;
   padding: 20px;
   border-radius: 12px;
@@ -345,7 +349,7 @@ body {
   margin-bottom: 15px;
   font-size: 15px;
 }
-#buy-luck-upgrade, .buy-artifact-btn { /* Added .buy-artifact-btn */
+#buy-luck-upgrade, #buy-spin-speed-upgrade, .buy-artifact-btn { /* Added .buy-spin-speed-upgrade and .buy-artifact-btn */
   margin-top: 8px;
   padding: 6px 12px;
   font-size: 14px;
@@ -369,6 +373,37 @@ body {
   background: #ccc;
   cursor: not-allowed;
 }
+
+/* Entity Beyond Time rarity */
+.rarity-Entity-Beyond-Time {
+  color: #00bcd4; /* Light Blue */
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  text-shadow: 0 0 10px #00e0ff, 0 0 20px #00b0ff;
+  animation: warpTime 4s infinite alternate;
+}
+
+@keyframes warpTime {
+  0%   { transform: skewX(0) scale(1); opacity: 1; text-shadow: 0 0 10px #00e0ff; }
+  50%  { transform: skewX(-5deg) scale(1.02); opacity: 0.8; text-shadow: 0 0 20px #00e0ff, 0 0 30px #00b0ff; }
+  100% { transform: skewX(0) scale(1); opacity: 1; text-shadow: 0 0 10px #00e0ff; }
+}
+
+/* Dimensional Overclocker Gear Title */
+.gear-title[data-gear="Dimensional Overclocker"] {
+  color: #03a9f4; /* A slightly darker blue */
+  font-family: 'Orbitron', sans-serif;
+  text-shadow: 0 0 8px #2196f3;
+  animation: temporalGlow 3s infinite ease-in-out;
+  font-size: 20px; /* Make it stand out */
+}
+
+@keyframes temporalGlow {
+  0% { text-shadow: 0 0 8px #2196f3; }
+  50% { text-shadow: 0 0 18px #2196f3, 0 0 25px #00bcd4; }
+  100% { text-shadow: 0 0 8px #2196f3; }
+}
+
 
   select {
     width: 100%;
@@ -478,10 +513,15 @@ body {
     <strong>Luck Upgrade</strong> (Level <span id="luck-upgrade-level">0</span>)<br>
     Increases base luck by 10% per level.<br>
     <button id="buy-luck-upgrade">Buy (Cost: <span id="luck-upgrade-cost">10,000</span>)</button>
+  </div>
+  <div class="upgrade-box">
+    <strong>Spin Speed Upgrade</strong> (Level <span id="spin-speed-upgrade-level">0</span>)<br>
+    Increases base spin speed.<br>
+    <button id="buy-spin-speed-upgrade">Buy (Cost: <span id="spin-speed-upgrade-cost">5,000</span>)</button>
+  </div>
     <button id="toggle-image-showcase-btn" style="margin-bottom:10px;">Show/Hide Rarity Images</button>
 
 <div id="image-showcase" style="display:none; border: 1px solid #ccc; padding: 10px; max-width: 600px; margin-top: 10px; background: #fafafa; overflow-x: auto; white-space: nowrap;">
-  </div>
   </div>
   <div id="image-showcase" style="margin-top: 40px; padding: 20px;">
   <h2>Your Collection</h2>
@@ -494,23 +534,51 @@ body {
   <div id="artifact-list">No artifacts discovered yet.</div>
 </div>
 
+<div id="achievements-panel">
+  <h3>Achievements</h3>
+  <div id="achievement-list">No achievements unlocked yet.</div>
+</div>
+
+<div id="settings-panel">
+  <h3>Settings</h3>
+  <button id="toggle-music-btn">Music: ON</button>
+</div>
+
   <label for="rarity-list">All Rarities</label>
   <select id="rarity-list" size="16" readonly>
     </select>
 </div>
 <script>
 let bgmStarted = false;
+let musicEnabled = true; // New state for music
+
 function startBGM() {
-  if (!bgmStarted) {
-    const audio = document.getElementById("bgm-audio");
+  const audio = document.getElementById("bgm-audio");
+  if (!bgmStarted && musicEnabled) {
     audio.volume = 0.3;
     audio.play().catch(err => {
-      console.log("Autoplay blocked:", err);
+      console.log("Autoplay blocked or failed:", err);
     });
     bgmStarted = true;
   }
 }
+
+function toggleMusic() {
+  const audio = document.getElementById("bgm-audio");
+  musicEnabled = !musicEnabled;
+  document.getElementById("toggle-music-btn").textContent = `Music: ${musicEnabled ? 'ON' : 'OFF'}`;
+  if (musicEnabled) {
+    startBGM(); // Try to start if not already playing
+  } else {
+    audio.pause();
+    bgmStarted = false; // Reset so it tries to play from start if turned on again
+  }
+  saveGame(); // Save music preference
+}
+
 document.addEventListener("click", startBGM, { once: true });
+document.getElementById("toggle-music-btn").addEventListener("click", toggleMusic);
+
 
 // Create container once
 const notificationContainer = document.createElement("div");
@@ -661,7 +729,8 @@ const rarityDropRates = {
   "Glitched": 1 / 50000000,
   "Ethereal": 1 / 106000000,
   "Reality-Bound": 1 / 90000000,
-  "Genesis": 1 / 2000000000
+  "Genesis": 1 / 2000000000,
+  "Entity Beyond Time": 1 / 10000000000
 };
 
 const baseRarities = {};
@@ -805,7 +874,7 @@ const gearRecipes = {
 
   "Gear 3: Eccentric Engine": {
     requirements: { "Rare": 200, "Epic": 50, "Legendary": 5 },
-    cost: 60000,
+    cost: 120000,
     luckBonus: 4.0,
     rarityUpgradeChance: 0.10,
     spinRateBoost: 0.12
@@ -820,7 +889,7 @@ const gearRecipes = {
       "Celestial": 4,
       "Transcendent": 2
     },
-    cost: 75000,
+    cost: 225000,
     luckBonus: 7.5,
     tenthSpinMoneyMultiplier: 5,
     variantRarityMultiplier: 1.1
@@ -835,7 +904,7 @@ const gearRecipes = {
       "Transcendent": 4,
       "Omniversal": 2
     },
-    cost: 100000,
+    cost: 500000,
     luckBonus: 12.5,
     thirdSpinLuckBoost: 12,
     spinRateBoost: 0.25
@@ -850,7 +919,7 @@ const gearRecipes = {
       "Omniversal": 4,
       "Divine": 2
     },
-    cost: 150000,
+    cost: 1000000,
     luckBonus: 30,
     addsGlitchedVariant: true,
     glitchMoneyBoostChance: 0.35,
@@ -868,7 +937,7 @@ const gearRecipes = {
       "Phantom": 2,
       "Quantum": 2
     },
-    cost: 200000,
+    cost: 2000000,
     luckBonus: 40,
     moneyMultiplier: 0.8,
     variantLuckBoost: 0.4
@@ -885,7 +954,7 @@ const gearRecipes = {
       "Astral": 2,
       "Primordial": 2
     },
-    cost: 400000,
+    cost: 4000000,
     spinRateBoost: 0.75,
     tenthSpinMoneyMultiplier: 8,
     variantRarityMultiplier: 1.3
@@ -903,7 +972,7 @@ const gearRecipes = {
       "Ethereal": 2,
       "Reality-Bound": 2
     },
-    cost: 800000,
+    cost: 8000000,
     luckBonus: 300,
     bonusLuckChance: 0.4,
     moneyMultiplier: 0.4
@@ -922,7 +991,7 @@ const gearRecipes = {
       "Genesis": 1,
       "Steelbone": 5
     },
-    cost: 950000,
+    cost: 15000000,
     paradoxSpinChance: 0.04,
     glitchMoneyImmunity: true
   },
@@ -946,13 +1015,28 @@ const gearRecipes = {
       "Mythic": 2500,
       "Steelbone": 300
     },
-    cost: 10000000,
+    cost: 30000000,
     luckBonus: 3000,
     spinRateBoost: 0.8,
     godwaveMultiplier: 8,
     overrideSpinCap: true
+  },
+
+  "Dimensional Overclocker": {
+    requirements: { "Entity Beyond Time": 1 }, // Requires 1 Entity Beyond Time
+    cost: 0, // No money cost, unlocked by rarity
+    description: "A mysterious device that warps time. For every 10% of your current luck, gain 10% more spin speed. Additionally, each unlocked gear dramatically boosts your total luck!",
+    isSecret: true, // Mark as secret to handle its unique unlock
+    luckScaling: true, // Custom luck scaling property
+    spinSpeedScaling: true // Custom spin speed scaling property
   }
 };
+
+
+// Apply 50% cost reduction to all gears
+for (const gearName in gearRecipes) {
+  gearRecipes[gearName].cost *= 0.5;
+}
 
   const gearDescriptions = {
   "Gear 1: Luck Amulet": "A simple amulet that increases your luck by 125%, making rare pulls more common and speeding up your spins by 25%.",
@@ -965,8 +1049,54 @@ const gearRecipes = {
   "Gear 8: Eternity Processor": "An advanced processor that speeds up spins by 40%, increases variant chances by 35%, and boosts rare payouts by 60%.",
   "Gear 9: Genesis Drive": "The drive that controls genesis-level power, greatly enhancing luck by 400% and money multipliers by 300% for high-tier pulls.",
   "Gear 10: Paradox Core": "A core that manipulates paradoxes to protect you from glitches and unlock rare spin bonuses, increasing luck by 500% and spin speed by 50%.",
-  "Gear 11: Godwave Singularity": "The pinnacle of all gear, granting massive luck boosts of 1000%, spin speed boosts of 150%, and unparalleled money multipliers up to 10x."
+  "Gear 11: Godwave Singularity": "The pinnacle of all gear, granting massive luck boosts of 1000%, spin speed boosts of 150%, and unparalleled money multipliers up to 10x.",
+  "Dimensional Overclocker": "No human can understand this."
 };
+let achievements = {
+  "First Spin": { description: "Perform your first spin.", unlocked: false },
+  "Spin Enthusiast": { description: "Spin 100 times.", unlocked: false },
+  "Rare Collector": { description: "Pull a 'Rare' rarity item.", unlocked: false },
+  "Epic Spindly": {description: "Pull an 'Epic' rarity item.", unlocked: false},
+  "Legendary Seeker": {description: "Pull a 'Legendary' rarity item.", unlocked: false},
+  "Mythic Dreamer": {description: "Pull a 'Mythic' rarity item.", unlocked: false},
+  "Ancient Knowledge": {description: "Pull an 'Ancient' rarity item.", unlocked: false},
+  "Celestial Harmony": {description: "Pull a 'Celestial' rarity item.", unlocked: false},
+  "Transcendent Being": {description: "Pull a 'Transcendent' rarity item.", unlocked: false},
+  "Omniversal Conqueror": {description: "Pull an 'Omniversal' rarity item.", unlocked: false},
+  "Divine Presence": {description: "Pull a 'Divine' rarity item.", unlocked: false},
+  "Phantom Weaver": {description: "Pull a 'Phantom' rarity item.", unlocked: false},
+  "Quantum Leaper": {description: "Pull a 'Quantum' rarity item.", unlocked: false},
+  "Astral Traveler": {description: "Pull an 'Astral' rarity item.", unlocked: false},
+  "Primordial Genesis": {description: "Pull a 'Primordial' rarity item.", unlocked: false},
+  "Glitched Reality": {description: "Pull a 'Glitched' rarity item.", unlocked: false},
+  "Ethereal Whisper": {description: "Pull an 'Ethereal' rarity item.", unlocked: false},
+  "Reality Bender": {description: "Pull a 'Reality-Bound' rarity item.", unlocked: false},
+  "Genesis Unlocked": {description: "Pull a 'Genesis' rarity item.", unlocked: false},
+  "Luck Amulet Acquired": {description: "Unlock Gear 1: Luck Amulet.", unlocked: false},
+  "Fortune Ring Forged": {description: "Unlock Gear 2: Fortune Ring.", unlocked: false},
+  "Eccentric Engine Built": {description: "Unlock Gear 3: Eccentric Engine.", unlocked: false},
+  "Seraphim Blessed": {description: "Unlock Gear 4: Seraphim Booster.", unlocked: false},
+  "Lightspeed Engaged": {description: "Unlock Gear 5: Lightspeed Obliterator.", unlocked: false},
+  "System Glitched": {description: "Unlock Gear 6: 404 Glitcher.", unlocked: false},
+  "Omnicore Activated": {description: "Unlock Gear 7: Omnicore Reactor.", unlocked: false},
+  "Eternity Achieved": {description: "Unlock Gear 8: Eternity Processor.", unlocked: false},
+  "Genesis Drive Online": {description: "Unlock Gear 9: Genesis Drive.", unlocked: false},
+  "Paradox Solved": {description: "Unlock Gear 10: Paradox Core.", unlocked: false},
+  "Godwave Unleashed": {description: "Unlock Gear 11: Godwave Singularity.", unlocked: false},
+  "Orb Discovered": {description: "Discover the Orb of Foresight artifact.", unlocked: false},
+  "Amulet Found": {description: "Discover the Amulet of Abundance artifact.", unlocked: false},
+  "Chronos Activated": {description: "Discover the Chronos Shard artifact.", unlocked: false},
+  "Reality Anchored": {description: "Discover the Reality Anchor artifact.", unlocked: false},
+  "Echo Heard": {description: "Discover the Echo of Creation artifact.", unlocked: false},
+  "Money Maker": {description: "Earn 10,000 Money.", unlocked: false},
+  "Wealthy Spinner": {description: "Earn 100,000 Money.", unlocked: false},
+  "Millionaire": {description: "Earn 1,000,000 Money.", unlocked: false},
+  "Luck Upgraded!": {description: "Upgrade Luck 1 time.", unlocked: false},
+  "Speed Demon": {description: "Upgrade Spin Speed 1 time.", unlocked: false},
+  "Max Luck Upgrade": {description: "Reach Max Luck Upgrade (Level 10).", unlocked: false}, // Example max level
+  "Max Speed Upgrade": {description: "Reach Max Spin Speed Upgrade (Level 10).", unlocked: false}, // Example max level
+};
+
 
   // Keep inventory count of rarities and variants
   let inventory = {};
@@ -1015,29 +1145,29 @@ const weatherTypes = {
   "Mystic Storm": {
     duration: 60000,
     chance: 0.01,
-    effectDescription: "Celestial is 90% more likely. Mystic variants are unlocked.",
-    rarityBoost: { "Celestial": 0.90 },
+    effectDescription: "Celestial is 25% more likely. Mystic variants are unlocked.",
+    rarityBoost: { "Celestial": 0.25 },
     unlockVariants: ["Mystic"]
   },
   "Solar Flare": {
     duration: 45000,
     chance: 0.0075,
     effectDescription: "Ancient and Mythic increased. Unlocks Solar variants.",
-    rarityBoost: { "Ancient": 0.9, "Mythic": 0.9 },
+    rarityBoost: { "Ancient": 0.2, "Mythic": 0.1 },
     unlockVariants: ["Solar"]
   },
   "Void Eclipse": {
     duration: 70000,
     chance: 0.0037,
     effectDescription: "Increased Glitched drop chance. Unlocks Void variants.",
-    rarityBoost: { "Glitched": 120 },
+    rarityBoost: { "Glitched": 5 },
     unlockVariants: ["Void"]
   },
   "Lucky Winds": {
-    duration: 20000,
+    duration: 30000,
     chance: 0.015,
-    effectDescription: "+500% global luck bonus.",
-    globalLuckBoost: 5.0,
+    effectDescription: "+20% global luck bonus.",
+    globalLuckBoost: 0.2,
     unlockVariants: ["Windblessed"]
   }
 };
@@ -1125,9 +1255,47 @@ document.getElementById("buy-luck-upgrade").addEventListener("click", () => {
     money -= cost;
     luckUpgradeLevel++;
     updateLuckUpgradeUI();
-    moneyDiv.textContent = `Money: ${money}`;
+    moneyDiv.textContent = `Money: ${money.toLocaleString()}`;
     saveGame();
     checkGearsUnlock();
+  } else {
+      showNotification("Not enough money!", "#dc3545");
+  }
+});
+
+// === Spin Speed Upgrade System ===
+let spinSpeedUpgradeLevel = 0;
+let spinSpeedUpgradeBaseCost = 5000;
+const spinSpeedUpgradeEffect = 0.05; // Each level adds 2% to spin rate boost
+
+function getSpinSpeedUpgradeCost() {
+  return Math.floor(spinSpeedUpgradeBaseCost * Math.pow(1.5, spinSpeedUpgradeLevel));
+}
+
+function getSpinSpeedBonusFromUpgrade() {
+  return spinSpeedUpgradeLevel * spinSpeedUpgradeEffect;
+}
+
+function updateSpinSpeedUpgradeUI() {
+  document.getElementById("spin-speed-upgrade-level").textContent = spinSpeedUpgradeLevel;
+  document.getElementById("spin-speed-upgrade-cost").textContent = getSpinSpeedUpgradeCost().toLocaleString();
+}
+
+document.getElementById("buy-spin-speed-upgrade").addEventListener("click", () => {
+  const cost = getSpinSpeedUpgradeCost();
+  if (money >= cost) {
+    money -= cost;
+    spinSpeedUpgradeLevel++;
+    updateSpinSpeedUpgradeUI();
+    moneyDiv.textContent = `Money: ${money.toLocaleString()}`;
+    saveGame();
+    // Re-evaluate spin speed if auto-spin is active
+    if (autoSpinEnabled) {
+      startAutoSpin();
+    }
+    updateSpinBoostDisplay();
+  } else {
+      showNotification("Not enough money!", "#dc3545");
   }
 });
 
@@ -1154,6 +1322,11 @@ function getChanceDenominator(rarity) {
 function initRarityList() {
   rarityListSelect.innerHTML = "";
   for (const rarity of rarityOrder) {
+    // CONDITIONALLY RENDER "Entity Beyond Time"
+    if (rarity === "Entity Beyond Time" && getRarityCount("Entity Beyond Time") === 0) {
+      continue; // Skip if Entity Beyond Time not yet pulled
+    }
+
     const option = document.createElement("option");
     const pulledCount = getRarityCount(rarity);
     if (pulledCount === 0) {
@@ -1171,7 +1344,7 @@ function initRarityList() {
     }
     rarityListSelect.appendChild(option);
   }
-}
+  }
 
 // Then, inside your spin() function, add this line near the end to refresh sidebar after each spin:
 // initRarityList(); // This is called in updateSpinResultUI
@@ -1179,6 +1352,7 @@ function initRarityList() {
 function saveGame() {
   const data = {
     luckUpgradeLevel: luckUpgradeLevel,
+    spinSpeedUpgradeLevel: spinSpeedUpgradeLevel, // Save spin speed upgrade level
     inventory: inventory,
     unlockedGears: unlockedGears,
     discoveredArtifacts: discoveredArtifacts,
@@ -1187,7 +1361,9 @@ function saveGame() {
     highestRarityPulled: highestRarityPulled,
     artifactPermanentLuck: artifactPermanentLuck,
     genesisCascadeActive: genesisCascadeActive,
-    genesisCascadeEndTime: genesisCascadeEndTime
+    genesisCascadeEndTime: genesisCascadeEndTime,
+    musicEnabled: musicEnabled, // Save music state
+    achievements: achievements // Save achievements
   };
   localStorage.setItem("supaSpinSave", JSON.stringify(data));
 }
@@ -1197,6 +1373,7 @@ function loadGame() {
   if (saved) {
     const data = JSON.parse(saved);
     luckUpgradeLevel = data.luckUpgradeLevel || 0;
+    spinSpeedUpgradeLevel = data.spinSpeedUpgradeLevel || 0; // Load spin speed upgrade
     inventory = data.inventory || {};
     unlockedGears = data.unlockedGears || {};
     discoveredArtifacts = data.discoveredArtifacts || {}; // Load artifacts
@@ -1210,6 +1387,14 @@ function loadGame() {
     if (genesisCascadeActive && Date.now() > genesisCascadeEndTime) {
         genesisCascadeActive = false; // End cascade if expired
     }
+    musicEnabled = data.musicEnabled !== undefined ? data.musicEnabled : true; // Load music state
+    if (data.achievements) { // Load achievements, merging with new ones
+      for (const key in achievements) {
+        if (data.achievements[key]) {
+          achievements[key].unlocked = data.achievements[key].unlocked;
+        }
+      }
+    }
   }
 }
 
@@ -1218,6 +1403,10 @@ loadGame();
 
 function weightedRandomRarity(extraLuck = 0) {
   let totalLuck = currentLuck + getLuckBonusFromUpgrade() + artifactPermanentLuck + (extraLuck / 100); // Added artifact permanent luck
+  // Add global luck boost from weather
+  if (window.currentWeather && window.currentWeather.globalLuckBoost) {
+      totalLuck += window.currentWeather.globalLuckBoost;
+  }
   const luckMultiplier = 1 + totalLuck;
 
   let weightedEntries = [];
@@ -1401,16 +1590,61 @@ function checkGearsUnlock() {
 
   let totalGearLuck = 0;
   let unlockedCount = 0;
+  let dimensionalOverclockerSpinSpeedBonus = 0;
+  let dimensionalOverclockerLuckBonus = 0;
 
   for (const [gearName, gearData] of Object.entries(gearRecipes)) {
+    // Handle the secret gear unlock
+    if (gearData.isSecret && gearData.requirements["Entity Beyond Time"] && getRarityCount("Entity Beyond Time") >= 1 && !unlockedGears[gearName]) {
+      unlockedGears[gearName] = true;
+      showNotification(`⚙️ Secret Gear Unlocked: ${gearName}!`, "#00f"); // Blue notification
+      saveGame();
+      // Unlock achievement for this gear
+      if (!achievements["Dimensional Overclocker Acquired"].unlocked) {
+          achievements["Dimensional Overclocker Acquired"].unlocked = true;
+          showNotification("🏆 Achievement Unlocked: Dimensional Overclocker Acquired!", "#4CAF50");
+      }
+    }
+
     if (unlockedGears[gearName]) {
       unlockedCount++;
       totalGearLuck += gearData.luckBonus || 0;
+
+      // Apply Dimensional Overclocker's unique bonuses
+      if (gearName === "Dimensional Overclocker") {
+        // "For every 10% of luck, gives you 10% more spin speed"
+        // This is tricky as 'currentLuck' is calculated *after* this loop for other gears.
+        // We'll calculate it based on what currentLuck *would be* from other sources,
+        // or simplify for now to scale with overall luck later.
+        // Let's assume for simplicity, it scales with the *current effective luck* including upgrades.
+        // This will be applied *after* initial luck calculation.
+        // We'll use a temporary variable and apply it at the end of the spin speed calculation.
+
+        // "for every gear you have unlocked, increase luck by 1000%"
+        // This part *directly* contributes to totalGearLuck.
+        // Subtract 1 from unlockedCount if Dimensional Overclocker itself is counted, to avoid circular logic
+        // if its own unlock counts towards its bonus. Or, count all gears *except itself*.
+        const gearsForLuckBonus = Object.values(unlockedGears).filter(Boolean).length;
+        dimensionalOverclockerLuckBonus = (gearsForLuckBonus * 10); // 1000% = 10.0 in multiplier terms
+      }
     }
   }
 
+  // Add the flat bonus from Dimensional Overclocker
+  totalGearLuck += dimensionalOverclockerLuckBonus;
+
   // Add permanent luck upgrade to currentLuck
-  currentLuck = totalGearLuck + getLuckBonusFromUpgrade();
+  currentLuck = totalGearLuck + getLuckBonusFromUpgrade() + artifactPermanentLuck;
+
+  // Now calculate spin speed based on final currentLuck for Dimensional Overclocker
+  if (unlockedGears["Dimensional Overclocker"]) {
+    // 10% spin speed for every 10% luck means a 1:1 ratio.
+    // If currentLuck is 5.0 (500%), then spin speed boost is 5.0 (500%).
+    dimensionalOverclockerSpinSpeedBonus = currentLuck;
+  }
+
+  // Store this specific bonus to be used in startAutoSpin
+  gearRecipes["Dimensional Overclocker"].calculatedSpinSpeedBonus = dimensionalOverclockerSpinSpeedBonus;
 
   // Update luck display to include artifact permanent luck
   luckDiv.textContent = `Luck Bonus from Gears + Artifacts: ${(currentLuck * 100 + artifactPermanentLuck * 100).toFixed(2)}%`;
@@ -1420,6 +1654,7 @@ function checkGearsUnlock() {
   autoSpinBtn.disabled = unlockedCount === 0;
   saveGame();
 }
+
 
 // Function to consume rarities from inventory
 function consumeRarities(requirements) {
@@ -1452,13 +1687,17 @@ function consumeRarities(requirements) {
   }
 
   // Update gear list display with clickable gear names to show/hide requirements
-// Track which gear's recipe is currently open
-let openedGearName = null;
-
+// Track which gear's recipe is currently dimensionalOverclockerSpinSpeedBonus
+let openedGearName = null
 function updateGearListDisplay() {
   let html = "";
 
   for (const [gearName, gearData] of Object.entries(gearRecipes)) {
+    // CONDITIONALLY RENDER DIMENSIONAL OVERCLOCKER
+    if (gearName === "Dimensional Overclocker" && getRarityCount("Entity Beyond Time") === 0 && !unlockedGears[gearName]) {
+      continue; // Skip rendering if Entity Beyond Time not yet pulled and gear not unlocked
+    }
+
     const isUnlocked = unlockedGears[gearName];
     const hasRequirements = checkRequirements(gearData.requirements);
     const canAfford = money >= gearData.cost;
@@ -1492,9 +1731,13 @@ function updateGearListDisplay() {
       }
     }
 
+    // Apply special class for "Dimensional Overclocker" if it's unlocked for unique styling
+    const gearTitleClass = (gearName === "Dimensional Overclocker" && isUnlocked) ? 'gear-title rarity-Entity-Beyond-Time' : 'gear-title';
+
+
     html += `
       <div class="gear-box" style="border:1px solid #888; margin-bottom:8px; padding:8px; border-radius:5px;">
-        <div class="gear-title" style="cursor:pointer; user-select:none; font-weight:bold;" data-gear="${gearName}">
+        <div class="${gearTitleClass}" style="cursor:pointer; user-select:none; font-weight:bold;" data-gear="${gearName}">
           ${gearName} ${isUnlocked ? "✅" : "❌"}
         </div>
 
@@ -1557,6 +1800,8 @@ function updateGearListDisplay() {
         updateGearListDisplay(); // Re-evaluate and update gear display
         updateInventoryDisplay(); // Update inventory since rarities were consumed
         checkGearsUnlock(); // Re-evaluate total bonuses
+      } else {
+        showNotification("Not enough money or requirements!", "#dc3545");
       }
     });
   });
@@ -1567,13 +1812,25 @@ function updateGearListDisplay() {
     const openReqDiv = document.querySelector(`.gear-title[data-gear="${openedGearName}"]`)?.parentElement.querySelector(".gear-requirements");
     if (openReqDiv) openReqDiv.style.display = "block";
   }
+
+
+
+  // Restore open gear requirements after UI rebuild
+  if (openedGearName) {
+    const openReqDiv = document.querySelector(`.gear-title[data-gear="${openedGearName}"]`)?.parentElement.querySelector(".gear-requirements");
+    if (openReqDiv) openReqDiv.style.display = "block";
+  }
 }
 // Clicking outside closes all open requirements
-document.body.addEventListener("click", () => {
-  document.querySelectorAll(".gear-requirements").forEach(reqDiv => {
-    reqDiv.style.display = "none";
-  });
-  openedGearName = null;
+document.body.addEventListener("click", (event) => {
+  // Check if the click was inside a gear-box or a gear-title itself
+  const isInsideGearBox = event.target.closest('.gear-box');
+  if (!isInsideGearBox) {
+    document.querySelectorAll(".gear-requirements").forEach(reqDiv => {
+      reqDiv.style.display = "none";
+    });
+    openedGearName = null;
+  }
 });
 
 // Enable auto-spin button from start
@@ -1583,13 +1840,13 @@ autoSpinBtn.disabled = false;
   function spin() {
   // Money earned mapping
   const moneyMap = {
-    "Cracked": 5, "Chipped": 5, "Broken": 5, "Basic": 5, "Dull": 5,
-    "Tarnished": 5, "Common": 5, "Dusty": 5, "Uncommon": 5, "Firm": 5,
-    "Polished": 5, "Refined": 50, "Rare": 50, "Steelbone": 50, "Epic": 50,
+    "Cracked": 0.1, "Chipped": 0.25, "Broken": 0.5, "Basic": 0.75, "Dull": 0.9,
+    "Tarnished": 1, "Common": 1.25, "Dusty": 1.5, "Uncommon": 3, "Firm": 4,
+    "Polished": 5, "Refined": 6, "Rare": 7, "Steelbone": 9, "Epic": 12,
     "Legendary": 25, "Mythic": 40, "Ancient": 60, "Celestial": 100,
     "Transcendent": 200, "Omniversal": 350, "Divine": 500, "Phantom": 650,
     "Quantum": 800, "Astral": 1000, "Primordial": 1250, "Glitched": 1500,
-    "Ethereal": 200000, "Reality-Bound": 50000, "Genesis": 100000
+    "Ethereal": 2000, "Reality-Bound": 5000, "Genesis": 10000
   };
 
   let rarity = weightedRandomRarity();
@@ -1662,7 +1919,7 @@ if (unlockedGears["Gear 5: Lightspeed Obliterator"] && totalSpins % 3 === 0) {
   if (unlockedGears["Gear 6: 404 Glitcher"] && rarity === "Glitched") {
     const gearData = gearRecipes["Gear 6: 404 Glitcher"];
     if (Math.random() < (gearData.glitchMoneyBoostChance || 0)) {
-        const positive = Math.random() < 0.65; // 50/50 chance for buff or nerf
+        const positive = Math.random() < 0.5; // 50/50 chance for buff or nerf
         if (!positive && discoveredArtifacts["Reality Anchor"]) { // If it would have been negative, but immunity is active
             showNotification(`🛡️ Reality Anchor: Glitch avoided!`, "#2196f3");
         } else if (positive) {
@@ -1694,8 +1951,8 @@ if (unlockedGears["Gear 8: Eternity Processor"] && totalSpins % 10 === 0) {
 
 // Gear 9: Genesis Drive (random luck boost)
 if (unlockedGears["Gear 9: Genesis Drive"] && Math.random() < (gearRecipes["Gear 9: Genesis Drive"].bonusLuckChance || 0)) {
-  bonusLuck += 10.0; // +100% luck temporarily
-  showNotification("🌌 Genesis Surge: +1000% Luck!", "#673ab7");
+  bonusLuck += 1.0; // +100% luck temporarily
+  showNotification("🌌 Genesis Surge: +100% Luck!", "#673ab7");
 }
 
 // Gear 10: Paradox Core (5% chance to duplicate earned money)
@@ -1712,10 +1969,10 @@ if (unlockedGears["Gear 11: Godwave Singularity"] && totalSpins % 50 === 0) {
 }
 
   // Echo of Creation: Genesis Cascade
-  if (discoveredArtifacts["Echo of Creation"] && Math.random() < 0.00001) { // 0.5% chance
+  if (discoveredArtifacts["Echo of Creation"] && Math.random() < 0.00001) { // 0.001% chance
       genesisCascadeActive = true;
-      genesisCascadeEndTime = Date.now() + (10 * 1000); // 30 seconds duration
-      showNotification(`✨ Genesis Cascade Active for 10s! All pulls are Genesis or higher!`, "#FFD700", 5000);
+      genesisCascadeEndTime = Date.now() + (30 * 1000); // 30 seconds duration
+      showNotification(`✨ Genesis Cascade Active for 30s! All pulls are Genesis or higher!`, "#FFD700", 5000);
   }
 
   processSpinResult(rarity, variant, earned);
@@ -1759,6 +2016,8 @@ function processSpinResult(rarity, variant, earned) {
   checkGearsUnlock();
   // Check if any artifacts can be discovered
   updateArtifactsPanelAndBonuses();
+  // Check for achievements
+  checkAchievements();
 }
 
 
@@ -1775,21 +2034,27 @@ function updateSpinResultUI(rarity, variant, earned, money, totalSpins, highestR
 
   function startAutoSpin() {
   const baseInterval = 200; // default spin delay in ms
-  let totalBoost = 0;
+  let totalGearBoost = 0;
 
   for (const gearName in unlockedGears) {
     if (unlockedGears[gearName] && gearRecipes[gearName]) {
-      totalBoost += gearRecipes[gearName].spinRateBoost || 0;
+      totalGearBoost += gearRecipes[gearName].spinRateBoost || 0;
     }
   }
 
-  totalBoost = Math.min(Math.max(totalBoost, 0), 0.95); // cap between 0%–95%
-  const interval = Math.max(baseInterval * (1 - totalBoost), 50);
+  // Add Dimensional Overclocker's dynamic spin speed bonus
+  if (unlockedGears["Dimensional Overclocker"] && gearRecipes["Dimensional Overclocker"].calculatedSpinSpeedBonus) {
+      totalGearBoost += gearRecipes["Dimensional Overclocker"].calculatedSpinSpeedBonus;
+  }
+
+  const totalBoost = totalGearBoost + getSpinSpeedBonusFromUpgrade(); // Add upgrade bonus
+  const finalBoost = Math.min(Math.max(totalBoost, 0), 50000000000000000000000000000000000000000000); // cap between 0–500(adjusted from 500 to 0.95 for realistic interval)
+  const interval = Math.max(baseInterval * (1 - finalBoost), 50);
 
   // Update spin speed UI
   const spinBoostDiv = document.getElementById("spinBoostDisplay");
   if (spinBoostDiv) {
-    spinBoostDiv.textContent = `Spin Speed Boost: ${(totalBoost * 100).toFixed(1)}%`;
+    spinBoostDiv.textContent = `Spin Speed Boost: ${(finalBoost * 100).toFixed(1)}%`;
   }
 
   clearInterval(autoSpinInterval);
@@ -1797,7 +2062,8 @@ function updateSpinResultUI(rarity, variant, earned, money, totalSpins, highestR
   autoSpinEnabled = true;
   autoSpinBtn.textContent = "Auto Spin: ON";
   spinBtn.disabled = true;
-  }
+}
+
 
 function stopAutoSpin(reason = "OFF") {
   clearInterval(autoSpinInterval);
@@ -1838,13 +2104,23 @@ document.getElementById("secretCodeSubmit").addEventListener("click", () => {
     for (const artifactName of Object.keys(artifactRecipes)) {
       discoveredArtifacts[artifactName] = true;
     }
+    // Max out upgrades for easier testing
+    luckUpgradeLevel = 10;
+    spinSpeedUpgradeLevel = 10;
+    money = 1000000000; // Give a lot of money
+    totalSpins = 999999; // Simulate many spins for achievements
 
-
+    updateLuckUpgradeUI();
+    updateSpinSpeedUpgradeUI();
     updateGearListDisplay();
     updateArtifactsPanelAndBonuses(); // Update artifacts display after unlocking all
     checkGearsUnlock(); // Recalculate bonuses
+    checkAchievements(); // Update achievements with new spin count
+    updateMoneyDisplay();
+    updateSpinBoostDisplay();
+
     msgEl.style.color = "green";
-    msgEl.textContent = "✅ All gears and artifacts unlocked!";
+    msgEl.textContent = "✅ All gears and artifacts unlocked! Upgrades maxed and money added!";
   } else {
     msgEl.style.color = "red";
     msgEl.textContent = "❌ Invalid code.";
@@ -1867,7 +2143,7 @@ const artifactRecipes = {
     description: "Provides a 10% chance to duplicate the money earned from your spin."
   },
   "Chronos Shard": {
-    requirements: { "Mythic": 5, "Legendary": 20, "Ancient": 10, "Primordial": 2 },
+    requirements: { "Mythic": 5, "Legendary": 20, "Ancient": 2 },
     cost: 500000,
     description: "Grants a 5% chance for an immediate, free extra spin after your current one."
   },
@@ -1877,11 +2153,16 @@ const artifactRecipes = {
     description: "Prevents negative Glitched effects and grants +1% permanent luck every 100 spins."
   },
   "Echo of Creation": {
-    requirements: { "Genesis": 1, "Primordial": 2, "Astral": 3, "Transcendent": 3},
+    requirements: { "Genesis": 1, "Primordial": 2, "Astral": 3 },
     cost: 10000000,
     description: "Grants a 0.5% chance for a 'Genesis Cascade', forcing Genesis or higher rarity pulls for 30 seconds."
   }
 };
+
+// Apply 50% cost reduction to all artifacts
+for (const artifactName in artifactRecipes) {
+  artifactRecipes[artifactName].cost *= 0.5;
+}
 
 
 function updateArtifactsPanelAndBonuses() { // Renamed from checkArtifactDiscovery
@@ -1943,6 +2224,8 @@ function updateArtifactsPanelAndBonuses() { // Renamed from checkArtifactDiscove
         updateArtifactsPanelAndBonuses(); // Re-evaluate and update artifact display
         updateInventoryDisplay(); // Update inventory since rarities were consumed
         checkGearsUnlock(); // Re-evaluate gear requirements too
+      } else {
+        showNotification("Not enough money or requirements!", "#dc3545");
       }
     });
   });
@@ -1959,19 +2242,150 @@ function updateMoneyDisplay() {
 }
 
 function updateSpinBoostDisplay() {
-  let totalBoost = 0;
+  let totalGearBoost = 0;
   for (const gearName in unlockedGears) {
     if (unlockedGears[gearName]) {
-      totalBoost += gearRecipes[gearName].spinRateBoost || 0;
+      totalGearBoost += gearRecipes[gearName].spinRateBoost || 0;
     }
   }
 
-  totalBoost = Math.min(totalBoost, 250); // Cap boost
+  // Add Dimensional Overclocker's dynamic spin speed bonus
+  if (unlockedGears["Dimensional Overclocker"] && gearRecipes["Dimensional Overclocker"].calculatedSpinSpeedBonus) {
+      totalGearBoost += gearRecipes["Dimensional Overclocker"].calculatedSpinSpeedBonus;
+  }
 
+  const totalBoost = totalGearBoost + getSpinSpeedBonusFromUpgrade();
   const boostPercent = (totalBoost * 100).toFixed(1);
   const spinBoostDiv = document.getElementById("spinBoostDisplay");
   if (spinBoostDiv) {
     spinBoostDiv.textContent = `Spin Speed Boost: ${boostPercent}%`;
+  }
+  // Also update auto spin rate display here
+  const baseInterval = 200;
+  const finalBoost = Math.min(Math.max(totalBoost, 0), 0.95); // Ensure it doesn't go below 0 or above 95%
+  const effectiveInterval = Math.max(baseInterval * (1 - finalBoost), 50);
+  autoSpinRateDiv.textContent = `Auto Spin Rate: ${((1000 / effectiveInterval).toFixed(1))} spins/sec`;
+}
+
+
+// === Achievement System ===
+
+function checkAchievements() {
+  // Spin count achievements
+  if (totalSpins >= 1 && !achievements["First Spin"].unlocked) {
+    achievements["First Spin"].unlocked = true;
+    showNotification("🏆 Achievement Unlocked: First Spin!", "#4CAF50");
+  }
+  if (totalSpins >= 100 && !achievements["Spin Enthusiast"].unlocked) {
+    achievements["Spin Enthusiast"].unlocked = true;
+    showNotification("🏆 Achievement Unlocked: Spin Enthusiast!", "#4CAF50");
+  }
+
+  // Rarity pulling achievements
+  const rarityAchievements = {
+    "Rare": "Rare Collector", "Epic": "Epic Spindly", "Legendary": "Legendary Seeker",
+    "Mythic": "Mythic Dreamer", "Ancient": "Ancient Knowledge", "Celestial": "Celestial Harmony",
+    "Transcendent": "Transcendent Being", "Omniversal": "Omniversal Conqueror", "Divine": "Divine Presence",
+    "Phantom": "Phantom Weaver", "Quantum": "Quantum Leaper", "Astral": "Astral Traveler",
+    "Primordial": "Primordial Genesis", "Glitched": "Glitched Reality", "Ethereal": "Ethereal Whisper",
+    "Reality-Bound": "Reality Bender", "Genesis": "Genesis Unlocked"
+  };
+  for (const rarity in rarityAchievements) {
+    if (getRarityCount(rarity) > 0 && !achievements[rarityAchievements[rarity]].unlocked) {
+      achievements[rarityAchievements[rarity]].unlocked = true;
+      showNotification(`🏆 Achievement Unlocked: ${rarityAchievements[rarity]}!`, "#4CAF50");
+    }
+  }
+
+  // Gear unlocking achievements
+  const gearAchievements = {
+    "Gear 1: Luck Amulet": "Luck Amulet Acquired",
+    "Gear 2: Fortune Ring": "Fortune Ring Forged",
+    "Gear 3: Eccentric Engine": "Eccentric Engine Built",
+    "Gear 4: Seraphim Booster": "Seraphim Blessed",
+    "Gear 5: Lightspeed Obliterator": "Lightspeed Engaged",
+    "Gear 6: 404 Glitcher": "System Glitched",
+    "Gear 7: Omnicore Reactor": "Omnicore Activated",
+    "Gear 8: Eternity Processor": "Eternity Achieved",
+    "Gear 9: Genesis Drive": "Genesis Drive Online",
+    "Gear 10: Paradox Core": "Paradox Solved",
+    "Gear 11: Godwave Singularity": "Godwave Unleashed"
+  };
+  for (const gear in gearAchievements) {
+    if (unlockedGears[gear] && !achievements[gearAchievements[gear]].unlocked) {
+      achievements[gearAchievements[gear]].unlocked = true;
+      showNotification(`🏆 Achievement Unlocked: ${gearAchievements[gear]}!`, "#4CAF50");
+    }
+  }
+
+  // Artifact discovery achievements
+  const artifactAchievements = {
+    "Orb of Foresight": "Orb Discovered",
+    "Amulet of Abundance": "Amulet Found",
+    "Chronos Shard": "Chronos Activated",
+    "Reality Anchor": "Reality Anchored",
+    "Echo of Creation": "Echo Heard"
+  };
+  for (const artifact in artifactAchievements) {
+    if (discoveredArtifacts[artifact] && !achievements[artifactAchievements[artifact]].unlocked) {
+      achievements[artifactAchievements[artifact]].unlocked = true;
+      showNotification(`🏆 Achievement Unlocked: ${artifactAchievements[artifact]}!`, "#4CAF50");
+    }
+  }
+
+  // Money achievements
+  if (money >= 10000 && !achievements["Money Maker"].unlocked) {
+    achievements["Money Maker"].unlocked = true;
+    showNotification("🏆 Achievement Unlocked: Money Maker!", "#4CAF50");
+  }
+  if (money >= 100000 && !achievements["Wealthy Spinner"].unlocked) {
+    achievements["Wealthy Spinner"].unlocked = true;
+    showNotification("🏆 Achievement Unlocked: Wealthy Spinner!", "#4CAF50");
+  }
+  if (money >= 1000000 && !achievements["Millionaire"].unlocked) {
+    achievements["Millionaire"].unlocked = true;
+    showNotification("🏆 Achievement Unlocked: Millionaire!", "#4CAF50");
+  }
+
+  // Upgrade achievements
+  if (luckUpgradeLevel >= 1 && !achievements["Luck Upgraded!"].unlocked) {
+    achievements["Luck Upgraded!"].unlocked = true;
+    showNotification("🏆 Achievement Unlocked: Luck Upgraded!!", "#4CAF50");
+  }
+  if (spinSpeedUpgradeLevel >= 1 && !achievements["Speed Demon"].unlocked) {
+    achievements["Speed Demon"].unlocked = true;
+    showNotification("🏆 Achievement Unlocked: Speed Demon!", "#4CAF50");
+  }
+  if (luckUpgradeLevel >= 10 && !achievements["Max Luck Upgrade"].unlocked) {
+    achievements["Max Luck Upgrade"].unlocked = true;
+    showNotification("🏆 Achievement Unlocked: Max Luck Upgrade!", "#4CAF50");
+  }
+  if (spinSpeedUpgradeLevel >= 10 && !achievements["Max Speed Upgrade"].unlocked) {
+    achievements["Max Speed Upgrade"].unlocked = true;
+    showNotification("🏆 Achievement Unlocked: Max Speed Upgrade!", "#4CAF50");
+  }
+
+
+  updateAchievementsDisplay();
+  saveGame(); // Make sure achievements are saved
+}
+
+function updateAchievementsDisplay() {
+  const achievementListDiv = document.getElementById("achievement-list");
+  let html = "";
+  let unlockedCount = 0;
+
+  for (const [key, achievement] of Object.entries(achievements)) {
+    if (achievement.unlocked) {
+      html += `<div style="margin-bottom: 5px; font-weight: bold; color: #28a745;">${key} ✅</div>`;
+      html += `<div style="margin-bottom: 10px; font-style: italic; color: #555;">${achievement.description}</div>`;
+      unlockedCount++;
+    }
+  }
+  if (unlockedCount === 0) {
+    achievementListDiv.textContent = "No achievements unlocked yet.";
+  } else {
+    achievementListDiv.innerHTML = html;
   }
 }
 
@@ -1981,10 +2395,18 @@ function updateSpinBoostDisplay() {
   updateGearListDisplay();
   updateInventoryDisplay();
   updateLuckUpgradeUI();
+  updateSpinSpeedUpgradeUI(); // Update spin speed upgrade UI
   updateArtifactsPanelAndBonuses(); // Call to initialize artifacts display
   checkGearsUnlock(); // This also updates currentLuck and luckDiv
   updateMoneyDisplay();
   updateSpinBoostDisplay();
+  updateAchievementsDisplay(); // Initial call for achievements
+
+  // Initialize music state on load
+  document.getElementById("toggle-music-btn").textContent = `Music: ${musicEnabled ? 'ON' : 'OFF'}`;
+  if (musicEnabled) {
+      startBGM();
+  }
 </script>
 </body>
 </html>
