@@ -52,6 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  if (typeof SkillTree !== 'undefined') {
+    SkillTree.updateTreeDisplay();
+    });
+  }
+
   // Secret code handler
   const secretCodeInput = getElement('secretCodeInput');
   const secretCodeSubmit = getElement('secretCodeSubmit');
