@@ -1,0 +1,605 @@
+/* ===== IMPORTS & FONTS ===== */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron&family=Playfair+Display&family=Uncial+Antiqua&family=Raleway&family=Great+Vibes&family=Montserrat:wght@700&display=swap');
+
+/* ===== BASE STYLES ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #f0f2f5;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 30px;
+  min-height: 100vh;
+  gap: 30px;
+}
+
+/* ===== LAYOUT ===== */
+main {
+  flex: 1;
+  max-width: 600px;
+}
+
+#sidebar {
+  width: 250px;
+  background: white;
+  padding: 15px 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 30px;
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+/* ===== TYPOGRAPHY ===== */
+h1 {
+  margin-bottom: 20px;
+  font-size: 2.5em;
+  color: #111;
+}
+
+h2,
+h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* ===== BUTTONS ===== */
+button {
+  padding: 12px 30px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  background-color: #111;
+  color: white;
+  cursor: pointer;
+  margin: 10px 10px 10px 0;
+  transition: all 0.3s ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#buy-luck-upgrade,
+#buy-spin-speed-upgrade,
+.buy-artifact-btn {
+  margin-top: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-right: 0;
+}
+
+.buy-gear-btn {
+  margin-top: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.buy-gear-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* ===== FORMS ===== */
+input[type='text'],
+select {
+  width: 100%;
+  font-size: 16px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+
+input[type='text']:focus,
+select:focus {
+  outline: none;
+  border-color: #27ae60;
+  box-shadow: 0 0 4px rgba(39, 174, 96, 0.3);
+}
+
+/* ===== CONTENT PANELS ===== */
+#result,
+#stats,
+#money,
+#gears,
+#luck,
+#artifacts-panel,
+#settings-panel,
+#achievements-panel,
+#upgrades-panel,
+#inventory-display {
+  margin-top: 20px;
+  width: 100%;
+  padding: 15px 20px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: box-shadow 0.3s ease;
+}
+
+#upgrades-panel,
+#artifacts-panel,
+#settings-panel,
+#achievements-panel {
+  text-align: left;
+}
+
+#result:hover,
+#stats:hover,
+#money:hover,
+#gears:hover,
+#luck:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== MONEY & STATS ===== */
+#money {
+  color: #27ae60;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.03em;
+}
+
+#auto-spin-rate {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+/* ===== SPIN BOOST DISPLAY ===== */
+#spinBoostDisplay {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-weight: bold;
+  z-index: 1000;
+}
+
+/* ===== UPGRADE & ARTIFACT BOXES ===== */
+.upgrade-box,
+.artifact-box {
+  margin-bottom: 15px;
+  font-size: 15px;
+}
+
+/* ===== INVENTORY DISPLAY ===== */
+#rarity-counts {
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: left;
+}
+
+#rarity-image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+#image-showcase {
+  border: 1px solid #ccc;
+  padding: 10px;
+  background: #fafafa;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+/* ===== GEAR STYLES ===== */
+.gear-box {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.gear-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.gear-progress {
+  height: 18px;
+  background: #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 6px 0;
+}
+
+.gear-progress-bar {
+  height: 100%;
+  background: linear-gradient(to right, #4caf50, #2ecc71);
+  width: 0%;
+  transition: width 0.3s ease;
+  color: white;
+  font-size: 12px;
+  text-align: center;
+  line-height: 18px;
+}
+
+.gear-status {
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+/* ===== RARITY COLOR DEFINITIONS ===== */
+.rarity-Common {
+  color: #666;
+}
+
+.rarity-Uncommon {
+  color: #2ecc71;
+}
+
+.rarity-Rare {
+  color: #3498db;
+}
+
+.rarity-Steelbone {
+  color: #76798c;
+  font-weight: bold;
+  font-family: 'Orbitron', sans-serif;
+  text-shadow: 0 0 8px #a3a7b0;
+  animation: glowSteelbone 3s ease-in-out infinite alternate;
+}
+
+@keyframes glowSteelbone {
+  0% {
+    text-shadow: 0 0 8px #a3a7b0;
+  }
+  100% {
+    text-shadow: 0 0 20px #8a8fa0;
+  }
+}
+
+.rarity-Epic {
+  color: #9b59b6;
+}
+
+.rarity-Legendary {
+  color: #f1c40f;
+}
+
+.rarity-Mythic {
+  color: #e67e22;
+}
+
+.rarity-Cracked {
+  color: #888;
+  font-style: italic;
+}
+
+.rarity-Chipped {
+  color: #999;
+}
+
+.rarity-Broken {
+  color: #666;
+  text-decoration: line-through;
+}
+
+.rarity-Basic {
+  color: #aaa;
+}
+
+.rarity-Dull {
+  color: #999;
+  font-style: italic;
+}
+
+.rarity-Tarnished {
+  color: #bbb;
+}
+
+.rarity-Dusty {
+  color: #aaa;
+}
+
+.rarity-Firm {
+  color: #666;
+  font-weight: bold;
+}
+
+.rarity-Polished {
+  color: #777;
+}
+
+.rarity-Refined {
+  color: #8c8c8c;
+  font-weight: bold;
+}
+
+/* ===== ADVANCED RARITY STYLES ===== */
+.rarity-Phantom {
+  color: slateblue;
+  font-family: 'Orbitron', sans-serif;
+  animation: pulseFade 2s infinite ease-in-out;
+}
+
+@keyframes pulseFade {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.rarity-Divine {
+  color: gold;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+}
+
+.rarity-Ancient {
+  color: #d35400;
+  font-family: 'Uncial Antiqua', cursive;
+  font-weight: 600;
+  text-shadow: 0 0 8px #e67e22;
+  animation: glowAncient 3.5s ease-in-out infinite alternate;
+}
+
+@keyframes glowAncient {
+  0% {
+    text-shadow: 0 0 8px #e67e22;
+  }
+  100% {
+    text-shadow: 0 0 18px #f39c12;
+  }
+}
+
+.rarity-Celestial {
+  color: #1abc9c;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  text-shadow: 0 0 10px #16a085;
+  animation: glowCelestial 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes glowCelestial {
+  0% {
+    text-shadow: 0 0 10px #16a085;
+  }
+  100% {
+    text-shadow: 0 0 20px #1abc9c;
+  }
+}
+
+.rarity-Astral {
+  color: mediumorchid;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 700;
+  text-shadow: 0 0 12px #b280b2;
+  animation: glowAstral 3s ease-in-out infinite alternate;
+}
+
+@keyframes glowAstral {
+  0% {
+    text-shadow: 0 0 12px #b280b2;
+  }
+  100% {
+    text-shadow: 0 0 24px #c49dcc;
+  }
+}
+
+.rarity-Glitched {
+  color: darkred;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  text-shadow: 0 0 10px #7b0000;
+  animation: glowGlitched 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes glowGlitched {
+  0% {
+    text-shadow: 0 0 10px #7b0000;
+  }
+  100% {
+    text-shadow: 0 0 22px #a00000;
+  }
+}
+
+.rarity-Primordial {
+  color: teal;
+  font-weight: bold;
+  font-family: 'Great Vibes', cursive;
+  text-shadow: 0 0 15px #008080;
+  animation: glowPrimordial 4s ease-in-out infinite alternate;
+}
+
+@keyframes glowPrimordial {
+  0% {
+    text-shadow: 0 0 15px #008080;
+  }
+  100% {
+    text-shadow: 0 0 30px #00a0a0;
+  }
+}
+
+.rarity-Ethereal {
+  color: #a29bfe;
+  font-family: 'Raleway', sans-serif;
+  font-style: italic;
+  font-weight: 600;
+  text-shadow: 0 0 14px #8c87ff;
+  animation: glowEthereal 3.5s ease-in-out infinite alternate;
+}
+
+@keyframes glowEthereal {
+  0% {
+    text-shadow: 0 0 14px #8c87ff;
+  }
+  100% {
+    text-shadow: 0 0 28px #b0adff;
+  }
+}
+
+.rarity-Reality-Bound {
+  color: #8e44ad;
+  font-weight: bold;
+  font-family: 'Montserrat', sans-serif;
+  text-shadow: 0 0 14px #5a2f71;
+  animation: glowRealityBound 3s ease-in-out infinite alternate;
+}
+
+@keyframes glowRealityBound {
+  0% {
+    text-shadow: 0 0 14px #5a2f71;
+  }
+  100% {
+    text-shadow: 0 0 26px #8e44ad;
+  }
+}
+
+.rarity-Genesis {
+  color: #000;
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  text-shadow: 0 0 12px #555;
+  animation: glowGenesis 4s ease-in-out infinite alternate;
+}
+
+@keyframes glowGenesis {
+  0% {
+    text-shadow: 0 0 12px #555;
+  }
+  100% {
+    text-shadow: 0 0 24px #888;
+  }
+}
+
+.rarity-Entity-Beyond-Time {
+  color: #00bcd4;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  text-shadow: 0 0 10px #00e0ff, 0 0 20px #00b0ff;
+  animation: warpTime 4s infinite alternate;
+}
+
+@keyframes warpTime {
+  0% {
+    transform: skewX(0) scale(1);
+    opacity: 1;
+    text-shadow: 0 0 10px #00e0ff;
+  }
+  50% {
+    transform: skewX(-5deg) scale(1.02);
+    opacity: 0.8;
+    text-shadow: 0 0 20px #00e0ff, 0 0 30px #00b0ff;
+  }
+  100% {
+    transform: skewX(0) scale(1);
+    opacity: 1;
+    text-shadow: 0 0 10px #00e0ff;
+  }
+}
+
+/* ===== GEAR-SPECIFIC TITLE ANIMATION ===== */
+.gear-title[data-gear='Dimensional Overclocker'] {
+  color: #03a9f4;
+  font-family: 'Orbitron', sans-serif;
+  text-shadow: 0 0 8px #2196f3;
+  animation: temporalGlow 3s infinite ease-in-out;
+  font-size: 20px;
+}
+
+@keyframes temporalGlow {
+  0% {
+    text-shadow: 0 0 8px #2196f3;
+  }
+  50% {
+    text-shadow: 0 0 18px #2196f3, 0 0 25px #00bcd4;
+  }
+  100% {
+    text-shadow: 0 0 8px #2196f3;
+  }
+}
+
+/* ===== VARIANT STYLES ===== */
+.variant {
+  font-style: italic;
+  margin-left: 5px;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: #eee;
+  font-weight: 600;
+  user-select: none;
+}
+
+.variant-common {
+  color: #7f8c8d;
+  font-weight: 600;
+  user-select: none;
+}
+
+.variant-uncommon {
+  color: #27ae60;
+  font-weight: 600;
+  user-select: none;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  #sidebar {
+    width: 100%;
+    position: relative;
+    top: auto;
+    max-height: none;
+  }
+
+  main {
+    max-width: 100%;
+  }
+
+  #spinBoostDisplay {
+    position: static;
+    margin-bottom: 10px;
+  }
+}
