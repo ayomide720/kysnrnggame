@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   RarityIndex.init();
   
   // Render Skill Tree UI if module exists
-  if (typeof SkillTree !== 'undefined') {
+if (typeof SkillTree !== 'undefined') {
     SkillTree.updateTreeDisplay();
   }
 
