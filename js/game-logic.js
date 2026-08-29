@@ -48,11 +48,13 @@ const GameLogic = (() => {
    * Calculate luck bonus from gears
    * @returns {number} Luck bonus percentage
    */
-  function getLuckBonus() {
-    const baseBonus = GameState.get('luckUpgradeLevel') * 10;
-    // Add gear bonuses here if applicable
-    return baseBonus;
-  }
+ function getLuckBonus() {
+  const baseBonus = GameState.get('luckUpgradeLevel') * 10;
+  // Apply the multiplier from the SkillTree module
+  const treeMultiplier = typeof SkillTree !== 'undefined' ? SkillTree.getLuckMultiplier() : 1;
+  
+  return baseBonus * treeMultiplier;
+}
 
   /**
    * Perform a single spin
