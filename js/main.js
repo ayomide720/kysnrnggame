@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   AutoSpin.init();
   MusicSystem.init();
   RarityIndex.init();
+  SkillTree.updateTreeDisplay();
 
   // Attach main button listeners
   const spinBtn = getElement('spin-btn');
