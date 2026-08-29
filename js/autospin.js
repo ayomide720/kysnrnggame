@@ -27,12 +27,16 @@ const AutoSpin = (() => {
    * Start auto spinning
    */
   function startAutoSpin() {
+    // Inside AutoSpin.startAutoSpin():
+const baseSpeed = GameState.get('autoSpinSpeed');
+const speedMultiplier = typeof SkillTree !== 'undefined' ? SkillTree.getSpeedMultiplier() : 1;
+const effectiveSpeed = Math.max(50, baseSpeed * speedMultiplier);
+
+// Use effectiveSpeed in your setInterval call
     const btn = getElement('auto-spin-btn');
     const rateDisplay = getElement('auto-spin-rate');
 
     if (!btn || !rateDisplay) return;
-
-    const speed = GameState.get('autoSpinSpeed');
 
     btn.textContent = 'Auto Spin: ON';
     btn.style.backgroundColor = '#27ae60';
