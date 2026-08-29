@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Supa Spin Simulator</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <audio id="bgm-audio" src="ScreenRecording_07-13-2025_16-13-26_1 (1).mp3" loop></audio>
@@ -20,6 +20,9 @@
     <div id="stats">Total Spins: 0<br />Rarest Pull: N/A</div>
     <div id="luck">Luck Bonus from Gears: 0%</div>
     <div id="auto-spin-rate">Auto Spin Rate: OFF</div>
+
+    <!-- Skill Tree Container -->
+    <div id="skill-tree-container"></div>
 
     <div id="gears">
       <div id="spinBoostDisplay">Spin Speed Boost: 0%</div>
@@ -88,14 +91,13 @@
     </div>
   </div>
 
-  <!-- Scripts loaded in order -->
-  <script src="js/ui.js"></script>
-  <script src="js/game-state.js"></script>
-  <script src="js/skill-tree.js"></script>
-  <script src="js/game-logic.js"></script>
-  <script src="js/autospin.js"></script>
-  <script src="js/music.js"></script>
-  <script src="js/index.js"></script>
-  <script src="js/main.js"></script>
+  <!-- Correct file paths matching your root directory -->
+  <script src="ui.js"></script>
+  <script src="game-state.js"></script>
+  <script src="skill-tree.js"></script>
+  <script src="game-logic.js"></script>
+  <script src="autospin.js"></script>
+  <script src="index.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
