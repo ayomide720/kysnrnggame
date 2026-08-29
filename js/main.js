@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   GameLogic.updateUI();
   AutoSpin.init();
   MusicSystem.init();
+  RarityIndex.init();
 
   // Attach main button listeners
   const spinBtn = getElement('spin-btn');
@@ -17,6 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
     spinBtn.addEventListener('click', () => {
       GameLogic.spin();
       showNotification('Spun!', '#00c8ff', 1000);
+      // Update index if it's open
+      RarityIndex.updateIndexDisplay();
     });
   }
 
@@ -129,6 +132,7 @@ function handleSecretCode(code) {
       GameState.addMoney(100000);
       showNotification('💰 Free money activated!', '#f1c40f', 2000);
       GameLogic.updateUI();
+      RarityIndex.updateIndexDisplay();
       return true;
     },
     'god': () => {
@@ -136,12 +140,14 @@ function handleSecretCode(code) {
       GameState.set('luckUpgradeLevel', 100);
       showNotification('⚡ God mode activated!', '#f1c40f', 2000);
       GameLogic.updateUI();
+      RarityIndex.updateIndexDisplay();
       return true;
     },
     'reset': () => {
       if (confirm('Are you sure? This will reset your entire game progress!')) {
         GameState.reset();
         GameLogic.updateUI();
+        RarityIndex.updateIndexDisplay();
         showNotification('🔄 Game reset!', '#ff6b6b', 2000);
         return true;
       }
