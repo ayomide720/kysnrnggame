@@ -26,42 +26,39 @@ const AutoSpin = (() => {
   /**
    * Start auto spinning
    */
-  function startAutoSpin() {
-    // Inside AutoSpin.startAutoSpin():
-const baseSpeed = GameState.get('autoSpinSpeed');
-const speedMultiplier = typeof SkillTree !== 'undefined' ? SkillTree.getSpeedMultiplier() : 1;
-const effectiveSpeed = Math.max(50, baseSpeed * speedMultiplier);
+function startAutoSpin() {
+  const btn = getElement('auto-spin-btn');
+  const rateDisplay = getElement('auto-spin-rate');
 
-// Use effectiveSpeed in your setInterval call
-    const btn = getElement('auto-spin-btn');
-    const rateDisplay = getElement('auto-spin-rate');
+  if (!btn || !rateDisplay) return;
 
-    if (!btn || !rateDisplay) return;
+  const baseSpeed = GameState.get('autoSpinSpeed');
+  // Multiply interval time by speed multiplier (lower value = faster spins)[cite: 1]
+  const effectiveSpeed = Math.max(50, baseSpeed * SkillTree.getSpeedMultiplier()); //[cite: 1]
 
-    btn.textContent = 'Auto Spin: ON';
-    btn.style.backgroundColor = '#27ae60';
-    rateDisplay.textContent = `Auto Spin Rate: ${(1000 / speed).toFixed(1)} spins/sec`;
+  btn.textContent = 'Auto Spin: ON';
+  btn.style.backgroundColor = '#27ae60';
+  rateDisplay.textContent = `Auto Spin Rate: ${(1000 / effectiveSpeed).toFixed(1)} spins/sec`;
 
-    const interval = setInterval(() => {
-      if (!GameState.get('autoSpinActive')) {
-        clearInterval(interval);
-        return;
+  const interval = setInterval(() => {
+    if (!GameState.get('autoSpinActive')) {
+      clearInterval(interval);
+      return;
+    }
+
+    if (!spinInProgress) {
+      spinInProgress = true;
+      try {
+        GameLogic.spin();
+      } finally {
+        spinInProgress = false;
       }
+    }
+  }, effectiveSpeed);
 
-      // Prevent overlapping spins
-      if (!spinInProgress) {
-        spinInProgress = true;
-        try {
-          GameLogic.spin();
-        } finally {
-          spinInProgress = false;
-        }
-      }
-    }, speed);
-
-    GameState.setAutoSpinInterval(interval);
-    showNotification('Auto Spin Started!', '#27ae60', 1500);
-  }
+  GameState.setAutoSpinInterval(interval);
+  showNotification('Auto Spin Started!', '#27ae60', 1500);
+}
 
   /**
    * Stop auto spinning
