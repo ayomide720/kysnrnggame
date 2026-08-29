@@ -11,7 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
   AutoSpin.init();
   MusicSystem.init();
   RarityIndex.init();
-  SkillTree.updateTreeDisplay();
+  
+  // Render Skill Tree UI if module exists
+  if (typeof SkillTree !== 'undefined') {
+    SkillTree.updateTreeDisplay();
+  }
 
   // Attach main button listeners
   const spinBtn = getElement('spin-btn');
@@ -51,10 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
         imageShowcase.style.display = 'none';
       }
     });
-  }
-
-  if (typeof SkillTree !== 'undefined') {
-    SkillTree.updateTreeDisplay();
   }
 
   // Secret code handler
