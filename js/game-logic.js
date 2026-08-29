@@ -45,62 +45,41 @@ const GameLogic = (() => {
   };
 
   /**
-   * Calculate luck bonus from gears
-   * @returns {number} Luck bonus percentage
-   */
- function getLuckBonus() {
+ * Calculate total luck bonus including skill tree multipliers
+ */
+function getLuckBonus() {
   const baseBonus = GameState.get('luckUpgradeLevel') * 10;
-  // Apply the multiplier from the SkillTree module
-  const treeMultiplier = typeof SkillTree !== 'undefined' ? SkillTree.getLuckMultiplier() : 1;
+  const treeMultiplier = SkillTree.getLuckMultiplier(); //[cite: 1]
   
   return baseBonus * treeMultiplier;
 }
 
-  /**
-   * Perform a single spin
-   * @returns {string} The rarity obtained
-   */
-  function performSpin() {
-    const luckBonus = getLuckBonus();
-    const random = Math.random() * 100;
-    let cumulative = 0;
+/**
+ * Execute a spin and update game state
+ */
+function spin() {
+  const result = performSpin();
 
-    for (const rarity of CONFIG.rarities) {
-      const baseProb = CONFIG.baseProbabilities[rarity] * 100;
-      const adjustedProb = baseProb * (1 + luckBonus / 100);
-      cumulative += adjustedProb;
+  GameState.incrementSpins();
+  GameState.addToInventory(result);
+  
+  // Apply money multiplier from SkillTree[cite: 1]
+  const baseReward = Math.floor(Math.random() * 100) + 10;
+  const finalReward = Math.floor(baseReward * SkillTree.getMoneyMultiplier()); //[cite: 1]
+  GameState.addMoney(finalReward);
 
-      if (random < cumulative) {
-        return rarity;
-      }
-    }
-
-    // Fallback to Common (should never reach)
-    return 'Common';
+  // Update rarest pull
+  const currentRarest = GameState.get('rarest');
+  if (
+    currentRarest === 'N/A' ||
+    CONFIG.rarities.indexOf(result) > CONFIG.rarities.indexOf(currentRarest)
+  ) {
+    GameState.setRarest(result);
   }
 
-  /**
-   * Execute a spin and update game state
-   */
-  function spin() {
-    const result = performSpin();
-
-    GameState.incrementSpins();
-    GameState.addToInventory(result);
-    GameState.addMoney(Math.floor(Math.random() * 100) + 10);
-
-    // Update rarest pull
-    const currentRarest = GameState.get('rarest');
-    if (
-      currentRarest === 'N/A' ||
-      CONFIG.rarities.indexOf(result) > CONFIG.rarities.indexOf(currentRarest)
-    ) {
-      GameState.setRarest(result);
-    }
-
-    updateUI();
-    return result;
-  }
+  updateUI();
+  return result;
+}
 
   /**
    * Update UI elements with current game state
