@@ -53,7 +53,40 @@ function getLuckBonus() {
   
   return baseBonus * treeMultiplier;
 }
+/**
+   * Perform a single spin calculation based on probability and luck
+   */
+  function performSpin() {
+    const luckBonus = getLuckBonus() / 100;
+    const rarities = CONFIG.rarities;
+    const probabilities = CONFIG.baseProbabilities;
 
+    // Calculate total weight with luck factor
+    let totalWeight = 0;
+    const weightedProbabilities = {};
+
+    for (const rarity of rarities) {
+      let weight = probabilities[rarity];
+      if (rarity !== 'Common') {
+        weight *= (1 + luckBonus);
+      }
+      weightedProbabilities[rarity] = weight;
+      totalWeight += weight;
+    }
+
+    // Roll a random number
+    let roll = Math.random() * totalWeight;
+
+    // Determine pulled rarity
+    for (const rarity of rarities) {
+      roll -= weightedProbabilities[rarity];
+      if (roll <= 0) {
+        return rarity;
+      }
+    }
+
+    return rarities[0];
+  }
 /**
  * Execute a spin and update game state
  */
