@@ -1,783 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Supa Spin Simulator</title>
-<style>
-  body {
-    background: #f0f2f5;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    padding: 30px;
-    min-height: 100vh;
-    margin: 0;
-    gap: 30px;
-  }
-  main {
-    flex: 1;
-    max-width: 600px;
-  }
-  h1 {
-    margin-bottom: 10px;
-  }
-  button {
-    padding: 12px 30px;
-    font-size: 18px;
-    border: none;
-    border-radius: 8px;
-    background-color: #111;
-    color: white;
-    cursor: pointer;
-    margin: 10px 10px 10px 0;
-  }
-/* Apply a clean modern font to the entire page */
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
-  background-color: #f9f9f9; /* subtle light background for contrast */
-  line-height: 1.5;
-  margin: 0;
-  padding: 0;
-}
-
-/* Style all text inside the specific containers */
-#result,
-#stats,
-#money,
-#gears,
-#luck,
-#artifacts-panel,
-#settings-panel, /* Added settings-panel */
-#achievements-panel { /* Added achievements-panel */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
-  font-weight: 500;
-  font-size: 16px;
-  /* other styling from before */
-  margin-top: 20px;
-  width: 100%;
-  padding: 15px 20px;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  transition: box-shadow 0.3s ease;
-}
-
-/* Hover effect for containers */
-#result:hover,
-#stats:hover,
-#money:hover,
-#gears:hover,
-#luck:hover,
-#artifacts-panel:hover,
-#settings-panel:hover, /* Added settings-panel */
-#achievements-panel:hover { /* Added achievements-panel */
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-}
-
-/* Money text */
-#money {
-  color: #27ae60;
-  font-weight: 700;
-  font-size: 18px;
-  letter-spacing: 0.03em;
-}
-
-@import url('https://fonts.googleapis.com/css2?family=Orbitron&family=Playfair+Display&family=Uncial+Antiqua&family=Raleway&family=Great+Vibes&family=Montserrat:wght@700&display=swap');
-
-.rarity-Common        { color: #666; }
-.rarity-Uncommon      { color: #2ecc71; }
-.rarity-Rare          { color: #3498db; }
-.rarity-Steelbone     { color: #76798c; font-weight: bold; }
-.rarity-Epic          { color: #9b59b6; }
-.rarity-Legendary     { color: #f1c40f; }
-.rarity-Mythic        { color: #e67e22; }
-.rarity-Cracked     { color: #888; font-style: italic; }
-.rarity-Chipped     { color: #999; }
-.rarity-Broken      { color: #666; text-decoration: line-through; }
-.rarity-Basic       { color: #aaa; }
-.rarity-Dull        { color: #999; font-style: italic; }
-.rarity-Tarnished   { color: #bbb; }
-.rarity-Dusty       { color: #aaa; }
-.rarity-Firm        { color: #666; font-weight: bold; }
-.rarity-Polished    { color: #777; }
-.rarity-Refined     { color: #8c8c8c; font-weight: bold; }
-
-/* Phantom rarity */
-.rarity-Phantom {
-  color: slateblue;
-  font-family: 'Orbitron', sans-serif;
-  animation: pulseFade 2s infinite ease-in-out;
-}
-
-/* Divine rarity */
-.rarity-Divine {
-  color: gold;
-  font-family: 'Playfair Display', serif;
-  font-weight: 700;
-}
-
-/* Pulse animation */
-@keyframes pulseFade {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-
-/* Steelbone */
-.rarity-Steelbone {
-  color: #76798c;
-  font-weight: bold;
-  font-family: 'Orbitron', sans-serif;
-  text-shadow: 0 0 8px #a3a7b0;
-  animation: glowSteelbone 3s ease-in-out infinite alternate;
-}
-@keyframes glowSteelbone {
-  0%   { text-shadow: 0 0 8px #a3a7b0; }
-  100% { text-shadow: 0 0 20px #8a8fa0; }
-}
-
-/* Ancient */
-.rarity-Ancient {
-  color: #d35400;
-  font-family: 'Uncial Antiqua', cursive;
-  font-weight: 600;
-  text-shadow: 0 0 8px #e67e22;
-  animation: glowAncient 3.5s ease-in-out infinite alternate;
-}
-@keyframes glowAncient {
-  0%   { text-shadow: 0 0 8px #e67e22; }
-  100% { text-shadow: 0 0 18px #f39c12; }
-}
-
-/* Celestial */
-.rarity-Celestial {
-  color: #1abc9c;
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  text-shadow: 0 0 10px #16a085;
-  animation: glowCelestial 2.5s ease-in-out infinite alternate;
-}
-@keyframes glowCelestial {
-  0%   { text-shadow: 0 0 10px #16a085; }
-  100% { text-shadow: 0 0 20px #1abc9c; }
-}
-
-/* Above Quantum */
-
-.rarity-Astral {
-  color: mediumorchid;
-  font-family: 'Raleway', sans-serif;
-  font-weight: 700;
-  text-shadow: 0 0 12px #b280b2;
-  animation: glowAstral 3s ease-in-out infinite alternate;
-}
-@keyframes glowAstral {
-  0%   { text-shadow: 0 0 12px #b280b2; }
-  100% { text-shadow: 0 0 24px #c49dcc; }
-}
-
-.rarity-Glitched {
-  color: darkred;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
-  text-shadow: 0 0 10px #7b0000;
-  animation: glowGlitched 2.5s ease-in-out infinite alternate;
-}
-@keyframes glowGlitched {
-  0%   { text-shadow: 0 0 10px #7b0000; }
-  100% { text-shadow: 0 0 22px #a00000; }
-}
-
-.rarity-Primordial {
-  color: teal;
-  font-weight: bold;
-  font-family: 'Great Vibes', cursive;
-  text-shadow: 0 0 15px #008080;
-  animation: glowPrimordial 4s ease-in-out infinite alternate;
-}
-@keyframes glowPrimordial {
-  0%   { text-shadow: 0 0 15px #008080; }
-  100% { text-shadow: 0 0 30px #00a0a0; }
-}
-
-.rarity-Ethereal {
-  color: #a29bfe;
-  font-family: 'Raleway', sans-serif;
-  font-style: italic;
-  font-weight: 600;
-  text-shadow: 0 0 14px #8c87ff;
-  animation: glowEthereal 3.5s ease-in-out infinite alternate;
-}
-@keyframes glowEthereal {
-  0%   { text-shadow: 0 0 14px #8c87ff; }
-  100% { text-shadow: 0 0 28px #b0adff; }
-}
-
-.rarity-Reality-Bound {
-  color: #8e44ad;
-  font-weight: bold;
-  font-family: 'Montserrat', sans-serif;
-  text-shadow: 0 0 14px #5a2f71;
-  animation: glowRealityBound 3s ease-in-out infinite alternate;
-}
-@keyframes glowRealityBound {
-  0%   { text-shadow: 0 0 14px #5a2f71; }
-  100% { text-shadow: 0 0 26px #8e44ad; }
-}
-
-.rarity-Genesis {
-  color: #000;
-  background: #fff;
-  padding: 2px 6px;
-  border-radius: 6px;
-  font-family: 'Playfair Display', serif;
-  font-weight: 700;
-  text-shadow: 0 0 12px #555;
-  animation: glowGenesis 4s ease-in-out infinite alternate;
-}
-@keyframes glowGenesis {
-  0%   { text-shadow: 0 0 12px #555; }
-  100% { text-shadow: 0 0 24px #888; }
-}
-
-  .variant {
-    font-style: italic;
-    margin-left: 5px;
-    padding: 2px 6px;
-    border-radius: 5px;
-    background: #eee;
-    font-weight: 600;
-    user-select: none;
-  }
-  /* Variant colors by rarity */
-.variant-common {
-  color: #7f8c8d; /* greyish */
-  font-weight: 600;
-  user-select: none;
-}
-
-.variant-uncommon {
-  color: #27ae60; /* green */
-  font-weight: 600;
-  user-select: none;
-}
-/* Base animation keyframes */
-@keyframes pulseGlow {
-  0% { box-shadow: 0 0 6px currentColor; }
-  50% { box-shadow: 0 0 20px currentColor; transform: scale(1.03); }
-  100% { box-shadow: 0 0 6px currentColor; }
-}
-
-@keyframes colorCycle {
-  0%   { filter: hue-rotate(0deg); }
-  100% { filter: hue-rotate(360deg); }
-}
-
-/* Animated Rarity Styles */
-
-.rarity-Glitched {
-  color: darkred;
-  font-weight: bold;
-  animation: pulseGlow 1.5s infinite;
-}
-
-.rarity-Primordial {
-  color: teal;
-  font-weight: bold;
-  animation: pulseGlow 1.6s infinite ease-in-out;
-}
-
-.rarity-Ethereal {
-  color: #a29bfe;
-  font-style: italic;
-  animation: colorCycle 3s linear infinite;
-}
-
-.rarity-Reality-Bound {
-  color: #8e44ad;
-  background: linear-gradient(45deg, #8e44ad, #d0c1f7);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  animation: colorCycle 4s linear infinite;
-}
-
-.rarity-Genesis {
-  color: #fff;
-  background: linear-gradient(90deg, #000, #ff0, #000);
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-weight: 900;
-  animation: pulseGlow 1.2s infinite, colorCycle 5s linear infinite;
-}
-  /* Sidebar dropdown styling */
-  #sidebar {
-    width: 250px;
-    background: white;
-    padding: 15px 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
-  }
-
-  #auto-spin-rate {
-  margin-top: 10px;
-  font-size: 16px;
-  color: #333;
-}
-
-  label {
-    font-weight: 600;
-    display: block;
-    margin-bottom: 8px;
-  }
-  #upgrades-panel, #artifacts-panel, #settings-panel, #achievements-panel { /* Added settings and achievements */
-  margin-top: 20px;
-  padding: 20px;
-  border-radius: 12px;
-  background: white;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-.upgrade-box, .artifact-box { /* Added .artifact-box */
-  margin-bottom: 15px;
-  font-size: 15px;
-}
-#buy-luck-upgrade, #buy-spin-speed-upgrade, .buy-artifact-btn { /* Added .buy-spin-speed-upgrade and .buy-artifact-btn */
-  margin-top: 8px;
-  padding: 6px 12px;
-  font-size: 14px;
-  border-radius: 6px;
-  background: #27ae60;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-.buy-gear-btn {
-  margin-top: 8px;
-  padding: 6px 12px;
-  font-size: 14px;
-  border-radius: 6px;
-  background: #007bff; /* Blue for gear buy button */
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-.buy-gear-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-/* Entity Beyond Time rarity */
-.rarity-Entity-Beyond-Time {
-  color: #00bcd4; /* Light Blue */
-  font-family: 'Orbitron', sans-serif;
-  font-weight: bold;
-  text-shadow: 0 0 10px #00e0ff, 0 0 20px #00b0ff;
-  animation: warpTime 4s infinite alternate;
-}
-
-@keyframes warpTime {
-  0%   { transform: skewX(0) scale(1); opacity: 1; text-shadow: 0 0 10px #00e0ff; }
-  50%  { transform: skewX(-5deg) scale(1.02); opacity: 0.8; text-shadow: 0 0 20px #00e0ff, 0 0 30px #00b0ff; }
-  100% { transform: skewX(0) scale(1); opacity: 1; text-shadow: 0 0 10px #00e0ff; }
-}
-
-/* Dimensional Overclocker Gear Title */
-.gear-title[data-gear="Dimensional Overclocker"] {
-  color: #03a9f4; /* A slightly darker blue */
-  font-family: 'Orbitron', sans-serif;
-  text-shadow: 0 0 8px #2196f3;
-  animation: temporalGlow 3s infinite ease-in-out;
-  font-size: 20px; /* Make it stand out */
-}
-
-@keyframes temporalGlow {
-  0% { text-shadow: 0 0 8px #2196f3; }
-  50% { text-shadow: 0 0 18px #2196f3, 0 0 25px #00bcd4; }
-  100% { text-shadow: 0 0 8px #2196f3; }
-}
-
-
-  select {
-    width: 100%;
-    font-size: 16px;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    margin-bottom: 15px;
-    cursor: pointer;
-  }
-    #gear-panel {
-  width: 300px;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
-}
-#inventory-display {
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 12px;
-  background: white;
-  box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
-}
-#rarity-counts {
-  font-size: 15px;
-  line-height: 1.6;
-  text-align: left;
-}
-
-.gear-box {
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-.gear-title {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-.gear-progress {
-  height: 18px;
-  background: #ddd;
-  border-radius: 10px;
-  overflow: hidden;
-  margin: 6px 0;
-}
-
-.gear-progress-bar {
-  height: 100%;
-  background: linear-gradient(to right, #4caf50, #2ecc71);
-  width: 0%;
-  transition: width 0.3s ease;
-  color: white;
-  font-size: 12px;
-  text-align: center;
-  line-height: 18px;
-}
-
-.gear-status {
-  font-size: 14px;
-  margin-top: 5px;
-}
-/* Floating particle container */
-
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Supa Spin Simulator</title>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-<audio id="bgm-audio" src="ScreenRecording_07-13-2025_16-13-26_1 (1).mp3" loop></audio>
-<main>
-  <h1>♤ Supa Spin Game ♤</h1>
-  <button id="spin-btn">Spin</button>
-  <button id="auto-spin-btn">Auto Spin: OFF</button>
+  <audio id="bgm-audio" src="ScreenRecording_07-13-2025_16-13-26_1 (1).mp3" loop></audio>
 
-  <div id="result">Your result will appear here.</div>
-  <div id="money"> 0</div>
-  <div id="stats">Total Spins: 0<br>Rarest Pull: N/A</div>
-  <div id="luck">Luck Bonus from Gears: 0%</div>
-  <div id="auto-spin-rate">Auto Spin Rate: OFF</div>
-  <div id="gears">
-    <div id="spinBoostDisplay" style="position: fixed; top: 10px; right: 10px;
-  background: rgba(0,0,0,0.6); color: white; padding: 8px 12px; border-radius: 8px;
-  font-family: monospace; font-weight: bold; z-index: 1000;">
-  Spin Speed Boost: 0%
-</div>
-    <h3>Gear Status</h3>
-    <div id="gear-list">No gears collected yet.</div>
-    <div class="gear-description" style="font-style: italic; color: #555; margin-bottom: 6px;">
-  ${description}
-</div>
-    <div id="inventory-display">
-      <h3>Your Rarity Inventory</h3>
-      <div id="rarity-counts">Nothing pulled yet.</div>
+  <main>
+    <h1>♤ Supa Spin Game ♤</h1>
+    <button id="spin-btn">Spin</button>
+    <button id="auto-spin-btn">Auto Spin: OFF</button>
+
+    <div id="result">Your result will appear here.</div>
+    <div id="money">0</div>
+    <div id="stats">Total Spins: 0<br />Rarest Pull: N/A</div>
+    <div id="luck">Luck Bonus from Gears: 0%</div>
+    <div id="auto-spin-rate">Auto Spin Rate: OFF</div>
+
+    <div id="gears">
+      <div id="spinBoostDisplay">Spin Speed Boost: 0%</div>
+      <h3>Gear Status</h3>
+      <div id="gear-list">No gears collected yet.</div>
+      <div id="inventory-display">
+        <h3>Your Rarity Inventory</h3>
+        <div id="rarity-counts">Nothing pulled yet.</div>
+      </div>
     </div>
+  </main>
+
+  <div id="sidebar">
+    <input type="text" id="secretCodeInput" placeholder="Enter secret code" />
+    <button id="secretCodeSubmit">Submit</button>
+    <div id="secretCodeMessage"></div>
+
+    <div id="upgrades-panel">
+      <h3>Upgrades</h3>
+      <div class="upgrade-box">
+        <strong>Luck Upgrade</strong> (Level <span id="luck-upgrade-level">0</span>)<br />
+        Increases base luck by 10% per level.<br />
+        <button id="buy-luck-upgrade">Buy (Cost: <span id="luck-upgrade-cost">10,000</span>)</button>
+      </div>
+      <div class="upgrade-box">
+        <strong>Spin Speed Upgrade</strong> (Level <span id="spin-speed-upgrade-level">0</span>)<br />
+        Increases base spin speed.<br />
+        <button id="buy-spin-speed-upgrade">Buy (Cost: <span id="spin-speed-upgrade-cost">5,000</span>)</button>
+      </div>
+      <button id="toggle-image-showcase-btn">Show/Hide Rarity Images</button>
+      <div id="image-showcase" style="display: none">
+        <h3>Your Collection</h3>
+        <div id="rarity-image-grid"></div>
+      </div>
+    </div>
+
+    <div id="artifacts-panel">
+      <h3>Artifacts</h3>
+      <div id="artifact-list">No artifacts discovered yet.</div>
+    </div>
+
+    <div id="achievements-panel">
+      <h3>Achievements</h3>
+      <div id="achievement-list">No achievements unlocked yet.</div>
+    </div>
+
+    <div id="settings-panel">
+      <h3>Settings</h3>
+      <button id="toggle-music-btn">Music: ON</button>
+    </div>
+
+    <label for="rarity-list">All Rarities</label>
+    <select id="rarity-list" size="16" readonly></select>
   </div>
-</main>
 
-<div id="sidebar">
-  <input type="text" id="secretCodeInput" placeholder="Enter secret code" />
-<button id="secretCodeSubmit">Submit</button>
-<div id="secretCodeMessage"></div>
-  <div id="upgrades-panel">
-  <h3>Upgrades</h3>
-  <div class="upgrade-box">
-    <strong>Luck Upgrade</strong> (Level <span id="luck-upgrade-level">0</span>)<br>
-    Increases base luck by 10% per level.<br>
-    <button id="buy-luck-upgrade">Buy (Cost: <span id="luck-upgrade-cost">10,000</span>)</button>
-  </div>
-  <div class="upgrade-box">
-    <strong>Spin Speed Upgrade</strong> (Level <span id="spin-speed-upgrade-level">0</span>)<br>
-    Increases base spin speed.<br>
-    <button id="buy-spin-speed-upgrade">Buy (Cost: <span id="spin-speed-upgrade-cost">5,000</span>)</button>
-  </div>
-    <button id="toggle-image-showcase-btn" style="margin-bottom:10px;">Show/Hide Rarity Images</button>
-
-<div id="image-showcase" style="display:none; border: 1px solid #ccc; padding: 10px; max-width: 600px; margin-top: 10px; background: #fafafa; overflow-x: auto; white-space: nowrap;">
-  </div>
-  <div id="image-showcase" style="margin-top: 40px; padding: 20px;">
-  <h2>Your Collection</h2>
-  <div id="rarity-image-grid" style="display: flex; flex-wrap: wrap; gap: 15px;"></div>
-</div>
-</div>
-
-<div id="artifacts-panel">
-  <h3>Artifacts</h3>
-  <div id="artifact-list">No artifacts discovered yet.</div>
-</div>
-
-<div id="achievements-panel">
-  <h3>Achievements</h3>
-  <div id="achievement-list">No achievements unlocked yet.</div>
-</div>
-
-<div id="settings-panel">
-  <h3>Settings</h3>
-  <button id="toggle-music-btn">Music: ON</button>
-</div>
-
-  <label for="rarity-list">All Rarities</label>
-  <select id="rarity-list" size="16" readonly>
-    </select>
-</div>
-<script>
-// ===== AUTO SPIN SYSTEM =====
-let autoSpinActive = false;
-let autoSpinInterval = null;
-let autoSpinSpeed = 1000; // milliseconds between spins
-
-function toggleAutoSpin() {
-  const btn = document.getElementById("auto-spin-btn");
-  const rateDisplay = document.getElementById("auto-spin-rate");
-  
-  autoSpinActive = !autoSpinActive;
-  
-  if (autoSpinActive) {
-    // Start auto spinning
-    btn.textContent = "Auto Spin: ON";
-    btn.style.backgroundColor = "#27ae60";
-    rateDisplay.textContent = `Auto Spin Rate: ${(1000 / autoSpinSpeed).toFixed(1)} spins/sec`;
-    
-    autoSpinInterval = setInterval(() => {
-      performSpin();
-    }, autoSpinSpeed);
-    
-    showNotification("Auto Spin Started!", "#27ae60", 1500);
-  } else {
-    // Stop auto spinning
-    btn.textContent = "Auto Spin: OFF";
-    btn.style.backgroundColor = "#111";
-    rateDisplay.textContent = "Auto Spin Rate: OFF";
-    clearInterval(autoSpinInterval);
-    autoSpinInterval = null;
-    
-    showNotification("Auto Spin Stopped!", "#ff6b6b", 1500);
-  }
-  
-  saveGame();
-}
-
-function updateAutoSpinSpeed(newSpeed) {
-  autoSpinSpeed = newSpeed;
-  
-  // Restart interval with new speed if active
-  if (autoSpinActive) {
-    clearInterval(autoSpinInterval);
-    autoSpinInterval = setInterval(() => {
-      performSpin();
-    }, autoSpinSpeed);
-    
-    const rateDisplay = document.getElementById("auto-spin-rate");
-    rateDisplay.textContent = `Auto Spin Rate: ${(1000 / autoSpinSpeed).toFixed(1)} spins/sec`;
-  }
-  
-  saveGame();
-}
-
-// Attach event listener to auto spin button
-document.getElementById("auto-spin-btn").addEventListener("click", toggleAutoSpin);
-
-// ===== MUSIC SYSTEM =====
-let bgmStarted = false;
-let musicEnabled = true; // New state for music
-
-function startBGM() {
-  const audio = document.getElementById("bgm-audio");
-  if (!bgmStarted && musicEnabled) {
-    audio.volume = 0.3;
-    audio.play().catch(err => {
-      console.log("Autoplay blocked or failed:", err);
-    });
-    bgmStarted = true;
-  }
-}
-
-function toggleMusic() {
-  const audio = document.getElementById("bgm-audio");
-  musicEnabled = !musicEnabled;
-  document.getElementById("toggle-music-btn").textContent = `Music: ${musicEnabled ? 'ON' : 'OFF'}`;
-  if (musicEnabled) {
-    startBGM(); // Try to start if not already playing
-  } else {
-    audio.pause();
-    bgmStarted = false; // Reset so it tries to play from start if turned on again
-  }
-  saveGame(); // Save music preference
-}
-
-document.addEventListener("click", startBGM, { once: true });
-document.getElementById("toggle-music-btn").addEventListener("click", toggleMusic);
-
-
-// Create container once
-const notificationContainer = document.createElement("div");
-notificationContainer.style.position = "fixed";
-notificationContainer.style.bottom = "20px";
-notificationContainer.style.left = "50%";
-notificationContainer.style.transform = "translateX(-50%)";
-notificationContainer.style.display = "flex";
-notificationContainer.style.flexDirection = "column-reverse";
-notificationContainer.style.alignItems = "center";
-notificationContainer.style.zIndex = "9999";
-document.body.appendChild(notificationContainer);
-
-const notificationTimeouts = new Map();
-let fortuneRingNotified = false;
-
-function showNotification(message, color = "#00c8ff", duration = 2500) {
-  // Check if notification with same message exists
-  let existing = [...notificationContainer.children].find(
-    (note) => note.textContent === message
-  );
-
-  if (existing) {
-    clearTimeout(notificationTimeouts.get(existing));
-
-    const timeoutId = setTimeout(() => {
-      existing.style.opacity = "0";
-      existing.style.transform = "translateY(-30px)";
-      setTimeout(() => {
-        existing.remove();
-        notificationTimeouts.delete(existing);
-      }, 400);
-    }, duration);
-
-    notificationTimeouts.set(existing, timeoutId);
-    return; // Don't create a new duplicate notification
-  }
-
-  // Create new notification
-  const note = document.createElement("div");
-  note.textContent = message;
-  note.style.position = "relative";
-  note.style.background = color;
-  note.style.color = "#fff";
-  note.style.padding = "10px 18px";
-  note.style.marginTop = "10px";
-  note.style.borderRadius = "10px";
-  note.style.fontWeight = "bold";
-  note.style.boxShadow = "0 3px 10px rgba(0,0,0,0.3)";
-  note.style.fontSize = "15px";
-  note.style.opacity = "0";
-  note.style.transform = "translateY(-40px)";
-  note.style.transition = "all 0.4s ease-out";
-
-  notificationContainer.appendChild(note);
-
-  requestAnimationFrame(() => {
-    note.style.opacity = "1";
-    note.style.transform = "translateY(0)";
-  });
-
-  const timeoutId = setTimeout(() => {
-    note.style.opacity = "0";
-    note.style.transform = "translateY(-30px)";
-    setTimeout(() => {
-      note.remove();
-      notificationTimeouts.delete(note);
-    }, 400);
-  }, duration);
-
-  notificationTimeouts.set(note, timeoutId);
-}
-
-// Toggle show/hide the image showcase div
-document.getElementById("toggle-image-showcase-btn").addEventListener("click", () => {
-  const showcase = document.getElementById("image-showcase");
-  if (showcase.style.display === "none" || showcase.style.display === "") {
-    updateImageShowcase();
-    showcase.style.display = "block";
-  } else {
-    showcase.style.display = "none";
-  }
-});
-
-function updateImageShowcase() {
-  const container = document.getElementById("image-showcase");
-  container.innerHTML = ""; // Clear previous
-
-  for (const rarity of rarityOrder) {
-    if (!inventory[rarity]) continue; // Show only owned rarities
-
-    const raritySlug = rarity.toLowerCase().replace(/ /g, "-");
-    const count = getRarityCount(rarity);
-
-    const wrapper = document.createElement("div");
-    wrapper.style = "display: inline-block; text-align: center; font-size: 12px; margin: 5px;";
-
-    const img = document.createElement("img");
-    img.src = `https://raw.githubusercontent.com/ayomide720/kysnrnggame/main/${raritySlug}.png`;
-    img.alt = rarity;
-    img.title = `${rarity} × ${count}`;
-    img.style = "width: 64px; height: 64px; image-rendering: pixelated; display: block; margin: 0 auto;";
-
-    const label = document.createElement("div");
-    label.innerHTML = `<span class="rarity-${rarity.replace(/ /g,"-")}">${rarity}</span>`;
-
-    img.onload = () => {
-      wrapper.appendChild(img);
-      wrapper.appendChild(label);
-    };
-
-    img.onerror = () => {
-      // If no image, just show the label text
-      wrapper.appendChild(label);
-    };
-
-    // Append wrapper immediately so at least label appears
-    container.appendChild(wrapper);
-  }
-}
-
-// Placeholder functions to prevent errors - replace with your actual game functions
-function performSpin() {
-  const spinBtn = document.getElementById("spin-btn");
-  if (spinBtn) {
-    spinBtn.click();
-  }
-}
-
-function saveGame() {
-  // Add your save game logic here
-  console.log("Game saved");
-}
-
-const rarityDropRates = {};
-const rarityOrder = [];
-const inventory = {};
-
-function getRarityCount(rarity) {
-  return inventory[rarity] || 0;
-}
-
-</script>
+  <!-- Scripts loaded in order -->
+  <script src="js/ui.js"></script>
+  <script src="js/game-state.js"></script>
+  <script src="js/game-logic.js"></script>
+  <script src="js/autospin.js"></script>
+  <script src="js/music.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
