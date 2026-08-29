@@ -13,6 +13,7 @@
     <h1>♤ Supa Spin Game ♤</h1>
     <button id="spin-btn">Spin</button>
     <button id="auto-spin-btn">Auto Spin: OFF</button>
+    <button id="open-index-btn" style="background-color: #6c5ce7;">Open Index</button>
 
     <div id="result">Your result will appear here.</div>
     <div id="money">0</div>
@@ -74,12 +75,26 @@
     <select id="rarity-list" size="16" readonly></select>
   </div>
 
+  <!-- Index Modal -->
+  <div id="index-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Rarity Index</h2>
+        <button class="close-btn" id="close-index-btn">&times;</button>
+      </div>
+      <div id="index-body" class="index-body">
+        <!-- Rarities will be populated here -->
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts loaded in order -->
   <script src="js/ui.js"></script>
   <script src="js/game-state.js"></script>
   <script src="js/game-logic.js"></script>
   <script src="js/autospin.js"></script>
   <script src="js/music.js"></script>
+  <script src="js/index.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
